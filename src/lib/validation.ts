@@ -1,0 +1,1 @@
+// RSS feed validation for Apple / Spotify compliance
