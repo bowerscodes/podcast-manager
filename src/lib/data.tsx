@@ -11,7 +11,7 @@ export const actionCards = [
     ),
     body: "Body",
     footer: "Get started",
-    href: "/podcasts/publish"
+    href: "/podcasts/new"
   },
   {
     id: "manage",
@@ -22,7 +22,7 @@ export const actionCards = [
       </>,
     body: "Body",
     footer: "View analytics",
-    href: "/podcasts/manage"
+    href: "/podcasts/"
   }
 ];
 

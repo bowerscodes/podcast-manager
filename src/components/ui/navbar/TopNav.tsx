@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from '@/providers/Providers';
 import UserMenu from './UserMenu';
 import LoginModal from './LoginModal';
+import LoadingSpinner from "../LoadingSpinner";
 
 export default function TopNav() {
   const { user, loading } = useAuth();
@@ -20,7 +21,7 @@ export default function TopNav() {
     return (
       <nav className="flex items-center justify-between p-4 border-b">
         <h1 className="text-xl font-bold">Podcast Manager</h1>
-        <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
+        <LoadingSpinner />
       </nav>
     );
   }

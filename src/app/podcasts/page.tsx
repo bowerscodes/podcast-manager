@@ -9,8 +9,9 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { Podcast } from "@/types/podcast";
 import toast from "react-hot-toast";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
-export default function PodcastsPage() {
+export default function PodcastsListPage() {
   const router = useRouter();
   const { user } = useAuth();
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
@@ -46,7 +47,7 @@ export default function PodcastsPage() {
     );
   }
   if (loading) {
-    return <div className="p-8 text-center">Loading podcasts...</div>;
+    return <LoadingSpinner message="Loading podcasts..." />;
   }
 
   return (

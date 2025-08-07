@@ -28,3 +28,12 @@ export interface Episode {
   explicit: boolean;
   created_at: Date;
 };
+
+export interface PodcastFormData {
+  title: string;
+  description: string;
+  author: string;
+  email: string;
+  website: string;
+  artwork: string;
+};
