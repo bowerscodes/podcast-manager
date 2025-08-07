@@ -53,7 +53,9 @@ export default function PodcastsListPage() {
   return (
     <div className="container mx-auto p-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">My Podcasts</h1>
+        <h1 className="text-3xl font-bold">
+          My Podcasts
+        </h1>
         <Button color="primary" onPress={() => router.push("/podcasts/manage")}>
           Manage podcasts
         </Button>
@@ -81,15 +83,17 @@ export default function PodcastsListPage() {
               </CardBody>
               <CardFooter className="flex gap-2">
                 <Button
-                  size="sm"
-                  variant="light"
+                  color="primary"
+                  size="md"
+                  variant="solid"
                   onPress={() => router.push(`/podcasts/${podcast.id}`)}
                 >
                   Manage
                 </Button>
                 <Button
-                  className="sm"
-                  variant="light"
+                  color="default"
+                  size="md"
+                  variant="solid"
                   onPress={() => router.push(podcast.rss_url)}
                   target="_blank"
                 >
