@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
+
+import { useAuth } from "@/providers/Providers";
 import LoginForm from "@/components/auth/LoginForm";
 
 type Props = {
@@ -9,6 +11,13 @@ type Props = {
 
 export default function LoginModal({ isOpen, onClose }: Props) {
   const [isSignUp, setIsSignUp] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user && isOpen) {
+      onClose();
+    }
+  }, [user, isOpen, onClose]);
 
   return (
     <Modal
@@ -26,6 +35,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
           <LoginForm
             isSignUp={isSignUp}
             onToggleMode={() => setIsSignUp(!isSignUp)}
+            onSuccess={onClose}
           />
         </ModalBody>
       </ModalContent>

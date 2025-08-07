@@ -9,9 +9,10 @@ import { supabase } from "@/lib/supabase";
 type Props = {
   isSignUp: boolean;
   onToggleMode: () => void;
+  onSuccess?: () => void;
 };
 
-export default function EmailPasswordForm({ isSignUp, onToggleMode }: Props) {
+export default function EmailPasswordForm({ isSignUp, onToggleMode, onSuccess }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,6 +29,7 @@ export default function EmailPasswordForm({ isSignUp, onToggleMode }: Props) {
         });
         if (error) throw error;
         toast.success("Please check your email for a confirmation link");
+        onSuccess?.();
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -35,6 +37,7 @@ export default function EmailPasswordForm({ isSignUp, onToggleMode }: Props) {
         });
         if (error) throw error;
         toast.success("Welcome back!");
+        onSuccess?.();
       }
     } catch (error) {
       const errorMessage =

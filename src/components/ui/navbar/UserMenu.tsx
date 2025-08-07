@@ -28,17 +28,17 @@ export default function UserMenu({ user }: Props) {
         />
       </DropdownTrigger>
       <DropdownMenu>
-        <DropdownItem key="profile">
+        <DropdownItem key="profile" textValue="Profile">
           <div className="flex flex-col">
             <span className="text-sm">{user.email}</span>
             <span className="text-xs text-gray-500">Profile</span>
           </div>
         </DropdownItem>
-        <DropdownItem key="podcasts" href="/podcasts">
+        <DropdownItem key="podcasts" href="/podcasts" textValue="My podcasts">
           My podcasts
         </DropdownItem>
         <DropdownItem key="settings">Settings</DropdownItem>
-        <DropdownItem key="logout" color="danger" onPress={handleSignOut}>
+        <DropdownItem key="logout" textValue="Logout" color="danger" onPress={handleSignOut}>
           Sign out
         </DropdownItem>
       </DropdownMenu>
