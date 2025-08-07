@@ -1,6 +1,6 @@
 export interface Podcast {
   id: string;
-  userId: string;
+  user_id: string;
   title: string;
   description: string;
   artwork: string;
@@ -9,22 +9,22 @@ export interface Podcast {
   categories: string[];
   author: string;
   email: string;
-  rssUrl: string; // Generated RSS URL
-  createdAt: Date;
-  updatedAt: Date;
+  rss_url: string; // Generated RSS URL
+  created_at: Date;
+  updated_at: Date;
 };
 
 export interface Episode {
   id: string;
-  podcastId: string;
+  podcast_id: string;
   title: string;
   description: string;
-  audioUrl: string; // User's self-hosted URL
+  audio_url: string; // User's self-hosted URL
   duration: number; // in seconds
-  fileSize: number; // in bytes
-  publishDate: Date;
-  seasonNumber?: number;
-  episodeNumber?: number;
+  file_size: number; // in bytes
+  publish_date: Date;
+  season_number?: number;
+  episode_number?: number;
   explicit: boolean;
-  createdAt: Date;
+  created_at: Date;
 };

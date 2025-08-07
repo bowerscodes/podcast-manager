@@ -37,7 +37,9 @@ export default function UserMenu({ user }: Props) {
         <DropdownItem key="podcasts" href="/podcasts" textValue="My podcasts">
           My podcasts
         </DropdownItem>
-        <DropdownItem key="settings">Settings</DropdownItem>
+        <DropdownItem key="settings">
+          Settings
+        </DropdownItem>
         <DropdownItem key="logout" textValue="Logout" color="danger" onPress={handleSignOut}>
           Sign out
         </DropdownItem>
