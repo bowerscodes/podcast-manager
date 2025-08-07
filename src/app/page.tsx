@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <>
       <div className='flex gap-5 justify-center mt-5 mb-5'>
-        {actionCards.map((card) => <ActionCard key={card.id} header={card.header} body={card.body} footer={card.footer}/>)}
+        {actionCards.map((card) => <ActionCard key={card.id} header={card.header} body={card.body} footer={card.footer} href={card.href} />)}
       </div>
       <main>
         <div className='w-[90vw] flex flex-col mx-auto items-center justify-center'>
@@ -15,4 +15,4 @@ export default function Home() {
       </main>
     </>
   );
-}
+};

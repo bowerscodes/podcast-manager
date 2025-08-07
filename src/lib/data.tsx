@@ -11,7 +11,7 @@ export const actionCards = [
     ),
     body: "Body",
     footer: "Get started",
-    onPress: () => {}
+    href: "/podcasts/publish"
   },
   {
     id: "manage",
@@ -22,9 +22,10 @@ export const actionCards = [
       </>,
     body: "Body",
     footer: "View analytics",
-    onPress: () => {}
+    href: "/podcasts/manage"
   }
 ];
 
 export const appDescription = 
-  "Create, manage, and distribute your podcasts with ease. Generate RSS feeds that work with Apple Podcasts, Spotify, and more.";
+  `Create, manage, and distribute your podcasts with ease. Generate RSS feeds that work 
+  with Apple Podcasts, Spotify, and more.`;
