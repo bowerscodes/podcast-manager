@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { Podcast } from "@/types/podcast";
+import toast from "react-hot-toast";
 
 export default function PodcastsPage() {
   const router = useRouter();
@@ -30,6 +31,7 @@ export default function PodcastsPage() {
         setPodcasts(data || []);
       } catch (error) {
         console.error("Error fetching podcasts: ", error);
+        toast.error("Failed to load podcasts. Please refresh the page.")
       } finally {
         setLoading(false);
       }
