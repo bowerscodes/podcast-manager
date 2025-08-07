@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@heroui/button";
-import { Card, CardHeader, CardBody, CardFooter } from "@heroui/card";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -10,6 +9,7 @@ import { useAuth } from "@/providers/Providers";
 import { Podcast } from "@/types/podcast";
 import toast from "react-hot-toast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import PodcastCard from "./PodcastCard";
 
 export default function PodcastsListPage() {
   const router = useRouter();
@@ -74,33 +74,7 @@ export default function PodcastsListPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {podcasts.map((podcast) => (
-            <Card key={podcast.id} className="p-4">
-              <CardHeader>
-                <h3 className="text-lg font-semibold">{podcast.title}</h3>
-              </CardHeader>
-              <CardBody>
-                <p className="text-gray-600 text-sm">{podcast.description}</p>
-              </CardBody>
-              <CardFooter className="flex gap-2">
-                <Button
-                  color="primary"
-                  size="md"
-                  variant="solid"
-                  onPress={() => router.push(`/podcasts/${podcast.id}`)}
-                >
-                  Manage
-                </Button>
-                <Button
-                  color="default"
-                  size="md"
-                  variant="solid"
-                  onPress={() => router.push(podcast.rss_url)}
-                  target="_blank"
-                >
-                  RSS Feed
-                </Button>
-              </CardFooter>
-            </Card>
+            <PodcastCard key={podcast.id} podcast={podcast}/>
           ))}
         </div>
       )}
