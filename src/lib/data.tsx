@@ -1,4 +1,10 @@
+import { FaPodcast } from "react-icons/fa";
+
 export const appTitle = "Podcast Manager";
+
+export const appDescription = 
+  `Create, manage, and distribute your podcasts with ease. Generate RSS feeds that work 
+  with Apple Podcasts, Spotify, and more.`;
 
 export const actionCards = [
   {
@@ -26,6 +32,10 @@ export const actionCards = [
   }
 ];
 
-export const appDescription = 
-  `Create, manage, and distribute your podcasts with ease. Generate RSS feeds that work 
-  with Apple Podcasts, Spotify, and more.`;
+export const defaultArtwork = () => {
+  return (
+    <div className="flex w-full h-full items-center justify-center bg-gray-100 text-gray-400 rounded-lg">
+      <FaPodcast size={128} />
+    </div>
+  );
+};
