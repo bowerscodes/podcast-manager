@@ -1,5 +1,5 @@
 import AuthGuard from '@/components/auth/AuthGuard';
-import PodcastForm from './PodcastForm';
+import PodcastForm from '../../../components/podcasts/PodcastForm';
 
 export default function NewPodcastPage() {
 

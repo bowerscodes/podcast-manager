@@ -9,18 +9,19 @@ import { useAuth } from "@/providers/Providers";
 import { Podcast } from "@/types/podcast";
 import toast from "react-hot-toast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import PodcastCard from "./PodcastCard";
+import PodcastCard from "../../components/podcasts/PodcastCard";
 
 export default function PodcastsListPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(false);
 
   useEffect(() => {
     const fetchPodcasts = async () => {
       if (!user) return;
-
+      
+      setDataLoading(true);
       try {
         const { data, error } = await supabase
           .from("podcasts")
@@ -34,19 +35,24 @@ export default function PodcastsListPage() {
         console.error("Error fetching podcasts: ", error);
         toast.error("Failed to load podcasts. Please refresh the page.")
       } finally {
-        setLoading(false);
+        setDataLoading(false);
       }
     };
 
     fetchPodcasts();
   }, [user]);
 
+  if (authLoading) {
+    return <LoadingSpinner message="Checking authentication..." />;
+  }
+
   if (!user) {
     return (
       <div className="p-8 text-center">Please login to view your podcasts.</div>
     );
   }
-  if (loading) {
+  
+  if (dataLoading) {
     return <LoadingSpinner message="Loading podcasts..." />;
   }
 
