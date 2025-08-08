@@ -1,5 +1,4 @@
 import { useRouter } from "next/navigation";
-import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 
 import { Podcast } from "@/types/podcast";
