@@ -9,7 +9,6 @@ export interface Podcast {
   categories: string[];
   author: string;
   email: string;
-  rss_url: string; // Generated RSS URL
   created_at: Date;
   updated_at: Date;
 };

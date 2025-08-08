@@ -18,7 +18,7 @@ export default function PodcastHeader({ podcast, episodeCount }: Props) {
           alt={`${podcast.title} artwork`}
           className="w-48 h-48 rounded-lg object-cover shadow-lg"
         />
-      : defaultArtwork()
+      : <div className="w-48 h-48 shadow-lg">{defaultArtwork()}</div>
       }
       <div className="flex-1">
         <h1>{podcast.title}</h1>

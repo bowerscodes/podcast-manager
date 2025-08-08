@@ -19,7 +19,7 @@ export default function PodcastRSSSection({ podcast }: Props) {
     navigator.clipboard.writeText(rssUrl);
     toast.success("RSS URL copied to clipboard!");
   };
-  
+
   return (
     <Card className="mb-8">
       <CardHeader>
@@ -33,11 +33,11 @@ export default function PodcastRSSSection({ podcast }: Props) {
         <div className="flex gap-2 mb-4">
           <input
             type="text"
-            value={podcast.rss_url || "RSS feed not generated yet"}
+            value={rssUrl || "RSS feed not generated yet"}
             readOnly
             className="flex-1 p-2 border rounded-lg bg-gray-50"
           />
-          <Button onPress={copyRSSUrl} disabled={!podcast.rss_url}>
+          <Button onPress={copyRSSUrl}>
             Copy
           </Button>
         </div>
