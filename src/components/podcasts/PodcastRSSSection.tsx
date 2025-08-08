@@ -12,12 +12,14 @@ type Props = {
 };
 
 export default function PodcastRSSSection({ podcast }: Props) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const rssUrl = `${baseUrl}/api/rss/${podcast.id}`;
+
   const copyRSSUrl = () => {
-    if (podcast.rss_url) {
-      navigator.clipboard.writeText(podcast.rss_url);
-      toast.success("RSS URL copied to clipboard!");
-    }
+    navigator.clipboard.writeText(rssUrl);
+    toast.success("RSS URL copied to clipboard!");
   };
+  
   return (
     <Card className="mb-8">
       <CardHeader>

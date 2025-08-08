@@ -1,6 +1,8 @@
 import { Image } from '@heroui/image';
+
 import { Podcast } from '@/types/podcast';
 import { defaultArtwork } from '@/lib/data';
+import { formatDate } from '@/lib/date-utils';
 
 type Props = {
   podcast: Podcast;
@@ -9,7 +11,7 @@ type Props = {
 
 export default function PodcastHeader({ podcast, episodeCount }: Props) {
   return (
-    <div className="flex items-start gap-6 mb-8">
+    <div className="flex items-start gap-6 mb-6">
       {podcast.artwork 
       ? <Image 
           src={podcast.artwork}
@@ -27,7 +29,7 @@ export default function PodcastHeader({ podcast, episodeCount }: Props) {
           <span>{episodeCount} episodes</span>
           <span>•</span>
           <span>
-            Created {new Date(podcast.created_at).toLocaleDateString()}
+            Created {formatDate(podcast.created_at)}
           </span>
         </div>
       </div>
