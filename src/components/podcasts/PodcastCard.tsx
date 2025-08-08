@@ -12,6 +12,11 @@ type Props = {
 export default function PodcastCard({ podcast }: Props) {
   const router = useRouter();
 
+  const truncateText = (text: string, maxLength: number = 100) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + "...";
+  };
+
   return (
     <Card 
       className="p-4 cursor-pointer"
@@ -40,10 +45,10 @@ export default function PodcastCard({ podcast }: Props) {
         </div>
       </CardBody>
       <CardFooter 
-        className="flex gap-2"
+        className="flex gap-2 items-center min-h-[60px]"
         onClick={(e) => e.stopPropagation()}
       >
-        <p className="text-gray-600 text-sm">{podcast.description}</p>
+        <p className="text-gray-600 text-sm text-center">{truncateText(podcast.description)}</p>
       </CardFooter>
     </Card>
   );
