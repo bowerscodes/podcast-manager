@@ -1,5 +1,8 @@
 import { FaPodcast } from "react-icons/fa";
 
+export const applePodcastsSubmitLink = "https://podcastsconnect.apple.com/";
+export const spotifyPodcastsSubmitLink = "https://podcasters.spotify.com/"
+
 export const appTitle = "Podcast Manager";
 
 export const appDescription = 

@@ -1,16 +1,13 @@
-import { supabase } from '@/lib/supabase';
-import AuthGuard from '@/components/auth/AuthGuard';
+"use client";
 
-type Props = {
-  params: { id: string };
-};
+import AuthGuard from "@/components/auth/AuthGuard";
+import PodcastDetailView from "@/components/podcasts/PodcastDetailView";
 
-
-
-export default function PodcastPage() {
+export default function PodcastDetailPage() {
+ 
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <AuthGuard>
+      <PodcastDetailView />
+    </AuthGuard>
+  );
+};
