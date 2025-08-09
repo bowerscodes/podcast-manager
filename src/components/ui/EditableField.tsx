@@ -1,8 +1,7 @@
-import toast from 'react-hot-toast';
-import { CiEdit } from "react-icons/ci";
-import { IoCheckmark, IoClose } from "react-icons/io5";
 import { cloneElement, useCallback, useEffect, useRef, useState } from 'react';
-import { textarea } from 'framer-motion/client';
+import toast from 'react-hot-toast';
+import { AiOutlineEdit } from "react-icons/ai";
+import { IoCheckmark, IoClose } from "react-icons/io5";
 
 
 type Props = {
@@ -56,6 +55,7 @@ export default function EditableField({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
 
   const adjustInputSize = useCallback(() => {
@@ -80,7 +80,32 @@ export default function EditableField({
     if (isEditing) {
       adjustInputSize();
     }
-  }, [editValue, isEditing, adjustInputSize])
+  }, [editValue, isEditing, adjustInputSize]);
+
+  const handleCancel = useCallback(() => {
+    setEditValue(value);
+    setIsEditing(false);
+  }, [value]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isEditing && containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        handleCancel();
+      }
+    };
+
+    if (isEditing) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isEditing, handleCancel]);
+
+  useEffect(() => {
+    setEditValue(value);
+  }, [value]);
 
   const handleSave = async () => {
     if (editValue === value) {
@@ -94,17 +119,13 @@ export default function EditableField({
       setIsEditing(false);
       toast.success("Updated successfully");
     } catch (error) {
-      console.error("Error saving: ", error);
-      toast.error("Failed to update");
+      console.error("Error saving: ", error)
+      const errorMessage = error instanceof Error ? error.message : "Failed to update";
+      toast.error(errorMessage);
       setEditValue(value); // Reset on error
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleCancel = () => {
-    setEditValue(value);
-    setIsEditing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -130,7 +151,7 @@ export default function EditableField({
         adjustInputSize();
       },
       onKeyDown: handleKeyDown,
-      className: `bg-transparent border-b2 border-blue-500 outline-none ${originalClassName} ${elementStyles} ${inputClassName}`,
+      className: `bg-transparent border-b-2 border-blue-500 outline-none ${originalClassName} ${elementStyles} ${inputClassName}`,
       autoFocus: true,
       disabled: saving,
       style: {
@@ -142,7 +163,7 @@ export default function EditableField({
     };
 
     return (
-      <div className="inline-flex items-center gap-2">
+      <div ref={containerRef} className="inline-flex items-center gap-2">
         {multiline ? (
           <textarea 
             ref={textareaRef}
@@ -159,16 +180,16 @@ export default function EditableField({
         <div className="flex gap-1">
           <button
             onClick={handleSave}
-            className="text-green-500 hover:text-green-600 cursor-pointer"
+            className="text-green-600 hover:text-green-700 hover:bg-green-50 bg-gray-100 rounded-md p-1 shadow-sm hover:shadow-md transition-colors cursor-pointer"
             disabled={saving}
           >
-            <IoCheckmark size={iconSize} />
+            <IoCheckmark size={iconSize-3} />
           </button>
           <button
             onClick={handleCancel}
-            className="text-red-500 hover:text-red-600 cursor-pointer"
+            className="text-red-600 hover:text-red-700 hover:bg-red-50 bg-gray-100 rounded-md p-1 shadow-sm hover:shadow-md transition-colors cursor-pointer"
           >
-            <IoClose size={iconSize} />
+            <IoClose size={iconSize-3} />
           </button>
         </div>
       </div>
@@ -182,7 +203,7 @@ export default function EditableField({
         onClick={() => setIsEditing(true)}
         className="text-blue-500 text-sm hover:text-blue-600 transition-colors cursor-pointer"
       >
-        <CiEdit size={iconSize} />
+        <AiOutlineEdit size={iconSize} />
       </button>      
     </div>
   )
