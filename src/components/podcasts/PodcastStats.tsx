@@ -18,13 +18,13 @@ export default function PodcastStats({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <Card>
+      <Card className="stats-card">
         <CardBody className="text-center">
-          <h3>{episodeCount}</h3>
-          <p className="text-gray-600">Episodes</p>
+          <h3 className="text-2xl font-bold text-gradient">{episodeCount}</h3>
+          <p className="text-muted">Episodes</p>
         </CardBody>
       </Card>
-      <Card>
+      <Card className="stats-card">
         <CardBody className="text-center">
           <h3>{totalDownloads.toLocaleString()}</h3>
           <p className="text-gray-600">Total Downloads</p>

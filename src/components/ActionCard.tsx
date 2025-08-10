@@ -27,18 +27,18 @@ export default function ActionCard({
 
   return (
     <Card 
-      className="w-[18rem] flex flex-col border-2 border-black rounded-xl bg-blue-500 shadow-md aspect-square cursor-pointer"
+      className="action-card group"
       isPressable
       disableRipple
       onPress={handlePress}
     >
-      <CardHeader className='p-4 flex-col items-start leading-none'>
+      <CardHeader className='p-6 flex-col items-start'>
         {header}
       </CardHeader>
-      <CardBody className='p-4 text-center flex-1 flex items-center justify-center'>
+      <CardBody className='p-6 text-center flex-1 flex items-center justify-center'>
         {body}
       </CardBody>
-      <CardFooter className='p-4 justify-end mt-auto leading-none'>
+      <CardFooter className='p-6 justify-end'>
         {footer}
       </CardFooter>
     </Card>

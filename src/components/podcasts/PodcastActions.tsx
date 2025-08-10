@@ -16,12 +16,14 @@ export default function PodcastActions({ podcast }: Props) {
     <div className="flex gap-4">
       <Button
         color="primary"
+        className="btn-primary"
         onPress={() => router.push(`/podcasts/${podcast.id}/episodes/new`)}
       >
         Add Episode
       </Button>
       <Button
         variant="bordered"
+        className="btn-secondary"
         onPress={() => router.push(`/podcasts/${podcast.id}/episodes`)}
       >
         Manage Episodes

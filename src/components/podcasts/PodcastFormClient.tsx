@@ -37,7 +37,6 @@ export default function PodcastFormClient({ initialData }: Props) {
         .insert({
           ...formData,
           user_id: user.id,
-          rss_url: "",
         })
         .select()
         .single();
@@ -106,11 +105,11 @@ export default function PodcastFormClient({ initialData }: Props) {
       />
 
       <div className="flex gap-4">
-        <Button type="button" variant="light" onPress={() => router.back()}>
-          Cancel
-        </Button>
         <Button type="submit" color="primary" isLoading={isLoading}>
           Create Podcast
+        </Button>
+        <Button type="button" variant="light" onPress={() => router.back()}>
+          Cancel
         </Button>
       </div>
     </form>

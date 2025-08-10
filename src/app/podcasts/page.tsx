@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import PodcastCard from "../../components/podcasts/PodcastCard";
 
-export default function PodcastsListPage() {
+export default function PodcastsList() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
@@ -57,20 +57,18 @@ export default function PodcastsListPage() {
   }
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="page-container mx-auto p-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">
-          My Podcasts
-        </h1>
-        <Button color="primary" onPress={() => router.push("/podcasts/manage")}>
-          Manage podcasts
+        <h1 className="heading-primary">Podcasts</h1>
+        <Button className="btn-primary" onPress={() => router.push("/podcasts/new")}>
+          Add new podcast
         </Button>
       </div>
 
       {podcasts.length === 0 ? (
         <div className="text-center py-12">
           <h2 className="text-xl mb-4">No podcasts yet</h2>
-          <p className="text-gray-500 mb-6">
+          <p className="text-muted mb-6">
             Create your first podcast to get started
           </p>
           <Button color="primary" onPress={() => router.push("/podcasts/new")}>

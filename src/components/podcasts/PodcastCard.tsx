@@ -1,8 +1,8 @@
 import { useRouter } from "next/navigation";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
+import { Image } from "@heroui/image";
 
 import { Podcast } from "@/types/podcast";
-import { Image } from "@heroui/image";
 import { defaultArtwork } from "@/lib/data";
 
 type Props = {
@@ -19,18 +19,21 @@ export default function PodcastCard({ podcast }: Props) {
 
   return (
     <Card 
-      className="p-4 cursor-pointer"
+      className="podcast-card group"
       isPressable
       onPress={() => router.push(`/podcasts/${podcast.id}`)} 
     >
-      <CardHeader>
-        <h3 className="text-lg font-semibold">{podcast.title}</h3>
+      <CardHeader className="pb-2">
+        <h3 className="text-xl font-bold text-gradient">
+          {podcast.title}
+        </h3>
       </CardHeader>
-      <CardBody>
-        <div className="w-full aspect-[4/3]">
+      <CardBody className="pt-2">
+        <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
           {podcast.artwork 
             ? <Image 
-              alt={`podcast artwork for ${podcast.title}`} src={podcast.artwork}
+              alt={`podcast artwork for ${podcast.title}`} 
+              src={podcast.artwork}
               radius="sm"
               className="w-full h-full object-cover"
               classNames={{
@@ -45,10 +48,9 @@ export default function PodcastCard({ podcast }: Props) {
         </div>
       </CardBody>
       <CardFooter 
-        className="flex gap-2 items-center min-h-[60px]"
-        onClick={(e) => e.stopPropagation()}
+        className="pt-4"
       >
-        <p className="text-gray-600 text-sm text-center">{truncateText(podcast.description)}</p>
+        <p className="text-muted text-sm">{truncateText(podcast.description)}</p>
       </CardFooter>
     </Card>
   );
