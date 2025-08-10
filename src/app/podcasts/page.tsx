@@ -10,6 +10,7 @@ import { Podcast } from "@/types/podcast";
 import toast from "react-hot-toast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import PodcastCard from "../../components/podcasts/PodcastCard";
+import PlaceholderPodcastCard from "@/components/podcasts/PlaceholderPodcastCard";
 
 export default function PodcastsList() {
   const router = useRouter();
@@ -60,11 +61,7 @@ export default function PodcastsList() {
     <div className="page-container mx-auto p-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="heading-primary">Podcasts</h1>
-        <Button className="btn-primary" onPress={() => router.push("/podcasts/new")}>
-          Add new podcast
-        </Button>
       </div>
-
       {podcasts.length === 0 ? (
         <div className="text-center py-12">
           <h2 className="text-xl mb-4">No podcasts yet</h2>
@@ -80,6 +77,7 @@ export default function PodcastsList() {
           {podcasts.map((podcast) => (
             <PodcastCard key={podcast.id} podcast={podcast}/>
           ))}
+          <PlaceholderPodcastCard />
         </div>
       )}
     </div>

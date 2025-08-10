@@ -6,7 +6,7 @@ import { Podcast } from "@/types/podcast";
 import { defaultArtwork } from "@/lib/data";
 
 type Props = {
-  podcast: Podcast
+  podcast: Podcast;
 };
 
 export default function PodcastCard({ podcast }: Props) {
@@ -18,40 +18,39 @@ export default function PodcastCard({ podcast }: Props) {
   };
 
   return (
-    <Card 
+    <Card
       className="podcast-card group"
       isPressable
-      onPress={() => router.push(`/podcasts/${podcast.id}`)} 
+      onPress={() => router.push(`/podcasts/${podcast.id}`)}
     >
       <CardHeader className="pb-2">
-        <h3 className="text-xl font-bold text-gradient">
-          {podcast.title}
-        </h3>
+        <h3 className="text-xl font-bold text-gradient">{podcast.title}</h3>
       </CardHeader>
       <CardBody className="pt-2">
         <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
-          {podcast.artwork 
-            ? <Image 
-              alt={`podcast artwork for ${podcast.title}`} 
+          {podcast.artwork ? (
+            <Image
+              alt={`podcast artwork for ${podcast.title}`}
               src={podcast.artwork}
               radius="sm"
               className="w-full h-full object-cover"
               classNames={{
                 wrapper: "w-full h-full",
-                img: "w-full h-full object-cover"
+                img: "w-full h-full object-cover",
               }}
               width="100%"
               height="100%"
             />
-            : defaultArtwork()
-          }
+          ) : (
+            defaultArtwork()
+          )}
         </div>
       </CardBody>
-      <CardFooter 
-        className="pt-4"
-      >
-        <p className="text-muted text-sm">{truncateText(podcast.description)}</p>
+      <CardFooter>
+        <p className="text-muted text-sm text-left">
+          {truncateText(podcast.description)}
+        </p>
       </CardFooter>
     </Card>
   );
-};
+}
