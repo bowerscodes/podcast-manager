@@ -46,7 +46,7 @@ export default function PodcastCard({ podcast }: Props) {
           )}
         </div>
       </CardBody>
-      <CardFooter>
+      <CardFooter className="min-h-[4.5rem] pt-0 justify-start items-start">
         <p className="text-muted text-sm text-left">
           {truncateText(podcast.description)}
         </p>
