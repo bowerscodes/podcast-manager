@@ -16,32 +16,39 @@ export default function PodcastStats({
   const topPlatform = Object.entries(platformBreakdown)
     .sort(([,a], [,b]) => b - a)[0]?.[0] || "None";
 
+  const statsCards = [
+    {
+      value: episodeCount,
+      attribute: "Episodes"
+    },
+    {
+      value: totalDownloads.toLocaleString(),
+      attribute: "Total Downloads"
+    },
+    {
+      value: uniqueListeners.toLocaleString(),
+      attribute: "Unique Listeners"
+    },
+    {
+      value: topPlatform,
+      attribute: "Top Platform"
+    }
+  ];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <Card className="stats-card">
-        <CardBody className="text-center">
-          <h3 className="text-2xl font-bold text-gradient">{episodeCount}</h3>
-          <p className="text-muted">Episodes</p>
-        </CardBody>
-      </Card>
-      <Card className="stats-card">
-        <CardBody className="text-center">
-          <h3>{totalDownloads.toLocaleString()}</h3>
-          <p className="text-gray-600">Total Downloads</p>
-        </CardBody>
-      </Card>
-      <Card>
-        <CardBody className="text-center">
-          <h3>{uniqueListeners.toLocaleString()}</h3>
-          <p className="text-gray-600">Unique Listeners</p>
-        </CardBody>
-      </Card>
-      <Card>
-        <CardBody className="text-center">
-          <h3>{topPlatform}</h3>
-          <p className="text-gray-600">Top Platform</p>
-        </CardBody>
-      </Card>
+      {statsCards.map((card, index) => (
+        <Card key={index} className="stats-card">
+          <CardBody className="text-center">
+            <h3 className="text-2xl font-bold text-gradient">
+              {card.value}
+            </h3>
+            <p className="text-muted">
+              {card.attribute}
+            </p>
+          </CardBody>
+        </Card>
+      ))}
     </div>
   );
 };
