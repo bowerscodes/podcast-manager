@@ -207,9 +207,44 @@ h4, h5 {
 
 /* Layout Components */
 .page-container {
+  text-align: center;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+.page-container .grid {
+  display: grid;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 0 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 600px;
+}
+
+@media (min-width: 1024px) {
+  .page-container .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 900px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .page-container .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 700px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    padding: 1rem;
+  }
+
+  .page-container .grid {
+    gap: 1rem;
+    max-width: 100%;
+  }
 }
 
 .card-grid {

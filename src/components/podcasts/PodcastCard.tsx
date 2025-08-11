@@ -12,7 +12,7 @@ type Props = {
 export default function PodcastCard({ podcast }: Props) {
   const router = useRouter();
 
-  const truncateText = (text: string, maxLength: number = 100) => {
+  const truncateText = (text: string, maxLength: number = 80) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + "...";
   };
@@ -46,7 +46,7 @@ export default function PodcastCard({ podcast }: Props) {
           )}
         </div>
       </CardBody>
-      <CardFooter className="min-h-[4.5rem] pt-0 justify-start items-start">
+      <CardFooter className="min-h-[3rem] pt-0 justify-start items-start">
         <p className="text-muted text-sm text-left">
           {truncateText(podcast.description)}
         </p>

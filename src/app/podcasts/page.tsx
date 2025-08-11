@@ -58,8 +58,8 @@ export default function PodcastsList() {
   }
 
   return (
-    <div className="page-container mx-auto p-8">
-      <div className="flex justify-between items-center mb-8">
+    <div className="page-container">
+      <div className="mb-8">
         <h1 className="heading-primary">Podcasts</h1>
       </div>
       {podcasts.length === 0 ? (
