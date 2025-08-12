@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardBody } from "@heroui/card";
 
 import { Podcast } from "@/types/podcast";
-import PodcastFormClient from "./PodcastFormClient";
+import PodcastFormClient from "./NewPodcastFormClient";
 
 type Props = {
   initialData?: Partial<Podcast>;
