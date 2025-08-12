@@ -1,7 +1,5 @@
 import { FaPodcast } from "react-icons/fa";
 
-import { Podcast } from "@/types/podcast";
-
 export const applePodcastsSubmitLink = "https://podcastsconnect.apple.com/";
 export const spotifyPodcastsSubmitLink = "https://podcasters.spotify.com/";
 
