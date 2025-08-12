@@ -5,12 +5,13 @@ import { useParams } from "next/navigation";
 
 import { useAuth } from "@/providers/Providers";
 import { supabase } from "@/lib/supabase";
-import { Podcast } from "@/types/podcast";
+import { Episode, Podcast } from "@/types/podcast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import PodcastHeader from "./PodcastHeader";
 import PodcastStats from "./PodcastStats";
 import PodcastRSSSection from "./PodcastRSSSection";
 import PodcastActions from "./PodcastActions";
+import EpisodesList from "./episodes/EpisodesList";
 
 interface AnalyticsData {
   totalDownloads: number;
@@ -22,6 +23,7 @@ export default function PodcastDetailView() {
   const params = useParams();
   const { user } = useAuth();
   const [podcast, setPodcast] = useState<Podcast | null>(null);
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [episodeCount, setEpisodeCount] = useState(0);
   const [analytics, setAnalytics] = useState<AnalyticsData>({
     totalDownloads: 0,
@@ -130,6 +132,7 @@ export default function PodcastDetailView() {
         platformBreakdown={analytics.platformBreakdown}
       />
       <PodcastRSSSection podcast={podcast} />
+      <EpisodesList episodes={episodes} podcast={podcast} />
       <PodcastActions podcast={podcast} />
     </div>
   );
