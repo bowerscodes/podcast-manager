@@ -19,8 +19,8 @@ export interface Episode {
   title: string;
   description: string;
   audio_url: string; // User's self-hosted URL
-  duration: number; // in seconds
-  file_size: number; // in bytes
+  duration?: number; // in seconds
+  file_size?: number; // in bytes
   publish_date: Date;
   season_number?: number;
   episode_number?: number;
