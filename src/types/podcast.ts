@@ -22,8 +22,8 @@ export interface Episode {
   duration?: number; // in seconds
   file_size?: number; // in bytes
   publish_date: Date;
-  season_number?: number;
-  episode_number?: number;
+  season_number?: string;
+  episode_number?: string;
   explicit: boolean;
   created_at: Date;
 };
@@ -35,4 +35,13 @@ export interface NewPodcastFormData {
   email: string;
   website: string;
   artwork: string;
+};
+
+export interface NewEpisodeFormData {
+  title: string;
+  description: string;
+  audio_url: string;
+  season_number?: string;
+  episode_number?: string;
+  explicit: boolean;
 };

@@ -6,7 +6,7 @@ import PlaceholderEpisodeRow from './PlaceholderEpisodeRow';
 
 type EpisodesListProps = {
   episodes: Episode[];
-  podcast?: Podcast;
+  podcast: Podcast;
 };
 
 export default function EpisodesList({ episodes, podcast }: EpisodesListProps) {
@@ -19,7 +19,7 @@ export default function EpisodesList({ episodes, podcast }: EpisodesListProps) {
         {episodes.map((ep) => (
           <EpisodeRow key={ep.id} episode={ep} podcast={podcast} />
         ))}
-        <PlaceholderEpisodeRow />
+        <PlaceholderEpisodeRow podcastId={podcast.id} />
       </CardBody>
     </Card>
   )
