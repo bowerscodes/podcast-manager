@@ -2,7 +2,7 @@
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
-import { PodcastFormData } from "@/types/podcast";
+import { NewPodcastFormData } from "@/types/podcast";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { useRouter } from "next/navigation";
@@ -10,14 +10,14 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 type Props = {
-  initialData: Partial<PodcastFormData>;
+  initialData: Partial<NewPodcastFormData>;
 };
 
-export default function PodcastFormClient({ initialData }: Props) {
+export default function NewPodcastFormClient({ initialData }: Props) {
   const { user } = useAuth();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<PodcastFormData>({
+  const [formData, setFormData] = useState<NewPodcastFormData>({
     title: initialData.title || "",
     description: initialData.description || "",
     author: initialData.author || "",

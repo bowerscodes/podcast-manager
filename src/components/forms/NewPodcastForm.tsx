@@ -7,7 +7,7 @@ type Props = {
   initialData?: Partial<Podcast>;
 };
 
-export default function PodcastForm({
+export default function NewPodcastForm({
   initialData = {},
 }: Props) {
   return (
