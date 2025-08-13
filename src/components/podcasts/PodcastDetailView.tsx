@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 
 import { useAuth } from "@/providers/Providers";
 import { supabase } from "@/lib/supabase";
-import { Episode, Podcast } from "@/types/podcast";
+import { Podcast } from "@/types/podcast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import PodcastHeader from "./PodcastHeader";
 import PodcastStats from "./PodcastStats";

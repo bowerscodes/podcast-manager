@@ -1,16 +1,21 @@
 import { Card, CardHeader, CardBody } from '@heroui/card';
 
-import { Episode, Podcast } from '@/types/podcast';
+import { Podcast } from '@/types/podcast';
 import EpisodeRow from './EpisodeRow';
 import PlaceholderEpisodeRow from './PlaceholderEpisodeRow';
 import useEpisodes from '@/hooks/useEpisodes';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 type EpisodesListProps = {
   podcast: Podcast;
 };
 
 export default function EpisodesList({ podcast }: EpisodesListProps) {
-  const { episodes, loading: episodesLoading, error: episodesError } = useEpisodes(podcast.id);
+  const { episodes, loading, error, refresh } = useEpisodes(podcast.id);
+
+  if (loading) return <LoadingSpinner />;
+
+  if (error) throw error;
 
   return (
     <Card className="mb-6">
@@ -19,10 +24,10 @@ export default function EpisodesList({ podcast }: EpisodesListProps) {
       </CardHeader>
       <CardBody className="">
         {episodes.map((ep) => (
-          <EpisodeRow key={ep.id} episode={ep} podcast={podcast} />
+          <EpisodeRow key={ep.id} episode={ep} />
         ))}
-        <PlaceholderEpisodeRow podcastId={podcast.id} />
+        <PlaceholderEpisodeRow podcastId={podcast.id} onEpisodeCreated={refresh} />
       </CardBody>
     </Card>
-  )
-}
+  );
+};

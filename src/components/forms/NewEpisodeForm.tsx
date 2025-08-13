@@ -14,7 +14,7 @@ export default function NewEpisodeForm({ podcastId, initialData = {}, onSuccess,
   return (
     <Card>
       <CardHeader>
-        <h2 className="heading-secondary">Add Espisode</h2>
+        <h2 className="heading-secondary">Add Episode</h2>
       </CardHeader>
       <CardBody>
         <NewEpisodeFormClient 

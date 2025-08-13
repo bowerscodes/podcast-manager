@@ -1,17 +1,14 @@
-'use client';
-
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { NewEpisodeFormData } from "@/types/podcast";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Checkbox } from "@heroui/checkbox";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Episode } from "@/types/podcast";
-
+import { getFileSize, getAudioDuration } from "@/lib/audio-utils";
+import { select } from "@heroui/theme";
 
 type Props = {
   podcastId: string;
@@ -22,7 +19,6 @@ type Props = {
 
 export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess, onCancel }: Props) {
   const { user } = useAuth();
-  const router = useRouter();
   const [isLoading, setLoading] = useState(false);
   const [formData, setFormData] = useState<NewEpisodeFormData>({
     title: initialData.title || "",
@@ -47,13 +43,64 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
       return;
     }
 
+    // Fetch all episodes
+    const { data: episodes, error: fetchError } =  await supabase
+      .from("episodes")
+      .select("season_number, episode_number")
+      .eq("podcast_id", podcastId);
+    
+    if (fetchError) {
+      toast.error("Failed to validate episode numbers")
+      return;
+    }
+
+    // Get all episode numbers in current season
+    const episodesInSeason = episodes?.filter(
+      ep => ep.season_number === formData.season_number
+    );
+    const existingEpisodeNumbers = episodesInSeason?.map(ep => parseInt(ep.episode_number)).filter(n => !isNaN(n));
+    const maxEpisode = existingEpisodeNumbers?.length ? Math.max(...existingEpisodeNumbers) : 0;
+    const selectedEpisode = parseInt(formData.episode_number as string);
+
+    if (selectedEpisode > maxEpisode + 1 || (
+      maxEpisode > 0 && selectedEpisode < maxEpisode && !existingEpisodeNumbers?.includes(selectedEpisode)
+    )) {
+      toast.error(
+        `you cannot skip episode numbers. the next episode should be ${maxEpisode + 1}`
+      );
+      return;
+    }
+
+    // Check for duplicate episode number in the same season
+    const duplicate = episodes?.some(ep => 
+      ep.season_number === formData.season_number &&
+      ep.episode_number === formData.episode_number
+    );
+    if (duplicate) {
+      toast.error("This episode number already exists in the selected season. Pick an unused episode number.");
+      return;
+    }
+
+    // Prevent skipped seasons
+    const existingSeasons = episodes?.map(ep => parseInt(ep.season_number)).filter(n => !isNaN(n));
+    const maxSeason = existingSeasons?.length ? Math.max(...existingSeasons) : 0;
+    const selectedSeason = parseInt(formData.season_number as string);
+
+    if (selectedSeason > maxSeason + 1 || (
+      maxSeason > 0 && selectedSeason < maxSeason && !existingSeasons?.includes(selectedSeason)
+    )) {
+      toast.error(`You cannot skip seasons. the next season should be ${maxSeason + 1}`);
+      return;
+    }
+
+
     setLoading(true);
     try {
       const { error} = await supabase
         .from("episodes")
         .insert({
           ...formData,
-          podcast_id: podcastId
+          podcast_id: podcastId,
         })
         .select()
         .single();
@@ -80,7 +127,7 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
         autoFocus
       />
       <div>
-        <label className="block text-sm font-medium mb-2">Description</label>
+        <label className="block text-sm font-normal mb-2">Description</label>
         <textarea
           className="w-full p-3 border rounded-lg"
           rows={4}
@@ -133,5 +180,5 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
         </Button>
       </div>
     </form>
-  )
-}
+  );
+};

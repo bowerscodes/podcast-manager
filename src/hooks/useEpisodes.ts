@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import { supabase } from '@/lib/supabase';
 import { Episode } from '@/types/podcast';
@@ -8,20 +8,22 @@ export default function useEpisodes(podcastId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    if (!podcastId) return;
+  const fetchEpisodes = useCallback(async () => {
     setLoading(true);
-    supabase
+    const { data, error } = await supabase
       .from("episodes")
       .select("*")
       .eq("podcast_id", podcastId)
-      .order("publish_date", { ascending: false })
-      .then(({ data, error }) => {
-        if (error) setError(error);
-        setEpisodes(data || []);
-        setLoading(false);
-      });
+      .order("publish_date", { ascending: true })
+    
+    if (error) setError(error);
+    setEpisodes(data || []);
+    setLoading(false);
   }, [podcastId]);
 
-  return { episodes, loading, error };
+  useEffect(() => {
+    fetchEpisodes();
+  }, [fetchEpisodes]);
+
+  return { episodes, loading, error, refresh: fetchEpisodes };
 };

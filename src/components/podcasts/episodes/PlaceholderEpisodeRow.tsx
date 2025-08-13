@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { Card, CardBody } from '@heroui/card';
-import { Modal, ModalContent, ModalHeader, ModalBody } from '@heroui/modal';
+import { Modal, ModalContent } from '@heroui/modal';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import NewEpisodeForm from '@/components/forms/NewEpisodeForm';
 
 
 type Props = {
   podcastId: string;
+  onEpisodeCreated: () => void;
   isFirstInList?: boolean;
 };
 
 
-export default function PlaceholderEpisodeRow({ podcastId, isFirstInList }: Props) {
+export default function PlaceholderEpisodeRow({ podcastId, onEpisodeCreated, isFirstInList }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -45,14 +46,17 @@ export default function PlaceholderEpisodeRow({ podcastId, isFirstInList }: Prop
         </CardBody>
       </Card>
       <Modal isOpen={isModalOpen} onOpenChange={setIsModalOpen} placement="center">
-        <ModalContent>
+        <ModalContent className="max-h-[90vh] overflow-y-auto">
           <NewEpisodeForm 
             podcastId={podcastId} 
-            onSuccess={() => setIsModalOpen(false)} 
+            onSuccess={() => {
+              setIsModalOpen(false)
+              onEpisodeCreated()
+            }}
             onCancel={() => setIsModalOpen(false)}  
           />
         </ModalContent>
       </Modal>
     </>
-  )
-}
+  );
+};
