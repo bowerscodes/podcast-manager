@@ -7,8 +7,6 @@ import { Checkbox } from "@heroui/checkbox";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { getFileSize, getAudioDuration } from "@/lib/audio-utils";
-import { select } from "@heroui/theme";
 
 type Props = {
   podcastId: string;
