@@ -7,16 +7,22 @@ type Props = {
   podcastId: string;
   initialData?: Partial<Episode>;
   onSuccess: () => void;
+  onCancel: () => void;
 }
 
-export default function NewEpisodeForm({ podcastId, initialData = {}, onSuccess }: Props) {
+export default function NewEpisodeForm({ podcastId, initialData = {}, onSuccess, onCancel }: Props) {
   return (
     <Card>
       <CardHeader>
         <h2 className="heading-secondary">Add Espisode</h2>
       </CardHeader>
       <CardBody>
-        <NewEpisodeFormClient podcastId={podcastId} initialData={initialData} onSuccess={onSuccess} />
+        <NewEpisodeFormClient 
+          podcastId={podcastId} 
+          initialData={initialData} 
+          onSuccess={onSuccess} 
+          onCancel={onCancel} 
+        />
       </CardBody>
     </Card>
   )

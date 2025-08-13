@@ -17,9 +17,10 @@ type Props = {
   podcastId: string;
   initialData: Partial<NewEpisodeFormData>;
   onSuccess: () => void;
+  onCancel: () => void;
 };
 
-export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess }: Props) {
+export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess, onCancel }: Props) {
   const { user } = useAuth();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
@@ -52,7 +53,6 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
         .from("episodes")
         .insert({
           ...formData,
-          user_id: user.id,
           podcast_id: podcastId
         })
         .select()
@@ -102,7 +102,7 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
       <Input
         label="Season number"
         type="number"
-        value={formData.season_number}
+        value={formData.season_number ?? ""}
         onChange={(e) => setFormData({ ...formData, season_number: e.target.value })}
         required
       />
@@ -110,7 +110,7 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
       <Input
         label="Episode number"
         type="number"
-        value={formData.episode_number}
+        value={formData.episode_number ?? ""}
         onChange={(e) => setFormData({ ...formData, episode_number: e.target.value })}
         required
       />
@@ -128,7 +128,7 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
         <Button type="submit" color="primary" isLoading={isLoading}>
           Create Podcast
         </Button>
-        <Button type="button" variant="light" onPress={() => router.back()}>
+        <Button type="button" variant="light" onPress={onCancel}>
           Cancel
         </Button>
       </div>

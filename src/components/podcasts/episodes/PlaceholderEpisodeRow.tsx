@@ -46,7 +46,11 @@ export default function PlaceholderEpisodeRow({ podcastId, isFirstInList }: Prop
       </Card>
       <Modal isOpen={isModalOpen} onOpenChange={setIsModalOpen} placement="center">
         <ModalContent>
-          <NewEpisodeForm podcastId={podcastId} onSuccess={() => setIsModalOpen(false)} />
+          <NewEpisodeForm 
+            podcastId={podcastId} 
+            onSuccess={() => setIsModalOpen(false)} 
+            onCancel={() => setIsModalOpen(false)}  
+          />
         </ModalContent>
       </Modal>
     </>
