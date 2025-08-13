@@ -23,7 +23,6 @@ export default function PodcastDetailView() {
   const params = useParams();
   const { user } = useAuth();
   const [podcast, setPodcast] = useState<Podcast | null>(null);
-  const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [episodeCount, setEpisodeCount] = useState(0);
   const [analytics, setAnalytics] = useState<AnalyticsData>({
     totalDownloads: 0,
@@ -132,7 +131,7 @@ export default function PodcastDetailView() {
         platformBreakdown={analytics.platformBreakdown}
       />
       <PodcastRSSSection podcast={podcast} />
-      <EpisodesList episodes={episodes} podcast={podcast} />
+      <EpisodesList podcast={podcast} />
       <PodcastActions podcast={podcast} />
     </div>
   );

@@ -3,13 +3,15 @@ import { Card, CardHeader, CardBody } from '@heroui/card';
 import { Episode, Podcast } from '@/types/podcast';
 import EpisodeRow from './EpisodeRow';
 import PlaceholderEpisodeRow from './PlaceholderEpisodeRow';
+import useEpisodes from '@/hooks/useEpisodes';
 
 type EpisodesListProps = {
-  episodes: Episode[];
   podcast: Podcast;
 };
 
-export default function EpisodesList({ episodes, podcast }: EpisodesListProps) {
+export default function EpisodesList({ podcast }: EpisodesListProps) {
+  const { episodes, loading: episodesLoading, error: episodesError } = useEpisodes(podcast.id);
+
   return (
     <Card className="mb-6">
       <CardHeader>

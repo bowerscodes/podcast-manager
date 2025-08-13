@@ -13,12 +13,12 @@ export default function EpisodeRow({
 }: EpisodeRowProps) {
   return (
     <div>
-      <Card>
-        <CardHeader>
+      <Card className="flex flex-row">
+        <CardHeader className="flex-shrink-0 w-1/3">
           {episode.title}
         </CardHeader>
-        <CardBody>
-
+        <CardBody className="flex-grow">
+          Description
         </CardBody>
       </Card>
     </div>
