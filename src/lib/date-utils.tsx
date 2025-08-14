@@ -1,5 +1,5 @@
 export function formatDate(date: string | Date): string {
-  const userLocale = navigator.language || "en-GB";
+  const userLocale = (typeof navigator !== 'undefined' && navigator?.language) || "en-GB";
   const locale = userLocale.startsWith("en-US") ? "en-US" : "en-GB";
 
   return new Date(date).toLocaleDateString(locale, {
@@ -10,7 +10,7 @@ export function formatDate(date: string | Date): string {
 };
 
 export function formatDateTime(date: string | Date): string {
-  const userLocale = navigator.language || "en-GB";
+  const userLocale = (typeof navigator !== 'undefined' && navigator?.language) || "en-GB";
   const locale = userLocale.startsWith("en-US") ? "en-US" : "en-GB";
 
   return new Date(date).toLocaleDateString(locale, {

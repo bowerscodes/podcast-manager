@@ -17,13 +17,15 @@ export default function UserMenu({ user }: Props) {
     await supabase.auth.signOut();
   };
 
+  const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email;
+
   return (
     <Dropdown>
       <DropdownTrigger>
         <Avatar
           size="sm"
           src={user.user_metadata?.avatar_url}
-          name={user.email || "User"}
+          name={displayName}
           className="cursor-pointer"
         />
       </DropdownTrigger>

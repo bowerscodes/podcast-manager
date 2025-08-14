@@ -54,7 +54,7 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
 
     // Get all episode numbers in current season
     const episodesInSeason = episodes?.filter(
-      ep => ep.season_number === formData.season_number
+      ep => parseInt(ep.season_number as string) === parseInt(formData.season_number as string)
     );
     const existingEpisodeNumbers = episodesInSeason?.map(ep => parseInt(ep.episode_number)).filter(n => !isNaN(n));
     const maxEpisode = existingEpisodeNumbers?.length ? Math.max(...existingEpisodeNumbers) : 0;
@@ -71,7 +71,7 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
 
     // Check for duplicate episode number in the same season
     const duplicate = episodes?.some(ep => 
-      ep.season_number === formData.season_number &&
+      parseInt(ep.season_number as string) === parseInt(formData.season_number as string) &&
       ep.episode_number === formData.episode_number
     );
     if (duplicate) {
@@ -94,7 +94,7 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
 
     setLoading(true);
     try {
-      const { error} = await supabase
+      const { error } = await supabase
         .from("episodes")
         .insert({
           ...formData,
@@ -105,7 +105,7 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
 
       if (error) throw error;
       
-      toast.success("Podcast created successfully!");
+      toast.success("Episode created successfully!");
       onSuccess();
     } catch (error) {
       console.error("Error creating episode: ", error);
