@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Card, CardBody } from '@heroui/card';
-import { Modal, ModalContent } from '@heroui/modal';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
-import NewEpisodeForm from '@/components/forms/NewEpisodeForm';
+import EpisodeModal from '@/components/modals/EpisodeModal';
 
 
 type Props = {
@@ -45,18 +44,12 @@ export default function PlaceholderEpisodeRow({ podcastId, onEpisodeCreated, isF
           }
         </CardBody>
       </Card>
-      <Modal isOpen={isModalOpen} onOpenChange={setIsModalOpen} placement="center">
-        <ModalContent className="max-h-[90vh] overflow-y-auto">
-          <NewEpisodeForm 
-            podcastId={podcastId} 
-            onSuccess={() => {
-              setIsModalOpen(false)
-              onEpisodeCreated()
-            }}
-            onCancel={() => setIsModalOpen(false)}  
-          />
-        </ModalContent>
-      </Modal>
+      <EpisodeModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        podcastId={podcastId}
+        onSuccess={onEpisodeCreated}
+      />
     </>
   );
 };

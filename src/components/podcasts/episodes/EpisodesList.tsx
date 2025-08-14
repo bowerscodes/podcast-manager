@@ -24,7 +24,7 @@ export default function EpisodesList({ podcast }: EpisodesListProps) {
       </CardHeader>
       <CardBody className="">
         {episodes.map((ep) => (
-          <EpisodeRow key={ep.id} episode={ep} />
+          <EpisodeRow key={ep.id} episode={ep}  onUpdate={refresh} />
         ))}
         <PlaceholderEpisodeRow podcastId={podcast.id} onEpisodeCreated={refresh} />
       </CardBody>

@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import toast from 'react-hot-toast';
-import NewEpisodeFormClient from '../NewEpisodeFormClient';
+import EpisodeFormClient from '../EpisodeFormClient';
 
 // Mock Next.js router
 const mockPush = jest.fn();
@@ -99,7 +99,7 @@ jest.mock('@heroui/checkbox', () => ({
   ),
 }));
 
-describe('NewEpisodeFormClient', () => {
+describe('EpisodeFormClient', () => {
   const defaultProps = {
     podcastId: 'podcast-123',
     initialData: {},
@@ -112,7 +112,7 @@ describe('NewEpisodeFormClient', () => {
   });
 
   it('should render all form fields', () => {
-    render(<NewEpisodeFormClient {...defaultProps} />);
+    render(<EpisodeFormClient {...defaultProps} />);
 
     expect(screen.getByLabelText(/episode title/i)).toBeTruthy();
     expect(screen.getAllByRole('textbox')[1]).toBeTruthy(); // Description textarea
@@ -132,7 +132,7 @@ describe('NewEpisodeFormClient', () => {
       explicit: true
     };
     
-    render(<NewEpisodeFormClient {...defaultProps} initialData={initialData} />);
+    render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
 
     expect((screen.getByLabelText(/episode title/i) as HTMLInputElement).value).toBe('Test Episode');
     expect((screen.getAllByRole('textbox')[1] as HTMLTextAreaElement).value).toBe('Test Description');
@@ -143,7 +143,7 @@ describe('NewEpisodeFormClient', () => {
   });
 
   it('should validate audio URL format', async () => {
-    render(<NewEpisodeFormClient {...defaultProps} />);
+    render(<EpisodeFormClient {...defaultProps} />);
 
     fireEvent.change(screen.getByLabelText(/episode title/i), {
       target: { value: 'Test Episode' }
@@ -172,7 +172,7 @@ describe('NewEpisodeFormClient', () => {
     
     for (const format of validFormats) {
       jest.clearAllMocks();
-      const { unmount } = render(<NewEpisodeFormClient {...defaultProps} />);
+      const { unmount } = render(<EpisodeFormClient {...defaultProps} />);
 
       fireEvent.change(screen.getByLabelText(/episode title/i), {
         target: { value: 'Test Episode' }
@@ -181,7 +181,7 @@ describe('NewEpisodeFormClient', () => {
         target: { value: `https://example.com/audio${format}` }
       });
 
-      fireEvent.click(screen.getByRole('button', { name: /create podcast/i }));
+      fireEvent.click(screen.getByRole('button', { name: /add episode/i }));
 
       await waitFor(() => {
         expect(toast.error).not.toHaveBeenCalledWith('Audio URL must point to a valid audio file (e.g. .mp3, .m4a, .wav)');
@@ -204,7 +204,7 @@ describe('NewEpisodeFormClient', () => {
       error: null
     });
 
-    render(<NewEpisodeFormClient {...defaultProps} />);
+    render(<EpisodeFormClient {...defaultProps} />);
 
     fireEvent.change(screen.getByLabelText(/episode title/i), {
       target: { value: 'Test Episode' }
@@ -222,7 +222,7 @@ describe('NewEpisodeFormClient', () => {
       target: { value: '1' }
     });
 
-    fireEvent.click(screen.getByRole('button', { name: /create podcast/i }));
+    fireEvent.click(screen.getByRole('button', { name: /add episode/i }));
 
     await waitFor(() => {
       expect(mockInsert).toHaveBeenCalledWith({
@@ -241,7 +241,7 @@ describe('NewEpisodeFormClient', () => {
   });
 
   it('should handle cancel button', () => {
-    render(<NewEpisodeFormClient {...defaultProps} />);
+    render(<EpisodeFormClient {...defaultProps} />);
 
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
 
@@ -260,7 +260,7 @@ describe('NewEpisodeFormClient', () => {
       error: { message: 'Database error' }
     });
 
-    render(<NewEpisodeFormClient {...defaultProps} />);
+    render(<EpisodeFormClient {...defaultProps} />);
 
     fireEvent.change(screen.getByLabelText(/episode title/i), {
       target: { value: 'Test Episode' }
@@ -284,7 +284,7 @@ describe('NewEpisodeFormClient', () => {
   });
 
   it('should handle explicit content checkbox', () => {
-    render(<NewEpisodeFormClient {...defaultProps} />);
+    render(<EpisodeFormClient {...defaultProps} />);
 
     const checkbox = screen.getByRole('checkbox');
     expect(checkbox).not.toBeChecked();
@@ -303,7 +303,7 @@ describe('NewEpisodeFormClient', () => {
       error: null
     });
 
-    render(<NewEpisodeFormClient {...defaultProps} />);
+    render(<EpisodeFormClient {...defaultProps} />);
 
     fireEvent.change(screen.getByLabelText(/episode title/i), {
       target: { value: 'Test Episode' }

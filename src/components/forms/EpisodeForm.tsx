@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardBody } from '@heroui/card';
 
 import { Episode } from '@/types/podcast';
-import NewEpisodeFormClient from './NewEpisodeFormClient';
+import EpisodeFormClient from './EpisodeFormClient';
 
 type Props = {
   podcastId: string;
@@ -10,14 +10,18 @@ type Props = {
   onCancel: () => void;
 }
 
-export default function NewEpisodeForm({ podcastId, initialData = {}, onSuccess, onCancel }: Props) {
+export default function EpisodeForm({ podcastId, initialData = {}, onSuccess, onCancel }: Props) {
+  const isEditing = Object.keys(initialData).length > 0;
+
   return (
     <Card>
       <CardHeader>
-        <h2 className="heading-secondary">Add Episode</h2>
+        <h2 className="heading-secondary">
+          {isEditing ? "Edit Episode" : "Add Episode"}
+        </h2>
       </CardHeader>
       <CardBody>
-        <NewEpisodeFormClient 
+        <EpisodeFormClient 
           podcastId={podcastId} 
           initialData={initialData} 
           onSuccess={onSuccess} 
@@ -25,5 +29,5 @@ export default function NewEpisodeForm({ podcastId, initialData = {}, onSuccess,
         />
       </CardBody>
     </Card>
-  )
-}
+  );
+};

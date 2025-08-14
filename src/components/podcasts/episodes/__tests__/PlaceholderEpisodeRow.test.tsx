@@ -2,17 +2,20 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import PlaceholderEpisodeRow from '../PlaceholderEpisodeRow';
 
 // Mock child component
-jest.mock('@/components/forms/NewEpisodeForm', () => {
-  return function MockNewEpisodeForm({ onSuccess, onCancel }: {
+jest.mock('@/components/modals/EpisodeModal', () => {
+  return function MockEpisodeModal({ isOpen, onSuccess, onClose }: {
+    isOpen: boolean;
     onSuccess: () => void;
-    onCancel: () => void;
+    onClose: () => void;
   }) {
-    return (
-      <div data-testid="new-episode-form">
-        <button onClick={onSuccess}>Success</button>
-        <button onClick={onCancel}>Cancel</button>
+    return isOpen ? (
+      <div data-testid="modal">
+        <div data-testid="episode-modal">
+          <button onClick={() => { onSuccess(); onClose(); }}>Success</button>
+          <button onClick={onClose}>Cancel</button>
+        </div>
       </div>
-    );
+    ) : null;
   };
 });
 
@@ -90,14 +93,14 @@ describe('PlaceholderEpisodeRow', () => {
     fireEvent.click(screen.getByText('Add new Episode'));
 
     expect(screen.getByTestId('modal')).toBeTruthy();
-    expect(screen.getByTestId('new-episode-form')).toBeTruthy();
+    expect(screen.getByTestId('episode-modal')).toBeTruthy();
   });
 
   it('should not show modal initially', () => {
     render(<PlaceholderEpisodeRow {...defaultProps} />);
 
     expect(screen.queryByTestId('modal')).toBeFalsy();
-    expect(screen.queryByTestId('new-episode-form')).toBeFalsy();
+    expect(screen.queryByTestId('episode-modal')).toBeFalsy();
   });
 
   it('should close modal when episode creation succeeds', () => {
@@ -133,8 +136,8 @@ describe('PlaceholderEpisodeRow', () => {
 
     fireEvent.click(screen.getByText('Add new Episode'));
 
-    // Form should be rendered with the podcast ID
-    expect(screen.getByTestId('new-episode-form')).toBeTruthy();
+    // Modal should be rendered
+    expect(screen.getByTestId('episode-modal')).toBeTruthy();
   });
 
   it('should apply different styling when first in list', () => {
@@ -172,9 +175,9 @@ describe('PlaceholderEpisodeRow', () => {
   it('should be accessible', () => {
     render(<PlaceholderEpisodeRow {...defaultProps} />);
 
-    const button = screen.getByRole('button');
+    const button = screen.getByText('Add new Episode').closest('[role="button"]');
     expect(button).toBeTruthy();
-    expect(button).toHaveTextContent('+Add new Episode');
+    expect(button).toHaveTextContent('Add new Episode');
   });
 
   it('should have proper visual hierarchy', () => {
@@ -187,11 +190,11 @@ describe('PlaceholderEpisodeRow', () => {
   it('should handle keyboard interactions', () => {
     render(<PlaceholderEpisodeRow {...defaultProps} />);
 
-    const button = screen.getByRole('button');
+    const button = screen.getByText('Add new Episode').closest('[role="button"]');
     
     // Test focus and click instead of keydown since HeroUI Card may not handle keydown events
-    fireEvent.focus(button);
-    fireEvent.click(button);
+    fireEvent.focus(button!);
+    fireEvent.click(button!);
     expect(screen.getByTestId('modal')).toBeTruthy();
   });
 });

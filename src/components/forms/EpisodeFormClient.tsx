@@ -15,7 +15,7 @@ type Props = {
   onCancel: () => void;
 };
 
-export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess, onCancel }: Props) {
+export default function EpisodeFormClient({ podcastId, initialData, onSuccess, onCancel }: Props) {
   const { user } = useAuth();
   const [isLoading, setLoading] = useState(false);
   const [formData, setFormData] = useState<NewEpisodeFormData>({
@@ -171,7 +171,7 @@ export default function NewEpisodeFormClient({ podcastId, initialData, onSuccess
 
       <div className="flex gap-4 mt-6">
         <Button type="submit" color="primary" isLoading={isLoading}>
-          Create Podcast
+          Add Episode
         </Button>
         <Button type="button" variant="light" onPress={onCancel}>
           Cancel
