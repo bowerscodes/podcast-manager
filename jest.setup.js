@@ -80,3 +80,26 @@ jest.mock('framer-motion', () => ({
   },
   AnimatePresence: ({ children }) => children,
 }))
+
+
+// Only suppress the specific JSDOM navigation warning (this is acceptable)
+const originalError = console.error;
+beforeAll(() => {
+  console.error = (...args) => {
+    const message = args[0];
+    
+    // Only suppress JSDOM limitations - not React warnings
+    if (
+      typeof message === 'string' &&
+      message.includes('Not implemented: navigation')
+    ) {
+      return;
+    }
+    
+    originalError.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalError;
+});

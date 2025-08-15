@@ -4,7 +4,7 @@ import { NewEpisodeFormData } from "@/types/podcast";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Checkbox } from "@heroui/checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 
@@ -18,6 +18,9 @@ type Props = {
 export default function EpisodeFormClient({ podcastId, initialData, onSuccess, onCancel }: Props) {
   const { user } = useAuth();
   const [isLoading, setLoading] = useState(false);
+  const [episodes, setEpisodes] = useState<Array<{ season_number: string; episode_number: string }>>([]);
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const [formData, setFormData] = useState<NewEpisodeFormData>({
     title: initialData.title || "",
     description: initialData.description || "",
@@ -27,6 +30,72 @@ export default function EpisodeFormClient({ podcastId, initialData, onSuccess, o
     explicit: initialData.explicit || false,
   });
 
+  useEffect(() => {
+    const fetchEpisodesAndSetDefaults = async () => {
+      const editMode = !!(initialData.season_number && initialData.episode_number);
+      setIsEditMode(editMode);
+
+      const { data: epsiodesData, error } = await supabase
+        .from("episodes")
+        .select("season_number, episode_number")
+        .eq("podcast_id", podcastId);
+      
+      if (error) {
+        console.error("Error fetching episodes: ", error);
+        return;
+      }
+
+      setEpisodes(epsiodesData || []);
+
+      if (!editMode && epsiodesData) {
+        const { defaultSeason, defaultEpisode } = calculateDefaults(epsiodesData);
+        setFormData(prev => ({
+          ...prev,
+          season_number: defaultSeason.toString(),
+          episode_number: defaultEpisode.toString(),
+        }));
+      }
+    };
+
+    fetchEpisodesAndSetDefaults();
+  }, [podcastId, initialData.season_number, initialData.episode_number]);
+
+
+  const calculateDefaults = (episodesData: Array<{ season_number: string; episode_number: string; }>) => {
+    if (!episodesData.length) {
+      return { defaultSeason: 1, defaultEpisode: 1 };
+    }
+
+    const seasons = episodesData.map(ep => parseInt(ep.season_number)).filter(n => !isNaN(n));
+    const newestSeason = Math.max(...seasons);
+
+    const episodesInNewestSeason = episodesData
+      .filter(ep => parseInt(ep.season_number) === newestSeason)
+      .map(ep => parseInt(ep.episode_number))
+      .filter(n => !isNaN(n));
+
+      const nextEpisode = episodesInNewestSeason.length ? Math.max(...episodesInNewestSeason) + 1 : 1;
+
+      return { defaultSeason: newestSeason, defaultEpisode: nextEpisode }
+  };
+
+  const handleSeasonChange = (newSeason: string) => {
+    setFormData(prev => ({ ...prev, season_number: newSeason }));
+
+    if (!isEditMode && episodes.length > 0) {
+      const seasonNum = parseInt(newSeason);
+      if (!isNaN(seasonNum)) {
+        const episodesInSeason = episodes
+          .filter(ep => parseInt(ep.season_number) === seasonNum)
+          .map(ep => parseInt(ep.episode_number))
+          .filter(n => !isNaN(n));
+        
+        const nextEpisode = episodesInSeason.length ? Math.max(...episodesInSeason) + 1 : 1;
+
+        setFormData(prev => ({ ...prev, episode_number: nextEpisode.toString() }));
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,19 +110,11 @@ export default function EpisodeFormClient({ podcastId, initialData, onSuccess, o
       return;
     }
 
-    // Fetch all episodes
-    const { data: episodes, error: fetchError } =  await supabase
-      .from("episodes")
-      .select("season_number, episode_number")
-      .eq("podcast_id", podcastId);
-    
-    if (fetchError) {
-      toast.error("Failed to validate episode numbers")
-      return;
-    }
+    // use cached episode data instead of fetching again
+    const episodesData = episodes;
 
     // Get all episode numbers in current season
-    const episodesInSeason = episodes?.filter(
+    const episodesInSeason = episodesData?.filter(
       ep => parseInt(ep.season_number as string) === parseInt(formData.season_number as string)
     );
     const existingEpisodeNumbers = episodesInSeason?.map(ep => parseInt(ep.episode_number)).filter(n => !isNaN(n));
@@ -70,7 +131,7 @@ export default function EpisodeFormClient({ podcastId, initialData, onSuccess, o
     }
 
     // Check for duplicate episode number in the same season
-    const duplicate = episodes?.some(ep => 
+    const duplicate = episodesData?.some(ep => 
       parseInt(ep.season_number as string) === parseInt(formData.season_number as string) &&
       ep.episode_number === formData.episode_number
     );
@@ -80,7 +141,7 @@ export default function EpisodeFormClient({ podcastId, initialData, onSuccess, o
     }
 
     // Prevent skipped seasons
-    const existingSeasons = episodes?.map(ep => parseInt(ep.season_number)).filter(n => !isNaN(n));
+    const existingSeasons = episodesData?.map(ep => parseInt(ep.season_number)).filter(n => !isNaN(n));
     const maxSeason = existingSeasons?.length ? Math.max(...existingSeasons) : 0;
     const selectedSeason = parseInt(formData.season_number as string);
 
@@ -148,7 +209,7 @@ export default function EpisodeFormClient({ podcastId, initialData, onSuccess, o
         label="Season number"
         type="number"
         value={formData.season_number ?? ""}
-        onChange={(e) => setFormData({ ...formData, season_number: e.target.value })}
+        onChange={(e) => handleSeasonChange(e.target.value)}
         required
       />
 

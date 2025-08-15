@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import toast from 'react-hot-toast';
 import EpisodeFormClient from '../EpisodeFormClient';
@@ -109,20 +109,31 @@ describe('EpisodeFormClient', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Default mock for episodes query - empty array
+    // Use resolved promise to ensure immediate resolution
+    mockEq.mockResolvedValue({
+      data: [],
+      error: null
+    });
   });
 
-  it('should render all form fields', () => {
-    render(<EpisodeFormClient {...defaultProps} />);
+  it('should render all form fields', async () => {
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
 
-    expect(screen.getByLabelText(/episode title/i)).toBeTruthy();
-    expect(screen.getAllByRole('textbox')[1]).toBeTruthy(); // Description textarea
-    expect(screen.getByLabelText(/audio url/i)).toBeTruthy();
-    expect(screen.getByLabelText(/season number/i)).toBeTruthy();
-    expect(screen.getByLabelText(/episode number/i)).toBeTruthy();
-    expect(screen.getByRole('checkbox')).toBeTruthy();
+    // Wait for initial fetch to complete
+    await waitFor(() => {
+      expect(screen.getByLabelText(/episode title/i)).toBeTruthy();
+      expect(screen.getAllByRole('textbox')[1]).toBeTruthy(); // Description textarea
+      expect(screen.getByLabelText(/audio url/i)).toBeTruthy();
+      expect(screen.getByLabelText(/season number/i)).toBeTruthy();
+      expect(screen.getByLabelText(/episode number/i)).toBeTruthy();
+      expect(screen.getByRole('checkbox')).toBeTruthy();
+    });
   });
 
-  it('should populate form with initial data', () => {
+  it('should populate form with initial data', async () => {
     const initialData = {
       title: 'Test Episode',
       description: 'Test Description',
@@ -132,18 +143,30 @@ describe('EpisodeFormClient', () => {
       explicit: true
     };
     
-    render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+    });
 
-    expect((screen.getByLabelText(/episode title/i) as HTMLInputElement).value).toBe('Test Episode');
-    expect((screen.getAllByRole('textbox')[1] as HTMLTextAreaElement).value).toBe('Test Description');
-    expect((screen.getByLabelText(/audio url/i) as HTMLInputElement).value).toBe('https://example.com/audio.mp3');
-    expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('1');
-    expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('5');
-    expect((screen.getByRole('checkbox') as HTMLInputElement).checked).toBe(true);
+    // Wait for component to render
+    await waitFor(() => {
+      expect((screen.getByLabelText(/episode title/i) as HTMLInputElement).value).toBe('Test Episode');
+      expect((screen.getAllByRole('textbox')[1] as HTMLTextAreaElement).value).toBe('Test Description');
+      expect((screen.getByLabelText(/audio url/i) as HTMLInputElement).value).toBe('https://example.com/audio.mp3');
+      expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('1');
+      expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('5');
+      expect((screen.getByRole('checkbox') as HTMLInputElement).checked).toBe(true);
+    });
   });
 
   it('should validate audio URL format', async () => {
-    render(<EpisodeFormClient {...defaultProps} />);
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
+
+    // Wait for initial load
+    await waitFor(() => {
+      expect(screen.getByLabelText(/episode title/i)).toBeTruthy();
+    });
 
     fireEvent.change(screen.getByLabelText(/episode title/i), {
       target: { value: 'Test Episode' }
@@ -172,7 +195,23 @@ describe('EpisodeFormClient', () => {
     
     for (const format of validFormats) {
       jest.clearAllMocks();
-      const { unmount } = render(<EpisodeFormClient {...defaultProps} />);
+      // Reset the episodes mock for each iteration
+      mockEq.mockResolvedValue({
+        data: [],
+        error: null
+      });
+      
+      let unmount: () => void;
+      
+      await act(async () => {
+        const renderResult = render(<EpisodeFormClient {...defaultProps} />);
+        unmount = renderResult.unmount;
+      });
+
+      // Wait for initial load
+      await waitFor(() => {
+        expect(screen.getByLabelText(/episode title/i)).toBeTruthy();
+      });
 
       fireEvent.change(screen.getByLabelText(/episode title/i), {
         target: { value: 'Test Episode' }
@@ -187,7 +226,7 @@ describe('EpisodeFormClient', () => {
         expect(toast.error).not.toHaveBeenCalledWith('Audio URL must point to a valid audio file (e.g. .mp3, .m4a, .wav)');
       });
       
-      unmount();
+      unmount!();
     }
   });
 
@@ -204,7 +243,9 @@ describe('EpisodeFormClient', () => {
       error: null
     });
 
-    render(<EpisodeFormClient {...defaultProps} />);
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
 
     fireEvent.change(screen.getByLabelText(/episode title/i), {
       target: { value: 'Test Episode' }
@@ -240,8 +281,10 @@ describe('EpisodeFormClient', () => {
     expect(defaultProps.onSuccess).toHaveBeenCalled();
   });
 
-  it('should handle cancel button', () => {
-    render(<EpisodeFormClient {...defaultProps} />);
+  it('should handle cancel button', async () => {
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
 
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
 
@@ -260,7 +303,9 @@ describe('EpisodeFormClient', () => {
       error: { message: 'Database error' }
     });
 
-    render(<EpisodeFormClient {...defaultProps} />);
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
 
     fireEvent.change(screen.getByLabelText(/episode title/i), {
       target: { value: 'Test Episode' }
@@ -283,8 +328,10 @@ describe('EpisodeFormClient', () => {
     });
   });
 
-  it('should handle explicit content checkbox', () => {
-    render(<EpisodeFormClient {...defaultProps} />);
+  it('should handle explicit content checkbox', async () => {
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
 
     const checkbox = screen.getByRole('checkbox');
     expect(checkbox).not.toBeChecked();
@@ -293,17 +340,190 @@ describe('EpisodeFormClient', () => {
     expect(checkbox).toBeChecked();
   });
 
-  it('should validate episode numbers for duplicates', async () => {
-    // Mock existing episodes
+  // New tests for smart defaults functionality
+  it('should set default season 1 episode 1 when no episodes exist', async () => {
+    // Mock empty episodes array
+    mockEq.mockResolvedValueOnce({
+      data: [],
+      error: null
+    });
+
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
+
+    await waitFor(() => {
+      expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('1');
+      expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('1');
+    });
+  });
+
+  it('should set default to newest season and next episode number', async () => {
+    // Mock existing episodes: Season 1 has episodes 1-3, Season 2 has episodes 1-2
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: 1, episode_number: '1' },
-        { season_number: 1, episode_number: '2' }
+        { season_number: '1', episode_number: '1' },
+        { season_number: '1', episode_number: '2' },
+        { season_number: '1', episode_number: '3' },
+        { season_number: '2', episode_number: '1' },
+        { season_number: '2', episode_number: '2' }
       ],
       error: null
     });
 
-    render(<EpisodeFormClient {...defaultProps} />);
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
+
+    await waitFor(() => {
+      expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('2');
+      expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('3');
+    });
+  });
+
+  it('should update episode number when season changes to existing season', async () => {
+    // Mock existing episodes
+    mockEq.mockResolvedValueOnce({
+      data: [
+        { season_number: '1', episode_number: '1' },
+        { season_number: '1', episode_number: '2' },
+        { season_number: '1', episode_number: '3' },
+        { season_number: '2', episode_number: '1' }
+      ],
+      error: null
+    });
+
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
+
+    // Wait for initial defaults to be set
+    await waitFor(() => {
+      expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('2');
+      expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('2');
+    });
+
+    // Change season to 1
+    fireEvent.change(screen.getByLabelText(/season number/i), {
+      target: { value: '1' }
+    });
+
+    await waitFor(() => {
+      expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('1');
+      expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('4');
+    });
+  });
+
+  it('should set episode 1 when season changes to new season', async () => {
+    // Mock existing episodes
+    mockEq.mockResolvedValueOnce({
+      data: [
+        { season_number: '1', episode_number: '1' },
+        { season_number: '1', episode_number: '2' },
+        { season_number: '2', episode_number: '1' }
+      ],
+      error: null
+    });
+
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
+
+    // Wait for initial defaults
+    await waitFor(() => {
+      expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('2');
+    });
+
+    // Change to a new season (3)
+    fireEvent.change(screen.getByLabelText(/season number/i), {
+      target: { value: '3' }
+    });
+
+    await waitFor(() => {
+      expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('3');
+      expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('1');
+    });
+  });
+
+  it('should not auto-update fields when in edit mode', async () => {
+    const initialData = {
+      title: 'Edit Episode',
+      season_number: '1',
+      episode_number: '5'
+    };
+
+    // Mock existing episodes
+    mockEq.mockResolvedValueOnce({
+      data: [
+        { season_number: '1', episode_number: '1' },
+        { season_number: '2', episode_number: '1' }
+      ],
+      error: null
+    });
+
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+    });
+
+    // Should keep initial values even with existing episodes
+    await waitFor(() => {
+      expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('1');
+      expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('5');
+    });
+
+    // Changing season in edit mode should not auto-update episode
+    fireEvent.change(screen.getByLabelText(/season number/i), {
+      target: { value: '2' }
+    });
+
+    await waitFor(() => {
+      expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('2');
+      expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('5'); // Should remain unchanged
+    });
+  });
+
+  it('should handle episodes fetch error gracefully', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    
+    // Mock fetch error
+    mockEq.mockResolvedValueOnce({
+      data: null,
+      error: { message: 'Database error' }
+    });
+
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching episodes: ', { message: 'Database error' });
+    });
+
+    // Should still render form even with fetch error
+    expect(screen.getByLabelText(/episode title/i)).toBeTruthy();
+    
+    consoleSpy.mockRestore();
+  });
+
+  it('should validate episode numbers for duplicates', async () => {
+    // Mock existing episodes for the initial fetch
+    mockEq.mockResolvedValueOnce({
+      data: [
+        { season_number: '1', episode_number: '1' },
+        { season_number: '1', episode_number: '2' }
+      ],
+      error: null
+    });
+
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
+
+    // Wait for initial load and defaults to be set
+    await waitFor(() => {
+      expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('1');
+      expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('3');
+    });
 
     fireEvent.change(screen.getByLabelText(/episode title/i), {
       target: { value: 'Test Episode' }
@@ -311,9 +531,8 @@ describe('EpisodeFormClient', () => {
     fireEvent.change(screen.getByLabelText(/audio url/i), {
       target: { value: 'https://example.com/audio.mp3' }
     });
-    fireEvent.change(screen.getByLabelText(/season number/i), {
-      target: { value: '1' }
-    });
+    
+    // Try to create a duplicate episode (episode 1 in season 1)
     fireEvent.change(screen.getByLabelText(/episode number/i), {
       target: { value: '1' }
     });

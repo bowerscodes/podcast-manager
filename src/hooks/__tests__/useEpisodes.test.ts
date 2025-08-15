@@ -156,8 +156,10 @@ describe('useEpisodes hook', () => {
       })
     });
 
-    // Call refresh
-    result.current.refresh();
+    // Call refresh wrapped in act
+    await act(async () => {
+      await result.current.refresh();
+    });
 
     // Wait for refresh to complete
     await waitFor(() => {
