@@ -2,11 +2,15 @@
 
 import AuthGuard from "@/components/auth/AuthGuard";
 import PodcastDetailView from "@/components/podcasts/PodcastDetailView";
+import BackButton from "@/components/ui/BackButton";
 
 export default function PodcastDetailPage() {
  
   return (
     <AuthGuard>
+      <div className="ml-10 mt-5">
+        <BackButton to="podcasts" />
+      </div>
       <PodcastDetailView />
     </AuthGuard>
   );

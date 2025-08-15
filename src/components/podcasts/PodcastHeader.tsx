@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Podcast } from "@/types/podcast";
-import { defaultArtwork } from "@/lib/data";
-import { formatDate } from "@/lib/date-utils";
-import { supabase } from "@/lib/supabase";
-import EditableField from "../ui/EditableField";
-import EditableImage from "../ui/EditableImage";
+import { Podcast } from '@/types/podcast';
+import { defaultArtwork } from '@/lib/data';
+import { formatDate } from '@/lib/date-utils';
+import { supabase } from '@/lib/supabase';
+import EditableField from '../ui/EditableField';
+import EditableImage from '../ui/EditableImage';
 
 type Props = {
   podcast: Podcast;

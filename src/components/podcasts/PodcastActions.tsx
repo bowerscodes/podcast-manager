@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { Podcast } from "@/types/podcast";
 import DeleteModal from "../modals/DeleteModal";
+import BackButton from "../ui/BackButton";
 
 type Props = {
   podcast: Podcast;
@@ -32,9 +33,9 @@ export default function PodcastActions({ podcast }: Props) {
   return (
     <>
       <div className="flex justify-between">
-        <Button variant="light" color="primary" onPress={handleBack}>
-          ← Back to Podcasts
-        </Button>
+        <BackButton
+          to="podcasts"
+        />
         <Button
           variant="bordered"
           color="danger"
