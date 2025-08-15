@@ -39,7 +39,7 @@ jest.mock('@heroui/modal', () => ({
 
 // Mock LoginModal component
 jest.mock('../LoginModal', () => {
-  return function MockLoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  return function MockLoginModal({ isOpen }: { isOpen: boolean; onClose: () => void }) {
     return isOpen ? <div data-testid="login-modal">Login Modal</div> : null;
   };
 });

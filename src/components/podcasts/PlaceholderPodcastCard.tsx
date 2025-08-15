@@ -3,7 +3,6 @@
 import { Card, CardBody } from "@heroui/card";
 import { useRouter } from "next/navigation";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import { FaPlus } from "react-icons/fa";
 
 type Props = {
   isFirstInList?: boolean;
