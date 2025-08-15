@@ -8,7 +8,7 @@ export default function PodcastDetailPage() {
  
   return (
     <AuthGuard>
-      <div className="ml-10 mt-5">
+      <div className="ml-8 mt-0 mb-0">
         <BackButton to="podcasts" />
       </div>
       <PodcastDetailView />

@@ -36,7 +36,7 @@ export default function PodcastStats({
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div className="podcast-stats-container gap-4 mb-6">
       {statsCards.map((card, index) => (
         <Card key={index} className="stats-card">
           <CardBody className="text-center">

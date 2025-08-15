@@ -122,7 +122,7 @@ export default function PodcastDetailView() {
 
   return (
     
-    <div className="container mx-auto p-8 max-w-4xl">
+    <div className="container mx-auto p-8 pt-5 max-w-4xl">
       <PodcastHeader podcast={podcast} episodeCount={episodeCount} />
       <PodcastStats 
         episodeCount={episodeCount} 

@@ -18,36 +18,19 @@ export default function TopNav() {
 
   return (
     <>
-      <nav className="relative bg-gradient-to-r from-purple-600 via-purple-700 to-cyan-600 shadow-lg">
-        <div className="absolute inset-0 bg-black/10"></div>
+      <nav className={"relative"}>
+        <div className="absolute inset-0"></div>
         <div className="relative flex items-center justify-between p-4">
           <div className="flex items-center space-x-4">
             <h1 
-              className="text-2xl font-bold text-white cursor-pointer hover:text-purple-200 transition-colors" 
+              className="text-2xl font-bold text-stone-800 cursor-pointer hover:text-stone-600 transition-colors duration-150"
+              style={{
+                textShadow: "1px 1px 6px rgba(0, 0, 0, 0.5)"
+              }} 
               onClick={handleLogoClick}
             >
-              🎙️ Podcast Manager
+              🎙️ podly
             </h1>
-            {user && (
-              <div className="hidden md:flex space-x-4">
-                <Button 
-                  variant="light" 
-                  className="text-white hover:text-purple-200" 
-                  as="a" 
-                  href="/podcasts/new"
-                >
-                  Publish
-                </Button>
-                <Button 
-                  variant="light" 
-                  className="text-white hover:text-purple-200" 
-                  as="a" 
-                  href="/podcasts"
-                >
-                  Analytics
-                </Button>
-              </div>
-            )}
           </div>
           <div className="flex items-center space-x-4">
             {user 
