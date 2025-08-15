@@ -1,5 +1,3 @@
-import { Button } from '@heroui/button';
-
 import useNavigation from '@/hooks/useNavigation';
 
 type Props = {
