@@ -2,8 +2,10 @@
 
 import { Button } from "@heroui/button";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Podcast } from "@/types/podcast";
+import DeleteModal from "../modals/DeleteModal";
 
 type Props = {
   podcast: Podcast;
@@ -11,26 +13,43 @@ type Props = {
 
 export default function PodcastActions({ podcast }: Props) {
   const router = useRouter();
+  const [canGoBack, setCanGoBack] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  useEffect(() => {
+    setCanGoBack(window.history.length > 1);
+  }, []);
+
+  const handleBack = () => {
+    if (canGoBack) {
+      router.back();
+    }
+    else {
+      router.push("/podcasts")
+    }
+  };
 
   return (
-    <div className="flex gap-4">
-      <Button
-        color="primary"
-        className="btn-primary"
-        onPress={() => router.push(`/podcasts/${podcast.id}/episodes/new`)}
-      >
-        Add Episode
-      </Button>
-      <Button
-        variant="bordered"
-        className="btn-secondary"
-        onPress={() => router.push(`/podcasts/${podcast.id}/episodes`)}
-      >
-        Manage Episodes
-      </Button>
-      <Button variant="light" onPress={() => router.push("/podcasts/")}>
-        Back to Podcasts
-      </Button>
-    </div>
+    <>
+      <div className="flex justify-between">
+        <Button variant="light" color="primary" onPress={handleBack}>
+          ← Back to Podcasts
+        </Button>
+        <Button
+          variant="bordered"
+          color="danger"
+          onPress={() => setIsDeleteModalOpen(true)}
+        >
+          Delete Podcast
+        </Button>
+      </div>
+
+      <DeleteModal 
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        podcastId={podcast.id}
+        onSuccess={handleBack}
+      />
+    </>
   );
 };

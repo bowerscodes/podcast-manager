@@ -130,8 +130,8 @@ export default function PodcastDetailView() {
         uniqueListeners={analytics.uniqueListeners}
         platformBreakdown={analytics.platformBreakdown}
       />
-      <PodcastRSSSection podcast={podcast} />
       <EpisodesList podcast={podcast} />
+      <PodcastRSSSection podcast={podcast} />
       <PodcastActions podcast={podcast} />
     </div>
   );

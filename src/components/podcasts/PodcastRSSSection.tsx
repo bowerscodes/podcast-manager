@@ -21,7 +21,7 @@ export default function PodcastRSSSection({ podcast }: Props) {
   };
 
   return (
-    <Card className="mb-6">
+    <Card className="mb-4">
       <CardHeader>
         <h2 className="heading-secondary">RSS Feed</h2>
       </CardHeader>
