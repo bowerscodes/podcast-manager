@@ -8,24 +8,24 @@
   --background: #ffffff;
   --foreground: #171717;
 
-    /* Brand Colors - Podcast Theme */
-  --color-primary: #8B5CF6;     /* Purple - creativity/audio */
-  --color-secondary: #06B6D4;   /* Cyan - technology */
-  --color-accent: #F59E0B;      /* Amber - energy */
-  
+  /* Brand Colors */
+  --color-primary: #8b5cf6; /* Purple - creativity/audio */
+  --color-secondary: #06b6d4; /* Cyan - technology */
+  --color-accent: #f59e0b; /* Amber - energy */
+
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%);
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
   --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
   --gradient-dark: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  
-  /* Semantic Colors */
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
 
-  --color-apple-music: #F31260;
+  /* Semantic Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  --color-apple-music: #f31260;
   --color-spotify: var(--color-success);
-  
+
   /* Spacing System */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
@@ -33,7 +33,7 @@
   --space-lg: 1.5rem;
   --space-xl: 2rem;
   --space-2xl: 3rem;
-  
+
   /* Shadows */
   --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -67,7 +67,8 @@ h3 {
   font-size: large;
 }
 
-h4, h5 {
+h4,
+h5 {
   font-weight: 700;
   font-size: medium;
 }
@@ -76,19 +77,25 @@ h4, h5 {
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
-  background: conic-gradient(from 0deg, transparent, var(--color-primary), var(--color-secondary), transparent);
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    var(--color-primary),
+    var(--color-secondary),
+    transparent
+  );
   animation: spin 1.5s linear infinite;
   position: relative;
 }
 
 .loading-spinner::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 3px;
   left: 3px;
   right: 3px;
   bottom: 3px;
-  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #fef3c7 100%);;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #fef3c7 100%);
   border-radius: 50%;
 }
 
@@ -160,7 +167,7 @@ h4, h5 {
 }
 
 .platform-submit-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -213,8 +220,7 @@ h4, h5 {
 }
 
 .podcast-card {
-  background: 
-    var(--gradient-card) padding-box, 
+  background: var(--gradient-card) padding-box,
     var(--gradient-primary) border-box;
   border: 3px solid transparent;
   border-radius: 0.75rem;
@@ -223,7 +229,6 @@ h4, h5 {
   cursor: pointer;
   position: relative;
 }
-
 
 .podcast-card:hover {
   box-shadow: var(--shadow-strong);

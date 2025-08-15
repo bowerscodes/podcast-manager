@@ -6,9 +6,9 @@ This project uses Jest and React Testing Library for comprehensive unit testing 
 
 ## Test Statistics
 
-- **26 test suites** with **236 tests** 
-- **65.27% coverage** (statements)
-- **~2.3 second execution time**
+- **27 test suites** with **245 tests** 
+- **65.50% coverage** (statements)
+- **~2.4 second execution time**
 
 ## Coverage by Component Type
 
@@ -43,6 +43,18 @@ The **EpisodeFormClient** test suite has been significantly enhanced with compre
 - **Edge Cases**: Tests cover scenarios like empty podcasts, new seasons, and duplicate validation
 
 These enhancements bring the EpisodeFormClient from 9 to 15 tests, ensuring robust coverage of complex form logic.
+
+The **EpisodeDescription** component has been added with comprehensive test coverage for responsive text truncation:
+
+- **Truncation Detection**: Tests verify proper detection of text overflow using DOM measurements
+- **Show More/Less Functionality**: Tests ensure proper button behavior for expanding/collapsing content
+- **Animation Behavior**: Tests validate smooth CSS transitions with correct max-height calculations
+- **Responsive Handling**: Tests cover window resize events and dynamic content adjustments
+- **Icon States**: Tests verify correct display of expand/collapse icons in different states
+- **Edge Cases**: Tests handle empty descriptions, very long content, and measurement edge cases
+- **DOM Mocking**: Advanced testing patterns using HTMLElement prototype mocking for accurate DOM simulation
+
+This adds 9 comprehensive tests covering the complex responsive text truncation behavior with smooth animations.
 
 ## Running Tests
 
@@ -140,6 +152,7 @@ src/
 │   │   └── episodes/
 │   │       └── __tests__/
 │   │           ├── EpisodeRow.test.tsx           ✅ 2 tests passing
+│   │           ├── EpisodeDescription.test.tsx   ✅ 9 tests passing
 │   │           └── PlaceholderEpisodeRow.test.tsx ✅ 15 tests passing
 │   ├── episodes/
 │   │   └── __tests__/
@@ -221,13 +234,13 @@ npm test src/lib/__tests__/           # Specific directory
 
 ## Summary
 
-This project has comprehensive test coverage with **26 test suites** and **236 tests** covering all critical functionality including RSS generation, authentication, forms, UI components, custom hooks, and API routes.
+This project has comprehensive test coverage with **27 test suites** and **245 tests** covering all critical functionality including RSS generation, authentication, forms, UI components, custom hooks, and API routes.
 
 ---
 
 ## Test Results Summary
 
-- ✅ **62 tests passing** across all test suites
+- ✅ **71 tests passing** across all test suites
 - 📊 **100% coverage** on utility functions
 - 🎯 **Complete coverage** on components, hooks, and API routes
 - � **Production ready** with comprehensive test suite

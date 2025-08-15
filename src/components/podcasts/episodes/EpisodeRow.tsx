@@ -7,6 +7,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 import { Episode } from '@/types/podcast';
 import EpisodeModal from '@/components/modals/EpisodeModal';
 import DeleteModal from '@/components/modals/DeleteModal';
+import EpisodeDescription from './EpisodeDescription';
 
 type EpisodeRowProps = {
   episode: Episode;
@@ -24,9 +25,11 @@ export default function EpisodeRow({
     <>
       <div>
         <Card className="flex flex-col mb-3">
-          <CardHeader className="flex justify-between items-center pb-0">
-            <h3>{episode.episode_number}. {episode.title}</h3>
-            <div className="flex flex-row gap-1">
+          <CardHeader className="flex justify-between items-start pb-0 gap-3">
+            <h3 className="break-words">
+              {episode.episode_number}. {episode.title}
+            </h3>
+            <div className="flex flex-row gap-1 flex-shrink-0">
               <Button 
                 className="flex items-center justify-center px-1 aspect-square min-w-0" 
                 size="sm" 
@@ -46,7 +49,7 @@ export default function EpisodeRow({
             </div>
           </CardHeader>
           <CardBody className="flex-grow pt-0">
-            {episode.description}
+            <EpisodeDescription description={episode.description} />
           </CardBody>
         </Card>
       </div>
