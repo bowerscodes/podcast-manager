@@ -22,6 +22,9 @@
   --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-error: #EF4444;
+
+  --color-apple-music: #F31260;
+  --color-spotify: var(--color-success);
   
   /* Spacing System */
   --space-xs: 0.25rem;
@@ -148,6 +151,51 @@ h4, h5 {
   background-color: #e5e7eb;
 }
 
+/* Platform Submit Buttons */
+.platform-submit-btn {
+  position: relative;
+  overflow: hidden;
+  transition: color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 1;
+}
+
+.platform-submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: -1;
+}
+
+.platform-submit-btn:hover::before {
+  width: 100%;
+}
+
+/* Apple Podcasts */
+.platform-submit-btn.apple-podcasts {
+  color: var(--color-apple-music);
+  border-color: var(--color-apple-music);
+}
+.platform-submit-btn.apple-podcasts::before {
+  background: var(--color-apple-music);
+}
+
+/* Spotify - Green */
+.platform-submit-btn.spotify {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+.platform-submit-btn.spotify::before {
+  background: var(--color-success);
+}
+
+.platform-submit-btn:hover {
+  color: white;
+}
+
 /* Card Components */
 .action-card {
   width: 18rem;
@@ -193,6 +241,15 @@ h4, h5 {
   border-color: rgba(139, 92, 246, 0.5);
 }
 
+/* Fix EditableImage transparency - target HeroUI Image component */
+.editable-image [data-slot="img"],
+.editable-image img {
+  background: transparent;
+}
+
+.editable-image [data-slot="wrapper"] {
+  background: transparent;
+}
 .stats-card {
   background: var(--gradient-card);
   box-shadow: var(--shadow-soft);

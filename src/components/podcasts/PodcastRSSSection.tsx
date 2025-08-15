@@ -46,8 +46,8 @@ export default function PodcastRSSSection({ podcast }: Props) {
             as="a"
             href={applePodcastsSubmitLink}
             target="_blank"
-            color="primary"
             variant="bordered"
+            className="platform-submit-btn apple-podcasts"
           >
             Submit to Apple Podcasts
           </Button>
@@ -55,8 +55,8 @@ export default function PodcastRSSSection({ podcast }: Props) {
             as="a"
             href={spotifyPodcastsSubmitLink}
             target="_blank"
-            color="success"
             variant="bordered"
+            className="platform-submit-btn spotify"
           >
             Submit to Spotify
           </Button>
