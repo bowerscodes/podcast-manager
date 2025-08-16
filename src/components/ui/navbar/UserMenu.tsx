@@ -1,4 +1,3 @@
-import { Avatar } from '@heroui/avatar';
 import {
   Dropdown,
   DropdownTrigger,
@@ -7,6 +6,7 @@ import {
 } from '@heroui/dropdown';
 import { supabase } from '@/lib/supabase';
 import type { User } from '@supabase/supabase-js';
+import { MdAccountCircle } from 'react-icons/md';
 
 type Props = {
   user: User;
@@ -22,12 +22,7 @@ export default function UserMenu({ user }: Props) {
   return (
     <Dropdown>
       <DropdownTrigger>
-        <Avatar
-          size="sm"
-          src={user.user_metadata?.avatar_url}
-          name={displayName}
-          className="cursor-pointer"
-        />
+        <MdAccountCircle name={displayName} cursor="pointer" size={36} />
       </DropdownTrigger>
       <DropdownMenu>
         <DropdownItem key="profile" textValue="Profile">

@@ -21,13 +21,16 @@ jest.mock('@/providers/Providers', () => ({
   useAuth: jest.fn(),
 }));
 
-// Mock HeroUI components with simplified structure
-jest.mock('@heroui/avatar', () => ({
-  Avatar: ({ name }: { name?: string }) => (
-    <div data-testid="avatar">{name}</div>
+// Mock react-icons
+jest.mock('react-icons/md', () => ({
+  MdAccountCircle: ({ name, size }: { name?: string; size?: number }) => (
+    <div data-testid="account-circle-icon" data-name={name} data-size={size}>
+      AccountCircle
+    </div>
   ),
 }));
 
+// Mock HeroUI components with simplified structure
 jest.mock('@heroui/dropdown', () => ({
   Dropdown: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="dropdown">{children}</div>
@@ -70,12 +73,12 @@ describe('UserMenu', () => {
     (useAuth as jest.Mock).mockReturnValue({ user: mockUser });
   });
 
-  it('should render user avatar', () => {
+  it('should render user account icon', () => {
     render(<UserMenu user={mockUser} />);
-    expect(screen.getByTestId('avatar')).toBeTruthy();
+    expect(screen.getByTestId('account-circle-icon')).toBeTruthy();
   });
 
-  it('should display user name in avatar when available', () => {
+  it('should pass user name to icon when available', () => {
     const userWithName = {
       id: '1',
       email: 'test@example.com',
@@ -88,10 +91,10 @@ describe('UserMenu', () => {
     } as User;
 
     render(<UserMenu user={userWithName} />);
-    expect(screen.getByTestId('avatar')).toHaveTextContent('John Doe');
+    expect(screen.getByTestId('account-circle-icon')).toHaveAttribute('data-name', 'John Doe');
   });
 
-  it('should display email when name is not available', () => {
+  it('should pass email to icon when name is not available', () => {
     const userWithoutName = {
       id: '1', 
       email: 'test@example.com',
@@ -102,7 +105,7 @@ describe('UserMenu', () => {
     } as User;
 
     render(<UserMenu user={userWithoutName} />);
-    expect(screen.getByTestId('avatar')).toHaveTextContent('test@example.com');
+    expect(screen.getByTestId('account-circle-icon')).toHaveAttribute('data-name', 'test@example.com');
   });
 
   it('should handle sign out action', () => {
