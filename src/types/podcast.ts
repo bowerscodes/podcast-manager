@@ -6,6 +6,7 @@ export interface Podcast {
   artwork: string;
   website?: string;
   language: string;
+  explicit: boolean;
   categories: string[];
   author: string;
   email: string;
@@ -35,9 +36,11 @@ export interface NewPodcastFormData {
   email: string;
   website: string;
   artwork: string;
+  explicit: boolean;
 };
 
-export interface NewEpisodeFormData {
+export interface EpisodeFormData {
+  id: string;
   title: string;
   description: string;
   audio_url: string;

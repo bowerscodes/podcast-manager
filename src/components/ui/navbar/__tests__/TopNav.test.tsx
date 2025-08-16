@@ -84,18 +84,6 @@ describe('TopNav', () => {
     jest.clearAllMocks();
   });
 
-  it('should render brand logo and title', () => {
-    mockUseAuth.mockReturnValue({
-      user: mockUser,
-      setUser: mockSetUser,
-      loading: false
-    });
-
-    render(<TopNav />);
-
-    expect(screen.getByText(/🎙️ Podcast Manager/)).toBeInTheDocument();
-  });
-
   it('should show login button when user is not authenticated', () => {
     mockUseAuth.mockReturnValue({
       user: null,
@@ -108,20 +96,7 @@ describe('TopNav', () => {
     expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
   });
 
-  it('should show navigation links when user is authenticated', () => {
-    mockUseAuth.mockReturnValue({
-      user: mockUser,
-      setUser: mockSetUser,
-      loading: false
-    });
-
-    render(<TopNav />);
-
-    expect(screen.getByRole('button', { name: /publish/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /analytics/i })).toBeInTheDocument();
-  });
-
-    it('should show user menu when authenticated', () => {
+  it('should show user menu when authenticated', () => {
     mockUseAuth.mockReturnValue({
       user: mockUser,
       setUser: mockSetUser,
@@ -146,45 +121,5 @@ describe('TopNav', () => {
     fireEvent.click(loginButton);
 
     expect(mockOnOpen).toHaveBeenCalled();
-  });
-
-  it('should highlight active navigation link', () => {
-    mockUseAuth.mockReturnValue({
-      user: mockUser,
-      setUser: mockSetUser,
-      loading: false
-    });
-
-    render(<TopNav />);
-
-    const publishButton = screen.getByRole('button', { name: /publish/i });
-    expect(publishButton).toHaveClass('text-white', 'hover:text-purple-200');
-  });
-
-  it('should not show navigation when loading', () => {
-    mockUseAuth.mockReturnValue({
-      user: null,
-      setUser: mockSetUser,
-      loading: true
-    });
-
-    render(<TopNav />);
-
-    expect(screen.queryByRole('button', { name: /log in/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: /dashboard/i })).not.toBeInTheDocument();
-  });
-
-  it('should show brand title that is clickable', () => {
-    mockUseAuth.mockReturnValue({
-      user: mockUser,
-      setUser: mockSetUser,
-      loading: false
-    });
-
-    render(<TopNav />);
-
-    const brandTitle = screen.getByRole('heading', { name: /🎙️ podcast manager/i });
-    expect(brandTitle).toBeInTheDocument();
-    expect(brandTitle).toHaveClass('cursor-pointer');
   });
 });

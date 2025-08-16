@@ -70,7 +70,8 @@ describe('PodcastActions', () => {
     language: 'en',
     categories: ['Technology'],
     author: 'Test Author',
-    email: 'test@example.com'
+    email: 'test@example.com',
+    explicit: false
   };
 
   beforeEach(() => {
@@ -86,7 +87,8 @@ describe('PodcastActions', () => {
     it('should render back button', () => {
       render(<PodcastActions podcast={mockPodcast} />);
       
-      expect(screen.getByText('← Back to Podcasts')).toBeInTheDocument();
+      // Use flexible text matching for split text
+      expect(screen.getByText('Back to Podcasts')).toBeInTheDocument();
     });
 
     it('should use router.back() when history exists', () => {
@@ -98,7 +100,9 @@ describe('PodcastActions', () => {
 
       render(<PodcastActions podcast={mockPodcast} />);
       
-      fireEvent.click(screen.getByText('← Back to Podcasts'));
+      // Click on the button element containing the text
+      const backButton = screen.getByText('Back to Podcasts').closest('button');
+      fireEvent.click(backButton!);
       
       expect(mockBack).toHaveBeenCalledTimes(1);
       expect(mockPush).not.toHaveBeenCalled();
@@ -115,7 +119,8 @@ describe('PodcastActions', () => {
       
       // Wait for useEffect to set canGoBack state
       waitFor(() => {
-        fireEvent.click(screen.getByText('← Back to Podcasts'));
+        const backButton = screen.getByText('Back to Podcasts').closest('button');
+        fireEvent.click(backButton!);
         
         expect(mockPush).toHaveBeenCalledWith('/podcasts');
         expect(mockBack).not.toHaveBeenCalled();
@@ -202,7 +207,7 @@ describe('PodcastActions', () => {
     it('should render buttons with correct layout classes', () => {
       render(<PodcastActions podcast={mockPodcast} />);
       
-      const container = screen.getByText('← Back to Podcasts').closest('div');
+      const container = screen.getByText('Back to Podcasts').closest('div');
       expect(container).toHaveClass('flex', 'justify-between');
     });
 
@@ -226,7 +231,8 @@ describe('PodcastActions', () => {
 
       render(<PodcastActions podcast={mockPodcast} />);
       
-      fireEvent.click(screen.getByText('← Back to Podcasts'));
+      const backButton = screen.getByText('Back to Podcasts').closest('button');
+      fireEvent.click(backButton!);
       
       // Should fallback to push when history length is undefined
       expect(mockPush).toHaveBeenCalledWith('/podcasts');
@@ -241,7 +247,8 @@ describe('PodcastActions', () => {
       render(<PodcastActions podcast={mockPodcast} />);
       
       await waitFor(() => {
-        fireEvent.click(screen.getByText('← Back to Podcasts'));
+        const backButton = screen.getByText('Back to Podcasts').closest('button');
+        fireEvent.click(backButton!);
         expect(mockBack).toHaveBeenCalledTimes(1);
       });
     });

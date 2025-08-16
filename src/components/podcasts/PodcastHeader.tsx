@@ -7,6 +7,7 @@ import { formatDate } from '@/lib/date-utils';
 import { supabase } from '@/lib/supabase';
 import EditableField from '../ui/EditableField';
 import EditableImage from '../ui/EditableImage';
+import ExplicitTag from '../ui/ExplicitTag';
 
 type Props = {
   podcast: Podcast;
@@ -53,12 +54,15 @@ export default function PodcastHeader({ podcast, episodeCount }: Props) {
         className="shadow-md"
       />
       <div className="flex-1">
-        <EditableField
-          value={localPodcast.title}
-          onSave={(value) => updatePodcast("title", value)}
-        >
-          <h1>{localPodcast.title}</h1>
-        </EditableField>
+        <div className="flex gap-2 mb-2">
+          <EditableField
+            value={localPodcast.title}
+            onSave={(value) => updatePodcast("title", value)}
+          >
+            <h1>{localPodcast.title}</h1>
+          </EditableField>
+          <ExplicitTag isExplicit={podcast.explicit} className="flex my-auto" />
+        </div>        
         <div className="mb-4">
           <EditableField
             value={localPodcast.description}

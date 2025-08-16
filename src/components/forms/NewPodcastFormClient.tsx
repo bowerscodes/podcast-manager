@@ -5,6 +5,7 @@ import { useAuth } from "@/providers/Providers";
 import { NewPodcastFormData } from "@/types/podcast";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
+import { Checkbox } from "@heroui/checkbox";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -24,6 +25,7 @@ export default function NewPodcastFormClient({ initialData }: Props) {
     email: initialData.email || "",
     website: initialData.website || "",
     artwork: initialData.artwork || "",
+    explicit: initialData.explicit || false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,7 +106,16 @@ export default function NewPodcastFormClient({ initialData }: Props) {
         onChange={(e) => setFormData({ ...formData, artwork: e.target.value })}
       />
 
-      <div className="flex gap-4">
+      <label>
+        <Checkbox
+          type="checkbox"
+          checked={formData.explicit}
+          onChange={(e) => setFormData({ ...formData, explicit: e.target.checked })}
+        />
+        Explicit
+      </label>
+
+      <div className="flex gap-4 mt-6">
         <Button type="submit" color="primary" isLoading={isLoading}>
           Create Podcast
         </Button>

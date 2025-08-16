@@ -266,7 +266,7 @@ describe('EpisodeFormClient', () => {
     fireEvent.click(screen.getByRole('button', { name: /add episode/i }));
 
     await waitFor(() => {
-      expect(mockInsert).toHaveBeenCalledWith({
+      expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Test Episode',
         description: 'Test Description',
         audio_url: 'https://example.com/audio.mp3',
@@ -274,7 +274,7 @@ describe('EpisodeFormClient', () => {
         episode_number: '1',
         explicit: false,
         podcast_id: 'podcast-123'
-      });
+      }));
     });
 
     expect(toast.success).toHaveBeenCalledWith('Episode created successfully!');

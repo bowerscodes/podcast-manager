@@ -154,6 +154,7 @@ describe('NewPodcastFormClient', () => {
         email: 'test@example.com',
         website: '',
         artwork: '',
+        explicit: false,
         user_id: 'user-123'
       });
       expect(toast.success).toHaveBeenCalledWith('Podcast created successfully!');

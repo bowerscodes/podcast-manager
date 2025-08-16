@@ -8,6 +8,7 @@ import { Episode } from '@/types/podcast';
 import EpisodeModal from '@/components/modals/EpisodeModal';
 import DeleteModal from '@/components/modals/DeleteModal';
 import EpisodeDescription from './EpisodeDescription';
+import ExplicitTag from '@/components/ui/ExplicitTag';
 
 type EpisodeRowProps = {
   episode: Episode;
@@ -27,7 +28,7 @@ export default function EpisodeRow({
         <Card className="flex flex-col mb-3">
           <CardHeader className="flex justify-between items-start pb-0 gap-3">
             <h3 className="break-words">
-              {episode.episode_number}. {episode.title}
+              {episode.episode_number}. {episode.title} <ExplicitTag isExplicit={episode.explicit} />
             </h3>
             <div className="flex flex-row gap-1 flex-shrink-0">
               <Button 
