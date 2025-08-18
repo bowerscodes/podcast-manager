@@ -83,6 +83,18 @@ jest.mock('@heroui/input', () => ({
       />
     </div>
   ),
+  Textarea: ({ label, value, onChange, rows, ...props }: { label?: string; value?: string; onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void; rows?: number; [key: string]: unknown }) => (
+    <div>
+      <label>{label}</label>
+      <textarea 
+        aria-label={label}
+        value={value}
+        onChange={onChange}
+        rows={rows}
+        {...props}
+      />
+    </div>
+  )
 }));
 
 jest.mock('@heroui/checkbox', () => ({
@@ -125,7 +137,7 @@ describe('EpisodeFormClient', () => {
     // Wait for initial fetch to complete
     await waitFor(() => {
       expect(screen.getByLabelText(/episode title/i)).toBeTruthy();
-      expect(screen.getAllByRole('textbox')[1]).toBeTruthy(); // Description textarea
+      expect(screen.getByLabelText(/description/i)).toBeTruthy();
       expect(screen.getByLabelText(/audio url/i)).toBeTruthy();
       expect(screen.getByLabelText(/season number/i)).toBeTruthy();
       expect(screen.getByLabelText(/episode number/i)).toBeTruthy();
@@ -150,7 +162,7 @@ describe('EpisodeFormClient', () => {
     // Wait for component to render
     await waitFor(() => {
       expect((screen.getByLabelText(/episode title/i) as HTMLInputElement).value).toBe('Test Episode');
-      expect((screen.getAllByRole('textbox')[1] as HTMLTextAreaElement).value).toBe('Test Description');
+      expect((screen.getByLabelText(/description/i) as HTMLTextAreaElement).value).toBe('Test Description');
       expect((screen.getByLabelText(/audio url/i) as HTMLInputElement).value).toBe('https://example.com/audio.mp3');
       expect((screen.getByLabelText(/season number/i) as HTMLInputElement).value).toBe('1');
       expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('5');
@@ -250,7 +262,7 @@ describe('EpisodeFormClient', () => {
     fireEvent.change(screen.getByLabelText(/episode title/i), {
       target: { value: 'Test Episode' }
     });
-    fireEvent.change(screen.getAllByRole('textbox')[1], {
+    fireEvent.change(screen.getByLabelText(/description/i), {
       target: { value: 'Test Description' }
     });
     fireEvent.change(screen.getByLabelText(/audio url/i), {

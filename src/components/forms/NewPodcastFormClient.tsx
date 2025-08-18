@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { NewPodcastFormData } from "@/types/podcast";
 import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
+import { Input, Textarea } from "@heroui/input";
 import { Checkbox } from "@heroui/checkbox";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -64,18 +64,16 @@ export default function NewPodcastFormClient({ initialData }: Props) {
         required
         autoFocus
       />
-      <div>
-        <label className="block text-sm font-medium mb-2">Description</label>
-        <textarea
-          className="w-full p-3 border rounded-lg"
-          rows={4}
-          value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-          required
-        />
-      </div>
+      
+      <Textarea 
+        label="Description"
+        rows={4}
+        value={formData.description}
+        onChange={(e) => {
+          setFormData({ ...formData, description: e.target.value})
+        }}
+        required
+      />
 
       <Input
         label="Author name"
