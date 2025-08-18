@@ -65,7 +65,8 @@ describe('PodcastCard', () => {
     artwork: 'https://example.com/artwork.jpg',
     user_id: 'user1',
     created_at: new Date('2024-01-01'),
-    updated_at: new Date('2024-01-01')
+    updated_at: new Date('2024-01-01'),
+    explicit: false
   };
 
   beforeEach(() => {
