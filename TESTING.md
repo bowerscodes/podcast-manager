@@ -6,9 +6,9 @@ This project uses Jest and React Testing Library for comprehensive unit testing 
 
 ## Test Statistics
 
-- **27 test suites** with **240 tests** 
+- **27 test suites** with **238 tests** 
 - **65.50% coverage** (statements)
-- **~2.3 second execution time**
+- **~2.4 second execution time**
 
 ## Coverage by Component Type
 
@@ -54,7 +54,18 @@ The **EpisodeDescription** component has been added with comprehensive test cove
 - **Edge Cases**: Tests handle empty descriptions, very long content, and measurement edge cases
 - **DOM Mocking**: Advanced testing patterns using HTMLElement prototype mocking for accurate DOM simulation
 
-This adds 9 comprehensive tests covering the complex responsive text truncation behavior with smooth animations.
+The EpisodeDescription component adds 9 comprehensive tests covering the complex responsive text truncation behavior with smooth animations.
+
+The **SocialLoginButtons** component tests have been enhanced with proper OAuth testing:
+
+- **Window Location Mocking**: Tests properly mock `window.location.origin` to verify correct redirect URLs
+- **OAuth Provider Testing**: Tests verify GitHub and Google OAuth integration with correct redirect endpoints
+- **Error Handling**: Tests validate proper error message display for OAuth failures, network errors, and unknown errors
+- **Jest Environment Configuration**: Tests use proper JSDOM URL configuration for accurate `window.location` behavior
+- **Provider Filtering**: Tests ensure only enabled providers (GitHub/Google) are displayed, not disabled ones (Apple/Facebook)
+- **Test Environment Accuracy**: Tests verify the expected application behavior rather than adapting to testing limitations
+
+These improvements ensure OAuth functionality is properly tested with accurate redirect URLs (`http://localhost:3000/auth/callback`) that will work correctly in production environments.
 
 ## Running Tests
 
@@ -74,9 +85,10 @@ npm test src/lib/__tests__/rss-utils.test.ts
 
 ## Test Configuration
 
-### Jest Setup (`jest.config.js`)
+### Jest Setup (`jest.config.mjs`)
 - Next.js Jest configuration for seamless integration
 - TypeScript support with module path mapping (`@/` aliases)
+- JSDOM test environment with proper URL configuration (`http://localhost:3000`)
 - Coverage collection from `src/` directory
 
 ### Mocks (`jest.setup.js`)
@@ -100,19 +112,6 @@ src/
 │   └── ui/__tests__/        # UI components
 └── app/api/*//__tests__/    # API route tests
 ```
-
-## Test Configuration
-
-### Jest Setup (`jest.config.js`)
-- Next.js Jest configuration for seamless integration
-- TypeScript support with module path mapping (`@/` aliases)
-- Coverage collection from `src/` directory
-
-### Mocks (`jest.setup.js`)
-- Next.js navigation hooks
-- Supabase client
-- HeroUI components  
-- Toast notifications
 
 ## Test Structure & Organization
 
@@ -234,16 +233,16 @@ npm test src/lib/__tests__/           # Specific directory
 
 ## Summary
 
-This project has comprehensive test coverage with **27 test suites** and **240 tests** covering all critical functionality including RSS generation, authentication, forms, UI components, custom hooks, and API routes.
+This project has comprehensive test coverage with **27 test suites** and **238 tests** covering all critical functionality including RSS generation, authentication, forms, UI components, custom hooks, and API routes.
 
 ---
 
 ## Test Results Summary
 
-- ✅ **71 tests passing** across all test suites
+- ✅ **238 tests passing** across all test suites
 - 📊 **100% coverage** on utility functions
 - 🎯 **Complete coverage** on components, hooks, and API routes
-- � **Production ready** with comprehensive test suite
-- � **Zero linting errors** - clean, professional code
+- 🚀 **Production ready** with comprehensive test suite
+- ✨ **Zero linting errors** - clean, professional code
 
 The test suite provides comprehensive coverage of the application's core functionality including RSS generation, data handling, user interface components, and API endpoints. All tests pass consistently and the codebase maintains high quality standards.

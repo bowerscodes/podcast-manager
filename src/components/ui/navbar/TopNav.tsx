@@ -1,8 +1,11 @@
 'use client';
 
-import { Button } from "@heroui/button";
+import { useState } from 'react';
+import Link from 'next/link';
+import { Button } from '@heroui/button';
 import { useDisclosure } from '@heroui/modal';
 import { useRouter } from "next/navigation";
+
 import { useAuth } from '@/providers/Providers';
 import UserMenu from './UserMenu';
 import LoginModal from './LoginModal';

@@ -18,6 +18,13 @@ export default function PodcastsList() {
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
 
+  // ADD THIS: Auth protection useEffect
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/');
+    }
+  }, [user, authLoading, router]);
+
   useEffect(() => {
     const fetchPodcasts = async () => {
       if (!user) return;
@@ -48,9 +55,7 @@ export default function PodcastsList() {
   }
 
   if (!user) {
-    return (
-      <div className="p-8 text-center">Please login to view your podcasts.</div>
-    );
+    return null;
   }
   
   if (dataLoading) {

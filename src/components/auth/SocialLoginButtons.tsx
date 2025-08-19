@@ -7,8 +7,8 @@ import { supabase } from '@/lib/supabase';
 type SocialProvider = 'apple' | 'facebook' | 'github' | 'google';
 
 const socialProviders: { provider: SocialProvider; label: string }[] = [
-  { provider: 'apple', label: 'Continue with Apple'},
-  { provider: 'facebook', label: 'Continue with Facebook'},
+  // { provider: 'apple', label: 'Continue with Apple'},
+  // { provider: 'facebook', label: 'Continue with Facebook'},
   { provider: 'github', label: 'Continue with GitHub'},
   { provider: 'google', label: 'Continue with Google'},
 ];
@@ -19,7 +19,7 @@ export default function SocialLoginButtons() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
       if (error) throw error;
