@@ -22,6 +22,10 @@ export default function SocialLoginButtons() {
         provider,
         options: {
           redirectTo,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent"
+          }
         },
       });
       if (error) throw error;
