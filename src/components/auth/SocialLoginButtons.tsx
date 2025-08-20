@@ -16,10 +16,12 @@ const socialProviders: { provider: SocialProvider; label: string }[] = [
 export default function SocialLoginButtons() {
   const handleSocialLogin = async (provider: SocialProvider) => {
     try {
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo,
         },
       });
       if (error) throw error;
