@@ -47,6 +47,14 @@ export const defaultArtwork = () => {
   );
 };
 
+export const podcastCategories = [
+  'Arts', 'Business', 'Comedy', 'Education', 'Fiction', 'Food & Drink',
+  'Government', 'Health & Fitness', 'History', 'Kids & Family',
+  'Leisure', 'Music', 'News', 'Religion & Spirituality',
+  'Science', 'Society & Culture', 'Sports', 'Technology',
+  'True Crime', 'TV & Film'
+];
+
 export const podcastCards = [
   {
     id: "testPodcast1",

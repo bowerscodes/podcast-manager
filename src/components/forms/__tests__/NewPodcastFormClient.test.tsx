@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import toast from "react-hot-toast";
+
 import NewPodcastFormClient from "@/components/forms/NewPodcastFormClient";
 
 // Mock Next.js router
@@ -118,6 +119,67 @@ jest.mock("@heroui/input", () => ({
   ),
 }));
 
+jest.mock("@heroui/select", () => ({
+  Select: ({
+    label,
+    children,
+    value, 
+    onChange, 
+    selectionMode, 
+    ...props
+  }: {
+    label?: string;
+    children?: React.ReactNode;
+    value?: string[];
+    onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    selectionMode?: "single" | "multiple";
+    [key: string]: unknown;
+  }) => (
+    <div>
+      <div>{label}</div>
+      <select
+        aria-label={label}
+        value={value}
+        onChange={onChange}
+        multiple={selectionMode === "multiple"}
+        {...props}
+      >
+        {children}
+      </select>
+    </div>
+  ),
+  SelectItem: ({
+    children,
+    ...props
+  }: {
+    children: React.ReactNode;
+    [key: string]: unknown;
+  }) => (
+    <option value={children as string} {...props} >
+      {children}
+    </option>
+  )
+}));
+
+jest.mock("@heroui/checkbox", () => ({
+  Checkbox: ({
+    checked, 
+    onChange, 
+    ...props
+  }: {
+    checked?: boolean
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    [key: string]: unknown;
+  }) => (
+    <input 
+      type="checkbox"
+      checked={checked}
+      onChange={onChange}
+      {...props}
+    />
+  )
+}));
+
 describe("NewPodcastFormClient", () => {
   const defaultProps = {
     initialData: {},
@@ -132,20 +194,24 @@ describe("NewPodcastFormClient", () => {
 
     expect(screen.getByLabelText(/podcast title/i)).toBeTruthy();
     expect(screen.getByLabelText(/description/i)).toBeTruthy();
+    expect(screen.getByLabelText(/categories/i)).toBeTruthy();
     expect(screen.getByLabelText(/author name/i)).toBeTruthy();
     expect(screen.getByLabelText(/contact email/i)).toBeTruthy();
     expect(screen.getByLabelText(/website/i)).toBeTruthy();
     expect(screen.getByLabelText(/artwork url/i)).toBeTruthy();
+    expect(screen.getByLabelText(/explicit/i)).toBeTruthy();
   });
 
   it("should populate form with initial data", () => {
     const initialData = {
       title: "Test Podcast",
       description: "Test Description",
+      categories: ["Business"],
       author: "Test Author",
       email: "test@example.com",
       website: "https://example.com",
       artwork: "https://example.com/art.jpg",
+      explicit: false
     };
 
     render(<NewPodcastFormClient initialData={initialData} />);
@@ -156,6 +222,9 @@ describe("NewPodcastFormClient", () => {
     expect(
       (screen.getByLabelText(/description/i) as HTMLTextAreaElement).value
     ).toBe("Test Description");
+    expect(
+      (screen.getByLabelText(/categories/i) as HTMLSelectElement).value
+    ).toBe("Business");
     expect(
       (screen.getByLabelText(/author name/i) as HTMLInputElement).value
     ).toBe("Test Author");
@@ -168,6 +237,9 @@ describe("NewPodcastFormClient", () => {
     expect(
       (screen.getByLabelText(/artwork url/i) as HTMLInputElement).value
     ).toBe("https://example.com/art.jpg");
+    expect(
+      (screen.getByLabelText(/explicit/i) as HTMLInputElement).checked
+    ).toBe(false)
   });
   it("should update form fields when user types", () => {
     render(<NewPodcastFormClient {...defaultProps} />);
@@ -175,10 +247,13 @@ describe("NewPodcastFormClient", () => {
     const titleInput = screen.getByLabelText(
       /podcast title/i
     ) as HTMLInputElement;
+    const explicitCheckbox = screen.getByLabelText(/explicit/i) as HTMLInputElement;
 
     fireEvent.change(titleInput, { target: { value: "New Title" } });
+    fireEvent.click(explicitCheckbox);
 
     expect(titleInput.value).toBe("New Title");
+    expect(explicitCheckbox.checked).toBe(true);
   });
 
   it("should submit form successfully", async () => {
@@ -191,12 +266,18 @@ describe("NewPodcastFormClient", () => {
     fireEvent.change(screen.getByLabelText(/description/i), {
       target: { value: "Test Description" },
     });
+    fireEvent.change(screen.getByLabelText(/categories/i), {
+      target: { value: ["Business"] },
+    });
     fireEvent.change(screen.getByLabelText(/author name/i), {
       target: { value: "Test Author" },
     });
     fireEvent.change(screen.getByLabelText(/contact email/i), {
       target: { value: "test@example.com" },
     });
+    fireEvent.click(screen.getByLabelText(/explicit/i), {
+      target: { checked: false }
+    })
 
     // Submit the form
     fireEvent.click(screen.getByRole("button", { name: /create podcast/i }));
@@ -205,11 +286,12 @@ describe("NewPodcastFormClient", () => {
       expect(mockInsert).toHaveBeenCalledWith({
         title: "Test Podcast",
         description: "Test Description",
+        categories: ["Business"],
         author: "Test Author",
         email: "test@example.com",
         website: "",
         artwork: "",
-        explicit: false,
+        explicit: true,
         user_id: "user-123",
       });
       expect(toast.success).toHaveBeenCalledWith(
@@ -235,12 +317,18 @@ describe("NewPodcastFormClient", () => {
     fireEvent.change(screen.getByLabelText(/description/i), {
       target: { value: "Test Description" },
     });
+    fireEvent.change(screen.getByLabelText(/categories/i), {
+      target: { value: ["Business"] },
+    });
     fireEvent.change(screen.getByLabelText(/author name/i), {
       target: { value: "Test Author" },
     });
     fireEvent.change(screen.getByLabelText(/contact email/i), {
       target: { value: "test@example.com" },
     });
+    fireEvent.change(screen.getByLabelText(/explicit/i), {
+      target: { checked: false }
+    })
 
     // Submit the form
     fireEvent.click(screen.getByRole("button", { name: /create podcast/i }));

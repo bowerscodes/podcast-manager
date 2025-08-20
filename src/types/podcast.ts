@@ -36,6 +36,7 @@ export interface NewPodcastFormData {
   email: string;
   website: string;
   artwork: string;
+  categories: string[];
   explicit: boolean;
 };
 

@@ -1,14 +1,17 @@
 'use client';
 
-import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/providers/Providers";
-import { NewPodcastFormData } from "@/types/podcast";
 import { Button } from "@heroui/button";
 import { Input, Textarea } from "@heroui/input";
+import { Select, SelectItem } from "@heroui/select";
 import { Checkbox } from "@heroui/checkbox";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
+
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/providers/Providers";
+import { NewPodcastFormData } from "@/types/podcast";
+import { podcastCategories } from "@/lib/data";
 
 type Props = {
   initialData: Partial<NewPodcastFormData>;
@@ -25,6 +28,7 @@ export default function NewPodcastFormClient({ initialData }: Props) {
     email: initialData.email || "",
     website: initialData.website || "",
     artwork: initialData.artwork || "",
+    categories: initialData.categories || [],
     explicit: initialData.explicit || false,
   });
 
@@ -75,6 +79,17 @@ export default function NewPodcastFormClient({ initialData }: Props) {
         required
       />
 
+      <Select 
+        label="Categories"
+        selectionMode="multiple"
+        value={formData.categories || []}
+        onChange={(e) => setFormData({ ...formData, categories: [e.target.value] })}
+      >
+        {podcastCategories.map((category) => (
+          <SelectItem key={category} >{category}</SelectItem>
+        ))}
+      </Select>
+
       <Input
         label="Author name"
         value={formData.author}
@@ -106,11 +121,10 @@ export default function NewPodcastFormClient({ initialData }: Props) {
 
       <label>
         <Checkbox
-          type="checkbox"
           checked={formData.explicit}
           onChange={(e) => setFormData({ ...formData, explicit: e.target.checked })}
-        />
-        Explicit
+          />
+          Explicit
       </label>
 
       <div className="flex gap-4 mt-6">
