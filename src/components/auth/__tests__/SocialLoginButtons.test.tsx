@@ -66,6 +66,10 @@ describe('SocialLoginButtons', () => {
         provider: 'github',
         options: {
           redirectTo: 'http://localhost:3000/auth/callback',
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent"
+          }
         },
       });
     });
@@ -85,6 +89,10 @@ describe('SocialLoginButtons', () => {
         provider: 'google',
         options: {
           redirectTo: 'http://localhost:3000/auth/callback',
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent"
+          }
         },
       });
     });
