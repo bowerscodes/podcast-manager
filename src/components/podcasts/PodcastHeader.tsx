@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 import EditableField from '../ui/EditableField';
 import EditableImage from '../ui/EditableImage';
 import ExplicitTag from '../ui/ExplicitTag';
+import ExpandableText from '../ui/ExpandableText';
 
 type Props = {
   podcast: Podcast;
@@ -67,8 +68,12 @@ export default function PodcastHeader({ podcast, episodeCount }: Props) {
           <EditableField
             value={localPodcast.description}
             onSave={(value) => updatePodcast("description", value)}
+            maxLines={3}
           >
-            <p className="text-gray-600">{localPodcast.description}</p>
+            <ExpandableText 
+              text={localPodcast.description}
+              maxLines={3}
+            />
           </EditableField>
         </div>
         <div className="text-sm gap-1 text-gray-500 h-5 mb-2 flex items-start">

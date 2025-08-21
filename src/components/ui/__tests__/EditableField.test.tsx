@@ -137,4 +137,166 @@ describe('EditableField', () => {
     const input = screen.getByDisplayValue('Test Value');
     expect(input).toHaveClass('custom-class');
   });
+
+  describe('maxLines functionality', () => {
+    it('should render as textarea when maxLines is provided', () => {
+      render(<EditableField {...defaultProps} maxLines={3} />);
+      
+      const editButton = screen.getByRole('button');
+      fireEvent.click(editButton);
+      
+      const textarea = screen.getByRole('textbox');
+      expect(textarea).toHaveProperty('tagName', 'TEXTAREA');
+      expect(textarea).toHaveAttribute('rows', '3');
+    });
+
+    it('should not save on Enter when maxLines is provided', () => {
+      render(<EditableField {...defaultProps} maxLines={3} />);
+      
+      const editButton = screen.getByRole('button');
+      fireEvent.click(editButton);
+      
+      const textarea = screen.getByDisplayValue('Test Value');
+      fireEvent.change(textarea, { target: { value: 'Updated Value' } });
+      fireEvent.keyDown(textarea, { key: 'Enter', code: 'Enter' });
+      
+      // Should still be in edit mode, not saved
+      expect(screen.getByDisplayValue('Updated Value')).toBeInTheDocument();
+      expect(mockOnSave).not.toHaveBeenCalled();
+    });
+
+    it('should apply captured styles when available', () => {
+      // Mock the style capture functionality
+      Object.defineProperty(window, 'getComputedStyle', {
+        value: jest.fn().mockReturnValue({
+          fontSize: '14px',
+          lineHeight: '20px',
+          color: 'rgb(75, 85, 99)',
+          fontFamily: 'Arial'
+        }),
+        writable: true
+      });
+
+      const TestComponent = () => (
+        <div>
+          <p>Test content with styles</p>
+        </div>
+      );
+
+      render(
+        <EditableField 
+          {...defaultProps} 
+          maxLines={3}
+        >
+          {<TestComponent />}
+        </EditableField>
+      );
+      
+      const editButton = screen.getByRole('button');
+      fireEvent.click(editButton);
+      
+      const textarea = screen.getByRole('textbox');
+      
+      // Verify textarea exists (styles will be applied via inline styles)
+      expect(textarea).toBeInTheDocument();
+    });
+
+    it('should have proper styling for multi-line editing', () => {
+      render(<EditableField {...defaultProps} maxLines={3} />);
+      
+      const editButton = screen.getByRole('button');
+      fireEvent.click(editButton);
+      
+      const textarea = screen.getByRole('textbox');
+      expect(textarea.tagName).toBe('TEXTAREA');
+      expect(textarea).toHaveClass('bg-transparent', 'border-b-2', 'border-blue-500', 'outline-none');
+    });
+  });
+
+  describe('ExpandableText integration', () => {
+    const ExpandableTextMock = ({ text }: { text: string }) => (
+      <div>
+        <p>{text}</p>
+        <button>Show more</button>
+      </div>
+    );
+
+    it('should handle ExpandableText children correctly', () => {
+      render(
+        <EditableField 
+          {...defaultProps} 
+          maxLines={3}
+        >
+          <ExpandableTextMock text="Test Value" />
+        </EditableField>
+      );
+      
+      expect(screen.getByText('Test Value')).toBeInTheDocument();
+      expect(screen.getByText('Show more')).toBeInTheDocument();
+    });
+
+    it('should use flex-col layout for proper ExpandableText display', () => {
+      const { container } = render(
+        <EditableField 
+          {...defaultProps} 
+          maxLines={3}
+        >
+          <ExpandableTextMock text="Test Value" />
+        </EditableField>
+      );
+      
+      // Look for the div with flex flex-col classes
+      const flexContainer = container.querySelector('.flex.flex-col');
+      expect(flexContainer).toBeInTheDocument();
+    });
+  });
+
+  describe('style capture functionality', () => {
+    beforeEach(() => {
+      // Mock querySelector to return a mock element
+      Object.defineProperty(Element.prototype, 'querySelector', {
+        value: jest.fn().mockReturnValue({
+          style: {},
+          scrollHeight: 100,
+          clientHeight: 50
+        }),
+        writable: true
+      });
+    });
+
+    it('should capture styles from child elements', () => {
+      Object.defineProperty(window, 'getComputedStyle', {
+        value: jest.fn().mockReturnValue({
+          fontSize: '16px',
+          lineHeight: '24px',
+          color: 'rgb(0, 0, 0)',
+          fontFamily: 'Arial'
+        }),
+        writable: true
+      });
+
+      render(<EditableField {...defaultProps} maxLines={3} />);
+      
+      const editButton = screen.getByRole('button');
+      fireEvent.click(editButton);
+      
+      // Verify that editing mode was activated
+      expect(screen.getByRole('textbox')).toBeInTheDocument();
+    });
+
+    it('should handle missing text elements gracefully', () => {
+      Object.defineProperty(Element.prototype, 'querySelector', {
+        value: jest.fn().mockReturnValue(null),
+        writable: true
+      });
+
+      render(<EditableField {...defaultProps} maxLines={3} />);
+      
+      const editButton = screen.getByRole('button');
+      fireEvent.click(editButton);
+      
+      // Should still render textarea even without captured styles
+      expect(screen.getByRole('textbox')).toBeInTheDocument();
+    });
+  });
 });

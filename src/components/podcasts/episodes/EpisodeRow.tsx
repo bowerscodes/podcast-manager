@@ -7,7 +7,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 import { Episode } from '@/types/podcast';
 import EpisodeModal from '@/components/modals/EpisodeModal';
 import DeleteModal from '@/components/modals/DeleteModal';
-import EpisodeDescription from './EpisodeDescription';
+import ExpandableText from '@/components/ui/ExpandableText';
 import ExplicitTag from '@/components/ui/ExplicitTag';
 
 type EpisodeRowProps = {
@@ -50,7 +50,7 @@ export default function EpisodeRow({
             </div>
           </CardHeader>
           <CardBody className="flex-grow pt-0">
-            <EpisodeDescription description={episode.description} />
+            <ExpandableText text={episode.description} />
           </CardBody>
         </Card>
       </div>

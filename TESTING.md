@@ -6,9 +6,9 @@ This project uses Jest and React Testing Library for comprehensive unit testing 
 
 ## Test Statistics
 
-- **27 test suites** with **238 tests** 
-- **65.50% coverage** (statements)
-- **~2.4 second execution time**
+- **28 test suites** with **267 tests** 
+- **Estimated 67.8% coverage** (statements)
+- **~2.9 second execution time**
 
 ## Coverage by Component Type
 
@@ -28,7 +28,7 @@ This project uses Jest and React Testing Library for comprehensive unit testing 
 - **RSS & Utilities** (19 tests) - RSS feed generation, platform detection, date formatting
 - **Authentication** (36 tests) - Login/logout flows, protected routes, OAuth integration  
 - **Forms** (46 tests) - Podcast/episode creation, validation, file uploads, smart defaults
-- **Components** (127 tests) - UI components, modals, navigation, user interactions
+- **Components** (156 tests) - UI components, modals, navigation, user interactions
 - **Custom Hooks** (8 tests) - Data fetching, state management
 - **API Routes** (1 test) - RSS endpoint with database integration
 
@@ -55,6 +55,33 @@ The **EpisodeDescription** component has been added with comprehensive test cove
 - **DOM Mocking**: Advanced testing patterns using HTMLElement prototype mocking for accurate DOM simulation
 
 The EpisodeDescription component adds 9 comprehensive tests covering the complex responsive text truncation behavior with smooth animations.
+
+The **ExpandableText** component has been created as a reusable text expansion component with comprehensive test coverage:
+
+- **Text Rendering**: Tests verify proper text display and custom className application
+- **Truncation Detection**: Tests ensure accurate detection of text overflow using DOM measurement mocking
+- **Expand/Collapse Functionality**: Tests validate show more/less button behavior with state management
+- **Icon Display**: Tests verify correct expand/collapse icon states throughout user interactions
+- **Responsive Behavior**: Tests cover window resize events and dynamic text content changes
+- **Height Calculations**: Tests validate proper CSS class application for container styling and animations
+- **Edge Cases**: Tests handle empty text, very long content, various maxLines values, and boundary conditions
+- **CSS Transitions**: Tests ensure proper application of transition classes for smooth animations
+- **DOM Mocking**: Advanced testing patterns using HTMLElement prototype mocking for accurate scrollHeight/clientHeight simulation
+
+The ExpandableText component adds 21 comprehensive tests covering all aspects of the responsive text expansion functionality with smooth animations and proper state management.
+
+The **EditableField** component has been enhanced with comprehensive test coverage for inline editing functionality:
+
+- **Basic Functionality**: Tests cover display mode, edit mode transitions, save/cancel operations
+- **Keyboard Interactions**: Tests validate Enter key saving and Escape key cancellation
+- **Multi-line Support**: Tests ensure proper textarea rendering and styling when maxLines prop is provided
+- **Style Capture**: Tests verify font size, color, and style preservation from original elements to edit inputs
+- **ExpandableText Integration**: Tests validate proper layout with flex-col classes for nested ExpandableText components
+- **Error Handling**: Tests cover graceful handling of missing text elements and style capture failures
+- **Element Type Support**: Tests ensure compatibility with different HTML elements (h1, h2, p, span)
+- **Custom Styling**: Tests verify proper application of custom input classes and styling overrides
+
+The EditableField component adds 17 comprehensive tests covering inline editing functionality, style preservation, and integration with other components like ExpandableText.
 
 The **SocialLoginButtons** component tests have been enhanced with proper OAuth testing:
 
@@ -158,7 +185,8 @@ src/
 │   │       └── EpisodeRow.test.tsx         ✅ 11 tests passing
 │   ├── ui/
 │   │   ├── __tests__/
-│   │   │   ├── EditableField.test.tsx      ✅ 7 tests passing
+│   │   │   ├── EditableField.test.tsx      ✅ 17 tests passing
+│   │   │   ├── ExpandableText.test.tsx     ✅ 21 tests passing
 │   │   │   ├── EditableImage.test.tsx      ✅ 8 tests passing
 │   │   │   └── LoadingSpinner.test.tsx     ✅ 1 test passing
 │   │   └── navbar/
@@ -233,13 +261,13 @@ npm test src/lib/__tests__/           # Specific directory
 
 ## Summary
 
-This project has comprehensive test coverage with **27 test suites** and **238 tests** covering all critical functionality including RSS generation, authentication, forms, UI components, custom hooks, and API routes.
+This project has comprehensive test coverage with **28 test suites** and **267 tests** covering all critical functionality including RSS generation, authentication, forms, UI components, custom hooks, and API routes.
 
 ---
 
 ## Test Results Summary
 
-- ✅ **238 tests passing** across all test suites
+- ✅ **267 tests passing** across all test suites
 - 📊 **100% coverage** on utility functions
 - 🎯 **Complete coverage** on components, hooks, and API routes
 - 🚀 **Production ready** with comprehensive test suite

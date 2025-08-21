@@ -3,13 +3,13 @@ import toast from 'react-hot-toast';
 import { AiOutlineEdit } from "react-icons/ai";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
-
 type Props = {
   value: string;
   onSave: (newValue: string) => Promise<void>;
   children: React.ReactElement<{ className?: string }>;
   inputClassName?: string;
   multiline?: boolean;
+  maxLines?: number;
 };
 
 type ElementType = "h1" | "h2" | "h3" | "h4" | "h5" | "p" | "span" | string;
@@ -47,20 +47,45 @@ export default function EditableField({
   onSave, 
   children, 
   inputClassName = "",
-  multiline = false
+  multiline = false,
+  maxLines
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
   const [saving, setSaving] = useState(false);
+  const [capturedStyles, setCapturedStyles] = useState<{
+    fontSize: string;
+    lineHeight: string;
+    color: string;
+    fontFamily: string;
+  } | null>(null);;
 
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const displayContainerRef = useRef<HTMLDivElement>(null);
 
+  const captureTextStyles = useCallback(() => {
+    if (!displayContainerRef.current) return null;
+
+    const textElement = displayContainerRef.current.querySelector("p, span, h1, h2, h3, h4, h5");
+
+    if (textElement) {
+      const computedStyle = window.getComputedStyle(textElement);
+
+      return {
+        fontSize: computedStyle.fontSize,
+        lineHeight: computedStyle.lineHeight,
+        color: computedStyle.color,
+        fontFamily: computedStyle.fontFamily
+      };
+    }
+
+    return null;
+  }, []);
 
   const adjustInputSize = useCallback(() => {
     const currentRef = multiline ? textareaRef.current : inputRef.current;
-    if (currentRef && !multiline) {
+    if (currentRef && !multiline && !maxLines) {
       const input = inputRef.current as HTMLInputElement;
 
       const span = document.createElement("span");
@@ -74,7 +99,7 @@ export default function EditableField({
       document.body.removeChild(span);
       input.style.width = `${width + 5}px`;
     }
-  }, [editValue, multiline]);
+  }, [editValue, multiline, maxLines]);
 
   useEffect(() => {
     if (isEditing) {
@@ -89,7 +114,7 @@ export default function EditableField({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isEditing && containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (isEditing && displayContainerRef.current && !displayContainerRef.current.contains(event.target as Node)) {
         handleCancel();
       }
     };
@@ -129,7 +154,7 @@ export default function EditableField({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !multiline) {
+    if (e.key === "Enter" && !multiline && !maxLines) {
       e.preventDefault();
       handleSave();
     }
@@ -148,27 +173,45 @@ export default function EditableField({
       value: editValue,
       onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setEditValue(e.target.value);
-        adjustInputSize();
+        if (!maxLines) adjustInputSize();
       },
       onKeyDown: handleKeyDown,
-      className: `bg-transparent border-b-2 border-blue-500 outline-none ${originalClassName} ${elementStyles} ${inputClassName}`,
+      className: maxLines 
+        ? `bg-transparent border-b-2 border-blue-500 outline-none ${inputClassName}`
+        : `bg-transparent border-b-2 border-blue-500 outline-none ${originalClassName} ${elementStyles} ${inputClassName}`,
       autoFocus: true,
       disabled: saving,
       style: {
         minHeight: "auto",
-        boxShadow: "none",
+        boxShadow: "none", 
         border: "none",
-        minWidth: "20px"
+        minWidth: "20px",
+        ...(maxLines && capturedStyles && {
+          fontSize: capturedStyles.fontSize,
+          lineHeight: capturedStyles.lineHeight,
+          color: capturedStyles.color,
+          fontFamily: capturedStyles.fontFamily,
+          width: "100%",
+          resize: "none" as const,
+          whiteSpace: "pre-wrap" as const,
+          wordBreak: "break-word" as const
+        }),
+        ...(maxLines && !capturedStyles && {
+          width: "100%",
+          resize: "none" as const,
+          whiteSpace: "pre-wrap" as const,
+          wordBreak: "break-word" as const
+        })
       }
     };
 
     return (
-      <div ref={containerRef} className="inline-flex items-center gap-2">
-        {multiline ? (
+      <div className="inline-flex items-center gap-2 w-full">
+        {multiline || maxLines ? (
           <textarea 
             ref={textareaRef}
             {...sharedProps}
-            rows={3}
+            rows={maxLines || 3}
           />
         ) : (
           <input 
@@ -177,7 +220,7 @@ export default function EditableField({
             {...sharedProps}
           />
         )}
-        <div className="flex gap-1">
+        <div className="flex gap-1 flex-shrink-0">
           <button
             onClick={handleSave}
             className="text-green-600 hover:text-green-700 hover:bg-green-50 bg-gray-100 rounded-md p-1 shadow-sm hover:shadow-md transition-colors cursor-pointer"
@@ -197,10 +240,16 @@ export default function EditableField({
   }
 
   return (
-    <div className="inline-flex items-center gap-3">
-      {cloneElement(children, {}, value)}
+    <div ref={displayContainerRef} className="inline-flex items-start gap-3">
+      <div className="flex flex-col">
+        {cloneElement(children, {}, value)}
+      </div>
       <button
-        onClick={() => setIsEditing(true)}
+        onClick={() => {
+          const styles = captureTextStyles();
+          setCapturedStyles(styles);
+          setIsEditing(true);
+        }}
         className="text-blue-500 text-sm hover:text-blue-600 transition-colors cursor-pointer"
       >
         <AiOutlineEdit size={iconSize} />
