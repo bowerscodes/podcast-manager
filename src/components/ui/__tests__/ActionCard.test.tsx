@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import ActionCard from '../../ActionCard';
+import ActionCard from '../ActionCard';
 
 // Mock Next.js router
 const mockPush = jest.fn();
