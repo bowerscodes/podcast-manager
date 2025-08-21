@@ -61,6 +61,7 @@ describe('RSS Utils', () => {
       artwork: 'https://example.com/artwork.jpg',
       user_id: 'user-123',
       language: 'en',
+      explicit: false,
       categories: ['Technology'],
       created_at: new Date('2024-01-01T00:00:00Z'),
       updated_at: new Date('2024-01-01T00:00:00Z')
