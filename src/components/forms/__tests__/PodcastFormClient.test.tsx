@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import toast from "react-hot-toast";
 
-import NewPodcastFormClient from "@/components/forms/NewPodcastFormClient";
+import PodcastFormClient from "@/components/forms/PodcastFormClient";
 
 // Mock Next.js router
 const mockPush = jest.fn();
@@ -37,8 +37,10 @@ jest.mock("@/providers/Providers", () => ({
 
 // Mock Supabase
 const mockInsert = jest.fn();
+const mockUpdate = jest.fn();
 const mockSelect = jest.fn();
 const mockSingle = jest.fn();
+const mockEq = jest.fn();
 
 jest.mock("@/lib/supabase", () => ({
   supabase: {
@@ -48,6 +50,16 @@ jest.mock("@/lib/supabase", () => ({
           single: mockSingle.mockResolvedValue({
             data: { id: "podcast-123", title: "Test Podcast" },
             error: null,
+          }),
+        }),
+      }),
+      update: mockUpdate.mockReturnValue({
+        eq: mockEq.mockReturnValue({
+          select: mockSelect.mockReturnValue({
+            single: mockSingle.mockResolvedValue({
+              data: { id: "podcast-123", title: "Updated Podcast" },
+              error: null,
+            }),
           }),
         }),
       }),
@@ -124,14 +136,14 @@ jest.mock("@heroui/select", () => ({
     label,
     children,
     value, 
-    onChange, 
+    onSelectionChange, 
     selectionMode, 
     ...props
   }: {
     label?: string;
     children?: React.ReactNode;
     value?: string[];
-    onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    onSelectionChange?: (keys: Set<string>) => void;
     selectionMode?: "single" | "multiple";
     [key: string]: unknown;
   }) => (
@@ -140,7 +152,10 @@ jest.mock("@heroui/select", () => ({
       <select
         aria-label={label}
         value={value}
-        onChange={onChange}
+        onChange={(e) => {
+          const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+          onSelectionChange?.(new Set(selectedOptions));
+        }}
         multiple={selectionMode === "multiple"}
         {...props}
       >
@@ -163,26 +178,36 @@ jest.mock("@heroui/select", () => ({
 
 jest.mock("@heroui/checkbox", () => ({
   Checkbox: ({
-    checked, 
-    onChange, 
+    isSelected, 
+    onValueChange,
+    children,
     ...props
   }: {
-    checked?: boolean
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    isSelected?: boolean
+    onValueChange?: (checked: boolean) => void;
+    children?: React.ReactNode;
     [key: string]: unknown;
   }) => (
-    <input 
-      type="checkbox"
-      checked={checked}
-      onChange={onChange}
-      {...props}
-    />
+    <label>
+      <input 
+        type="checkbox"
+        checked={isSelected}
+        onChange={(e) => onValueChange?.(e.target.checked)}
+        {...props}
+      />
+      {children}
+    </label>
   )
 }));
 
-describe("NewPodcastFormClient", () => {
+describe("PodcastFormClient", () => {
+  const mockOnSuccess = jest.fn();
+  const mockOnCancel = jest.fn();
+  
   const defaultProps = {
     initialData: {},
+    onSuccess: mockOnSuccess,
+    onCancel: mockOnCancel,
   };
 
   beforeEach(() => {
@@ -190,7 +215,7 @@ describe("NewPodcastFormClient", () => {
   });
 
   it("should render all form fields", () => {
-    render(<NewPodcastFormClient {...defaultProps} />);
+    render(<PodcastFormClient {...defaultProps} />);
 
     expect(screen.getByLabelText(/podcast title/i)).toBeTruthy();
     expect(screen.getByLabelText(/description/i)).toBeTruthy();
@@ -214,7 +239,7 @@ describe("NewPodcastFormClient", () => {
       explicit: false
     };
 
-    render(<NewPodcastFormClient initialData={initialData} />);
+    render(<PodcastFormClient initialData={initialData} onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
     expect(
       (screen.getByLabelText(/podcast title/i) as HTMLInputElement).value
@@ -242,7 +267,7 @@ describe("NewPodcastFormClient", () => {
     ).toBe(false)
   });
   it("should update form fields when user types", () => {
-    render(<NewPodcastFormClient {...defaultProps} />);
+    render(<PodcastFormClient {...defaultProps} />);
 
     const titleInput = screen.getByLabelText(
       /podcast title/i
@@ -256,8 +281,8 @@ describe("NewPodcastFormClient", () => {
     expect(explicitCheckbox.checked).toBe(true);
   });
 
-  it("should submit form successfully", async () => {
-    render(<NewPodcastFormClient {...defaultProps} />);
+  it("should submit form successfully in create mode", async () => {
+    render(<PodcastFormClient {...defaultProps} />);
 
     // Fill out the form
     fireEvent.change(screen.getByLabelText(/podcast title/i), {
@@ -284,6 +309,7 @@ describe("NewPodcastFormClient", () => {
 
     await waitFor(() => {
       expect(mockInsert).toHaveBeenCalledWith({
+        id: "",
         title: "Test Podcast",
         description: "Test Description",
         categories: ["Business"],
@@ -301,6 +327,55 @@ describe("NewPodcastFormClient", () => {
     });
   });
 
+  it("should submit form successfully in edit mode", async () => {
+    const editProps = {
+      initialData: {
+        id: "podcast-123",
+        title: "Existing Podcast",
+        description: "Existing Description",
+        categories: ["Technology"],
+        author: "Existing Author",
+        email: "existing@example.com",
+        website: "https://existing.com",
+        artwork: "https://existing.com/art.jpg",
+        explicit: false
+      },
+      onSuccess: mockOnSuccess,
+      onCancel: mockOnCancel,
+    };
+
+    render(<PodcastFormClient {...editProps} />);
+
+    // Update form fields
+    fireEvent.change(screen.getByLabelText(/podcast title/i), {
+      target: { value: "Updated Podcast" },
+    });
+    fireEvent.change(screen.getByLabelText(/description/i), {
+      target: { value: "Updated Description" },
+    });
+
+    // Submit the form
+    fireEvent.click(screen.getByRole("button", { name: /update podcast/i }));
+
+    await waitFor(() => {
+      expect(mockUpdate).toHaveBeenCalledWith({
+        title: "Updated Podcast",
+        description: "Updated Description",
+        categories: ["Technology"],
+        author: "Existing Author",
+        email: "existing@example.com",
+        website: "https://existing.com",
+        artwork: "https://existing.com/art.jpg",
+        explicit: false
+      });
+      expect(mockEq).toHaveBeenCalledWith("id", "podcast-123");
+      expect(toast.success).toHaveBeenCalledWith(
+        "Podcast updated successfully!"
+      );
+      expect(mockOnSuccess).toHaveBeenCalled();
+    });
+  });
+
   it("should handle submission errors", async () => {
     // Mock an error response
     mockSingle.mockResolvedValueOnce({
@@ -308,7 +383,7 @@ describe("NewPodcastFormClient", () => {
       error: { message: "Database error" },
     });
 
-    render(<NewPodcastFormClient {...defaultProps} />);
+    render(<PodcastFormClient {...defaultProps} />);
 
     // Fill out required fields
     fireEvent.change(screen.getByLabelText(/podcast title/i), {
@@ -338,16 +413,16 @@ describe("NewPodcastFormClient", () => {
     });
   });
 
-  it("should navigate back when cancel is clicked", () => {
-    render(<NewPodcastFormClient {...defaultProps} />);
+  it("should call onCancel when cancel is clicked", () => {
+    render(<PodcastFormClient {...defaultProps} />);
 
     fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
 
-    expect(mockBack).toHaveBeenCalled();
+    expect(mockOnCancel).toHaveBeenCalled();
   });
 
   it("should handle form validation for required fields", () => {
-    render(<NewPodcastFormClient {...defaultProps} />);
+    render(<PodcastFormClient {...defaultProps} />);
 
     const titleInput = screen.getByLabelText(/podcast title/i);
     const descriptionInput = screen.getByLabelText(/description/i);
@@ -361,7 +436,7 @@ describe("NewPodcastFormClient", () => {
   });
 
   it("should set correct input types", () => {
-    render(<NewPodcastFormClient {...defaultProps} />);
+    render(<PodcastFormClient {...defaultProps} />);
 
     expect(screen.getByLabelText(/contact email/i).getAttribute("type")).toBe(
       "email"

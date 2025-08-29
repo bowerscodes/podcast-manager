@@ -6,9 +6,9 @@ This project uses Jest and React Testing Library for comprehensive unit testing 
 
 ## Test Statistics
 
-- **28 test suites** with **267 tests** 
-- **Estimated 67.8% coverage** (statements)
-- **~2.9 second execution time**
+- **31 test suites** with **293 tests** 
+- **Estimated 70.1% coverage** (statements)
+- **~2.7 second execution time**
 
 ## Coverage by Component Type
 
@@ -27,9 +27,9 @@ This project uses Jest and React Testing Library for comprehensive unit testing 
 
 - **RSS & Utilities** (19 tests) - RSS feed generation, platform detection, date formatting
 - **Authentication** (36 tests) - Login/logout flows, protected routes, OAuth integration  
-- **Forms** (46 tests) - Podcast/episode creation, validation, file uploads, smart defaults
-- **Components** (156 tests) - UI components, modals, navigation, user interactions
-- **Custom Hooks** (8 tests) - Data fetching, state management
+- **Forms** (18 tests) - Podcast/episode creation, validation, file uploads, smart defaults, modal integration
+- **Components** (205 tests) - UI components, modals, navigation, user interactions
+- **Custom Hooks** (13 tests) - Data fetching, state management, podcast refresh functionality
 - **API Routes** (1 test) - RSS endpoint with database integration
 
 ### Recent Enhancements
@@ -93,6 +93,53 @@ The **SocialLoginButtons** component tests have been enhanced with proper OAuth 
 - **Test Environment Accuracy**: Tests verify the expected application behavior rather than adapting to testing limitations
 
 These improvements ensure OAuth functionality is properly tested with accurate redirect URLs (`http://localhost:3000/auth/callback`) that will work correctly in production environments.
+
+## Modal-Based Architecture Testing
+
+The podcast management interface has been refactored from inline editing to modal-based editing, requiring comprehensive test updates to ensure consistent UX patterns:
+
+### **PodcastFormClient** Enhancement (9 tests)
+- **Modal Integration**: Tests verify form behavior within modal context with proper callback handling
+- **Edit Mode Detection**: Tests ensure automatic detection of edit vs. create mode based on initial data presence
+- **Dual Mode Support**: Tests cover both podcast creation and editing workflows with appropriate API calls
+- **HeroUI Component Integration**: Tests validate proper integration with updated HeroUI component APIs (Checkbox, Select)
+- **Form Validation**: Tests ensure required field validation and proper input type handling
+- **Error Handling**: Tests cover graceful handling of database errors in both create and edit modes
+
+### **usePodcast Hook** Addition (5 tests)
+- **Data Fetching**: Tests verify podcast data retrieval with optional user filtering
+- **State Management**: Tests ensure proper loading, error, and data state handling
+- **Refresh Functionality**: Tests validate manual refresh capability for real-time updates
+- **Error Handling**: Tests cover network errors and invalid podcast ID scenarios
+- **Memoization**: Tests ensure proper useCallback implementation to prevent unnecessary re-renders
+
+### **PodcastHeader** Refactoring (10 tests)
+- **Modal Integration**: Tests verify seamless transition from inline editing to modal-based editing
+- **EditableImage Integration**: Tests ensure proper image editing with automatic refresh functionality
+- **State Synchronization**: Tests validate proper podcast data refresh after updates
+- **Button Interactions**: Tests cover edit button behavior and modal state management
+- **Layout Consistency**: Tests verify proper responsive layout without absolute positioning issues
+- **ExplicitTag Display**: Tests ensure conditional explicit content indicator rendering
+
+### **PodcastModal** Component (11 tests)
+- **Modal State Management**: Tests verify proper open/close behavior with backdrop interaction
+- **Form Integration**: Tests ensure seamless integration with PodcastForm component wrapper
+- **Create vs Edit Modes**: Tests validate proper title and behavior based on initial data presence
+- **Callback Handling**: Tests ensure proper success and cancel callback execution
+- **Modal Configuration**: Tests verify correct size, placement, and scroll behavior settings
+- **Data Passing**: Tests validate proper initial data propagation to form components
+
+### Testing Patterns for Modal Architecture
+
+The modal-based architecture introduces several key testing patterns:
+
+1. **Component Mocking**: Extensive use of mocked child components to isolate functionality
+2. **State Management Testing**: Verification of modal open/close states and data flow
+3. **Integration Testing**: Testing the interaction between modal triggers and form components
+4. **Callback Testing**: Ensuring proper execution of success, cancel, and close callbacks
+5. **Data Synchronization**: Testing refresh mechanisms to maintain UI consistency
+
+These enhancements bring the total podcast-related tests from 25 to 35, ensuring robust coverage of the new modal-based editing paradigm while maintaining backward compatibility with existing functionality.
 
 ## Running Tests
 

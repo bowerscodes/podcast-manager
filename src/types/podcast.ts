@@ -29,7 +29,8 @@ export interface Episode {
   created_at: Date;
 };
 
-export interface NewPodcastFormData {
+export interface PodcastFormData {
+  id: string;
   title: string;
   description: string;
   author: string;

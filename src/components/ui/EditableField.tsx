@@ -1,7 +1,9 @@
-import { cloneElement, useCallback, useEffect, useRef, useState } from 'react';
-import toast from 'react-hot-toast';
+import { cloneElement, useCallback, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { AiOutlineEdit } from "react-icons/ai";
 import { IoCheckmark, IoClose } from "react-icons/io5";
+
+import ExpandableText from "./ExpandableText";
 
 type Props = {
   value: string;
@@ -19,36 +21,36 @@ const getElementStyles = (tagName: ElementType) => {
     case "h1":
       return {
         elementStyles: "font-[800] text-[xx-large]",
-        iconSize: 24
-      }
+        iconSize: 24,
+      };
       break;
     case "h2":
       return {
         elementStyles: "font-[600] text-[x-large]",
-        iconSize: 20
-      }
+        iconSize: 20,
+      };
       break;
     case "h3":
       return {
         elementStyles: "font-[600] text-[large]",
-        iconSize: 18
-      }
+        iconSize: 18,
+      };
       break;
     default:
       return {
         elementStyles: "",
-        iconSize: 16
+        iconSize: 16,
       };
   }
-}
+};
 
 export default function EditableField({
-  value, 
-  onSave, 
-  children, 
+  value,
+  onSave,
+  children,
   inputClassName = "",
   multiline = false,
-  maxLines
+  maxLines,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
@@ -58,7 +60,7 @@ export default function EditableField({
     lineHeight: string;
     color: string;
     fontFamily: string;
-  } | null>(null);;
+  } | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -67,7 +69,9 @@ export default function EditableField({
   const captureTextStyles = useCallback(() => {
     if (!displayContainerRef.current) return null;
 
-    const textElement = displayContainerRef.current.querySelector("p, span, h1, h2, h3, h4, h5");
+    const textElement = displayContainerRef.current.querySelector(
+      "p, span, h1, h2, h3, h4, h5"
+    );
 
     if (textElement) {
       const computedStyle = window.getComputedStyle(textElement);
@@ -76,7 +80,7 @@ export default function EditableField({
         fontSize: computedStyle.fontSize,
         lineHeight: computedStyle.lineHeight,
         color: computedStyle.color,
-        fontFamily: computedStyle.fontFamily
+        fontFamily: computedStyle.fontFamily,
       };
     }
 
@@ -114,7 +118,11 @@ export default function EditableField({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isEditing && displayContainerRef.current && !displayContainerRef.current.contains(event.target as Node)) {
+      if (
+        isEditing &&
+        displayContainerRef.current &&
+        !displayContainerRef.current.contains(event.target as Node)
+      ) {
         handleCancel();
       }
     };
@@ -134,7 +142,7 @@ export default function EditableField({
 
   const handleSave = async () => {
     if (editValue === value) {
-      setIsEditing(false)
+      setIsEditing(false);
       return;
     }
 
@@ -144,8 +152,9 @@ export default function EditableField({
       setIsEditing(false);
       toast.success("Updated successfully");
     } catch (error) {
-      console.error("Error saving: ", error)
-      const errorMessage = error instanceof Error ? error.message : "Failed to update";
+      console.error("Error saving: ", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update";
       toast.error(errorMessage);
       setEditValue(value); // Reset on error
     } finally {
@@ -163,61 +172,80 @@ export default function EditableField({
     }
   };
 
-  const elementType = typeof children.type === "string" ? children.type : "span";
+  const elementType =
+    typeof children.type === "string" ? children.type : "span";
   const { elementStyles, iconSize } = getElementStyles(elementType);
 
   if (isEditing) {
-    const originalClassName = children.props.className || ""
+    const originalClassName = children.props.className || "";
 
     const sharedProps = {
       value: editValue,
-      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      onChange: (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      ) => {
         setEditValue(e.target.value);
         if (!maxLines) adjustInputSize();
       },
       onKeyDown: handleKeyDown,
-      className: maxLines 
+      className: maxLines
         ? `bg-transparent border-b-2 border-blue-500 outline-none ${inputClassName}`
         : `bg-transparent border-b-2 border-blue-500 outline-none ${originalClassName} ${elementStyles} ${inputClassName}`,
       autoFocus: true,
       disabled: saving,
       style: {
         minHeight: "auto",
-        boxShadow: "none", 
+        boxShadow: "none",
         border: "none",
         minWidth: "20px",
-        ...(maxLines && capturedStyles && {
-          fontSize: capturedStyles.fontSize,
-          lineHeight: capturedStyles.lineHeight,
-          color: capturedStyles.color,
-          fontFamily: capturedStyles.fontFamily,
-          width: "100%",
-          resize: "none" as const,
-          whiteSpace: "pre-wrap" as const,
-          wordBreak: "break-word" as const
-        }),
-        ...(maxLines && !capturedStyles && {
-          width: "100%",
-          resize: "none" as const,
-          whiteSpace: "pre-wrap" as const,
-          wordBreak: "break-word" as const
-        })
-      }
+        ...(maxLines &&
+          capturedStyles && {
+            fontSize: capturedStyles.fontSize,
+            lineHeight: capturedStyles.lineHeight,
+            color: capturedStyles.color,
+            fontFamily: capturedStyles.fontFamily,
+            width: "100%",
+            resize: "none" as const,
+            whiteSpace: "pre-wrap" as const,
+            wordBreak: "break-word" as const,
+          }),
+        ...(maxLines &&
+          !capturedStyles && {
+            width: "100%",
+            resize: "none" as const,
+            whiteSpace: "pre-wrap" as const,
+            wordBreak: "break-word" as const,
+          }),
+      },
     };
 
     return (
-      <div className="inline-flex items-center gap-2 w-full">
+      <div className="inline-flex items-start gap-2 min-w-0">
         {multiline || maxLines ? (
           <textarea 
-            ref={textareaRef}
-            {...sharedProps}
-            rows={maxLines || 3}
+            ref={textareaRef} 
+            {...sharedProps} 
+            style={{
+              ...sharedProps.style,
+              maxWidth: "100%",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+            rows={maxLines || 3} 
           />
         ) : (
-          <input 
+          <input
             ref={inputRef}
             type="text"
             {...sharedProps}
+            style={{
+              ...sharedProps.style,
+              maxWidth: "100%",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
           />
         )}
         <div className="flex gap-1 flex-shrink-0">
@@ -226,34 +254,67 @@ export default function EditableField({
             className="text-green-600 hover:text-green-700 hover:bg-green-50 bg-gray-100 rounded-md p-1 shadow-sm hover:shadow-md transition-colors cursor-pointer"
             disabled={saving}
           >
-            <IoCheckmark size={iconSize-3} />
+            <IoCheckmark size={iconSize - 3} />
           </button>
           <button
             onClick={handleCancel}
             className="text-red-600 hover:text-red-700 hover:bg-red-50 bg-gray-100 rounded-md p-1 shadow-sm hover:shadow-md transition-colors cursor-pointer"
           >
-            <IoClose size={iconSize-3} />
+            <IoClose size={iconSize - 3} />
           </button>
         </div>
       </div>
     );
   }
 
-  return (
-    <div ref={displayContainerRef} className="inline-flex items-start gap-3">
-      <div className="flex flex-col">
-        {cloneElement(children, {}, value)}
-      </div>
+  return children.type === ExpandableText ? (
+  <div ref={displayContainerRef} className="flex items-start gap-1 min-w-0">
+    <div className="flex-1 min-w-0">
+      {cloneElement(children, {
+        className: [
+          children.props.className,
+          "truncate whitespace-nowrap overflow-hidden min-w-0",
+        ]
+          .filter(Boolean)
+          .join(" "),
+      }, value)}
+    </div>
+    <button
+      onClick={() => {
+        const styles = captureTextStyles();
+        setCapturedStyles(styles);
+        setIsEditing(true);
+      }}
+      className="ml-1 text-blue-500 text-sm hover:text-blue-600 transition-colors cursor-pointer flex-shrink-0"
+    >
+      <AiOutlineEdit size={iconSize} />
+    </button>
+  </div>
+) : (
+    // Flex row for single-line fields
+    <div ref={displayContainerRef} className="flex items-center gap-3 min-w-0">
+      {cloneElement(
+        children,
+        {
+          className: [
+            children.props.className,
+            "truncate whitespace-nowrap overflow-hidden min-w-0 flex-1",
+          ]
+            .filter(Boolean)
+            .join(" "),
+        },
+        value
+      )}
       <button
         onClick={() => {
           const styles = captureTextStyles();
           setCapturedStyles(styles);
           setIsEditing(true);
         }}
-        className="text-blue-500 text-sm hover:text-blue-600 transition-colors cursor-pointer"
+        className="text-blue-500 text-sm hover:text-blue-600 transition-colors cursor-pointer flex-shrink-0"
       >
         <AiOutlineEdit size={iconSize} />
-      </button>      
+      </button>
     </div>
-  )
+  );
 }

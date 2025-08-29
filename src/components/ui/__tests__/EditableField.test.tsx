@@ -234,21 +234,6 @@ describe('EditableField', () => {
       expect(screen.getByText('Test Value')).toBeInTheDocument();
       expect(screen.getByText('Show more')).toBeInTheDocument();
     });
-
-    it('should use flex-col layout for proper ExpandableText display', () => {
-      const { container } = render(
-        <EditableField 
-          {...defaultProps} 
-          maxLines={3}
-        >
-          <ExpandableTextMock text="Test Value" />
-        </EditableField>
-      );
-      
-      // Look for the div with flex flex-col classes
-      const flexContainer = container.querySelector('.flex.flex-col');
-      expect(flexContainer).toBeInTheDocument();
-    });
   });
 
   describe('style capture functionality', () => {

@@ -1,15 +1,12 @@
-'use client';
-
 import { Card, CardBody } from "@heroui/card";
-import { useRouter } from "next/navigation";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 
 type Props = {
   isFirstInList?: boolean;
+  onCreateClick: () => void;
 }
 
-export default function PlaceholderPodcastCard({ isFirstInList }: Props) {
-  const router = useRouter();
+export default function PlaceholderPodcastCard({ isFirstInList, onCreateClick }: Props) {
 
   return (
     <Card
@@ -19,7 +16,7 @@ export default function PlaceholderPodcastCard({ isFirstInList }: Props) {
         background: 'rgba(139, 92, 246, 0.05)'
       }}
       isPressable
-      onPress={() => router.push("/podcasts/new")}
+      onPress={onCreateClick}
     >
       <CardBody className="flex flex-col items-center justify-center text-center p-8 min-h-[300px]">
         <div 
@@ -39,7 +36,6 @@ export default function PlaceholderPodcastCard({ isFirstInList }: Props) {
         </p>
         }
       </CardBody>
-
     </Card>
   )
 };

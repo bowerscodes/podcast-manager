@@ -190,7 +190,7 @@ export default function EditableImage({
             ref={modalRef}
             className="bg-white rounded-lg p-6 max-w-md w-full mx-4"
           >
-            <h3 className="text-lg font-semibold mb-4">Update Image</h3>
+            <h3 className="text-lg text-gradient font-semibold mb-4">Update Image</h3>
 
             {/* Image Preview */}
             <div className="mb-4 flex justify-center">
@@ -221,7 +221,7 @@ export default function EditableImage({
               <div className="mb-4">
                 <button
                   onClick={() => setImageUrl("")}
-                  className="text-sm text-gray-500 hover:text-gray-700 underline"
+                  className="text-sm text-gray-500 hover:text-gray-700 underline cursor-pointer"
                 >
                   Clear image
                 </button>
@@ -232,14 +232,14 @@ export default function EditableImage({
             <div className="flex gap-2 justify-end">
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-md transition-colors"
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-md transition-colors cursor-pointer"
                 disabled={saving}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
-                className="px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 rounded-md transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 rounded-md transition-colors flex items-center gap-2 cursor-pointer"
                 disabled={saving}
               >
                 {saving ? (
