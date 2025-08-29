@@ -30,7 +30,7 @@ export interface Episode {
 };
 
 export interface PodcastFormData {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   author: string;

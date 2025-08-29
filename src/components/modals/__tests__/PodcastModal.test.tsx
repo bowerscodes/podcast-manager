@@ -5,7 +5,6 @@ import { Podcast } from "@/types/podcast";
 
 // Mock PodcastForm (which wraps PodcastFormClient)
 const mockOnSuccess = jest.fn();
-const mockOnCancel = jest.fn();
 
 jest.mock("@/components/forms/PodcastForm", () => {
   return function MockPodcastForm({

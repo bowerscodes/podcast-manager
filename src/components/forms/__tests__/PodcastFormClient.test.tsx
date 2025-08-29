@@ -309,7 +309,6 @@ describe("PodcastFormClient", () => {
 
     await waitFor(() => {
       expect(mockInsert).toHaveBeenCalledWith({
-        id: "",
         title: "Test Podcast",
         description: "Test Description",
         categories: ["Business"],

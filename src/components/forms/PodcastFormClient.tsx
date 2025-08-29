@@ -30,7 +30,7 @@ export default function PodcastFormClient({
   const [isEditMode, setIsEditMode] = useState(false);
 
   const [formData, setFormData] = useState<PodcastFormData>({
-    id: initialData.id || "",
+    ...(initialData.id && { id: initialData.id }),
     title: initialData.title || "",
     description: initialData.description || "",
     author: initialData.author || "",
