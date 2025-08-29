@@ -6,7 +6,7 @@ This project uses Jest and React Testing Library for comprehensive unit testing 
 
 ## Test Statistics
 
-- **31 test suites** with **293 tests** 
+- **32 test suites** with **301 tests** 
 - **Estimated 70.1% coverage** (statements)
 - **~2.7 second execution time**
 
@@ -140,6 +140,40 @@ The modal-based architecture introduces several key testing patterns:
 5. **Data Synchronization**: Testing refresh mechanisms to maintain UI consistency
 
 These enhancements bring the total podcast-related tests from 25 to 35, ensuring robust coverage of the new modal-based editing paradigm while maintaining backward compatibility with existing functionality.
+
+### Integration Testing & UUID Bug Fix
+
+Added comprehensive integration tests (`PodcastFormClient.integration.test.tsx`) that test actual database operations rather than just mocked components. These tests revealed and helped fix a critical UUID insertion bug.
+
+#### **UUID Insertion Bug (Fixed)**
+- **Issue**: PodcastFormClient was inserting `id: ""` for new podcast creation, causing Supabase UUID validation errors
+- **Root Cause**: Spread operator in formData state included empty string ID values that weren't properly filtered
+- **Solution**: Enhanced ID filtering logic to exclude empty/whitespace-only IDs from both state initialization and database insert operations
+- **Detection**: Integration tests now verify that ID field is completely excluded from create operations
+
+```typescript
+// Fixed formData initialization
+const [formData, setFormData] = useState<PodcastFormData>({
+  // Only include id if it exists and is not empty
+  ...(initialData.id && initialData.id.trim() !== "" && { id: initialData.id }),
+  // ... other fields
+});
+
+// Fixed insert operation  
+const createData = Object.fromEntries(
+  Object.entries(formData).filter(([key]) => key !== 'id')
+);
+```
+
+#### **Integration Test Coverage (8 tests)**
+- **UUID Bug Prevention**: Verify that empty string IDs are not passed to Supabase during create operations
+- **Database Integration**: Test actual Supabase method calls with real data structures  
+- **Error Handling**: Test UUID validation errors and other database-level failures
+- **State Management**: Test edit mode detection for various ID states (empty, whitespace, valid)
+- **Create vs Edit Modes**: Ensure proper database operations for both podcast creation and updates
+- **Graceful Error Handling**: Test proper error message display and callback handling
+
+This integration testing approach revealed that unit tests alone were insufficient to catch database-level bugs, leading to a more comprehensive testing strategy that combines both unit and integration testing patterns.
 
 ## Running Tests
 

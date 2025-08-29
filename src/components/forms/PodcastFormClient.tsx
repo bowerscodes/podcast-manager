@@ -30,7 +30,8 @@ export default function PodcastFormClient({
   const [isEditMode, setIsEditMode] = useState(false);
 
   const [formData, setFormData] = useState<PodcastFormData>({
-    ...(initialData.id && { id: initialData.id }),
+    // Only include id if it exists and is not empty
+    ...(initialData.id && initialData.id.trim() !== "" && { id: initialData.id }),
     title: initialData.title || "",
     description: initialData.description || "",
     author: initialData.author || "",
@@ -42,7 +43,7 @@ export default function PodcastFormClient({
   });
 
   useEffect(() => {
-    const editMode = !!(initialData.id);
+    const editMode = !!(initialData.id && initialData.id.trim() !== "");
     setIsEditMode(editMode);
   }, [initialData.id]);
 
@@ -78,10 +79,14 @@ export default function PodcastFormClient({
         onSuccess();
 
       } else {
+        // For create operations, exclude the id field to let Supabase generate it
+        const createData = Object.fromEntries(
+          Object.entries(formData).filter(([key]) => key !== 'id')
+        );
         const { data, error } = await supabase
           .from("podcasts")
           .insert({
-            ...formData,
+            ...createData,
             user_id: user.id,
           })
           .select()
