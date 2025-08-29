@@ -11,6 +11,7 @@ import ExpandableText from "../ui/ExpandableText";
 import usePodcast from "@/hooks/usePodcast";
 import PodcastModal from "../modals/PodcastModal";
 import { useAuth } from "../auth/Provider";
+import { defaultArtwork } from "@/lib/data";
 
 type Props = {
   podcast: Podcast;
@@ -49,7 +50,7 @@ export default function PodcastHeader({
               // Refresh the podcast data to show the updated image
               refresh();
             }}
-            fallback={undefined}
+            fallback={defaultArtwork()}
             className="rounded-lg shadow-md"
           />
         </div>
