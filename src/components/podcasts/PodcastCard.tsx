@@ -14,7 +14,7 @@ export default function PodcastCard({ podcast }: Props) {
 
   return (
     <Card
-      className="w-full h-[300px] podcast-card group rounded-2xl relative overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300"
+      className="w-full h-[300px] podcast-card group relative overflow-hidden"
       isPressable
       onPress={() => router.push(`/podcasts/${podcast.id}`)}
     >
@@ -22,8 +22,8 @@ export default function PodcastCard({ podcast }: Props) {
         <Image
           removeWrapper
           alt={`podcast artwork for ${podcast.title}`}
-          className="absolute inset-0 w-full h-full object-cover z-0 -top-1 scale-102"
-          src={podcast.artwork || "/default-artwork.jpg"}
+          className="absolute inset-0 w-full h-full object-cover pbject-center z-0 -top-1 scale-105"
+          src={podcast.artwork}
           tabIndex={-1}
         />
       ) : (
@@ -37,7 +37,8 @@ export default function PodcastCard({ podcast }: Props) {
         <h3
           className="text-white font-bold text-xl leading-tight truncate drop-shadow-lg"
           style={{
-            textShadow: "0 0 3px rgba(0,0,0,0.6), 1px 1px 2px rgba(0,0,0,0.3), 2px 2px 4px rgba(0,0,0,0.3)",
+            textShadow:
+              "0 0 3px rgba(0,0,0,0.6), 1px 1px 2px rgba(0,0,0,0.3), 2px 2px 4px rgba(0,0,0,0.3)",
           }}
         >
           {podcast.title}

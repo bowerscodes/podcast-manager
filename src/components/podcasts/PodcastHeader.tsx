@@ -6,7 +6,6 @@ import { Podcast } from "@/types/podcast";
 import { formatDate } from "@/lib/date-utils";
 import { supabase } from "@/lib/supabase";
 import EditableImage from "../ui/EditableImage";
-import ExplicitTag from "../ui/ExplicitTag";
 import Tag from "../ui/Tag";
 import ExpandableText from "../ui/ExpandableText";
 import usePodcast from "@/hooks/usePodcast";
@@ -74,7 +73,7 @@ export default function PodcastHeader({
                 {displayPodcast.title}
               </h1>
               <div className="hidden sm:block flex-shrink-0">
-                <ExplicitTag isExplicit={displayPodcast.explicit} />
+                <Tag explicit={displayPodcast.explicit} />
               </div>
             </div>
             <Button
@@ -99,7 +98,7 @@ export default function PodcastHeader({
             </span>
           </div>
           {displayPodcast.categories.length > 0 && (
-            <div className="hidden sm:flex flex-wrap gap-4  mb-2">
+            <div className="hidden sm:flex flex-wrap gap-2  mb-2">
               {podcast?.categories.map((category, index) => (
                 <Tag key={index} color="blue">{category}</Tag>
               ))}
