@@ -19,38 +19,43 @@ export default function PodcastCard({ podcast }: Props) {
 
   return (
     <Card
-      className="podcast-card group"
+      className="w-full h-[300px] podcast-card group rounded-2xl relative overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300"
       isPressable
       onPress={() => router.push(`/podcasts/${podcast.id}`)}
     >
-      <CardHeader className="pb-2">
-        <h3 className="text-xl font-bold text-gradient">{podcast.title}</h3>
-      </CardHeader>
-      <CardBody className="pt-2">
-        <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
-          {podcast.artwork ? (
-            <Image
-              alt={`podcast artwork for ${podcast.title}`}
-              src={podcast.artwork}
-              radius="sm"
-              className="w-full h-full object-cover"
-              classNames={{
-                wrapper: "w-full h-full",
-                img: "w-full h-full object-cover",
-              }}
-              width="100%"
-              height="100%"
-            />
-          ) : (
-            defaultArtwork()
-          )}
-        </div>
-      </CardBody>
-      <CardFooter className="min-h-[3rem] pt-0 justify-start items-start">
-        <p className="text-muted text-sm text-left">
-          {truncateText(podcast.description)}
+      {podcast.artwork ? (
+        <Image
+          removeWrapper
+          alt={`podcast artwork for ${podcast.title}`}
+          className="absolute inset-0 w-full h-full object-cover z-0 -top-1 scale-102"
+          src={podcast.artwork || "/default-artwork.jpg"}
+          tabIndex={-1}
+        />
+      ) : (
+        defaultArtwork()
+      )}
+
+      {/* Bottom gradient overlay */}
+      <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-5" />
+
+      <div className="absolute text-left bottom-0 left-0 right-0 z-10 p-4 space-y-2">
+        <h3
+          className="text-white font-bold text-xl leading-tight truncate drop-shadow-lg"
+          style={{
+            textShadow: "0 0 3px rgba(0,0,0,0.6), 1px 1px 2px rgba(0,0,0,0.3), 2px 2px 4px rgba(0,0,0,0.3)",
+          }}
+        >
+          {podcast.title}
+        </h3>
+        <p
+          className="text-white/90 text-sm font-medium line-clamp-2 leading-relaxed"
+          style={{
+            textShadow: "0 0 2px rgba(0,0,0,0.8), 2px 2px 3px rgba(0,0,0,0.7)",
+          }}
+        >
+          {podcast.description}
         </p>
-      </CardFooter>
+      </div>
     </Card>
   );
 }

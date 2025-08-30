@@ -252,7 +252,7 @@ src/
 │   │       └── DeleteModal.test.tsx          ✅ 4 tests passing
 │   ├── podcasts/
 │   │   ├── __tests__/
-│   │   │   ├── PodcastCard.test.tsx        ✅ 8 tests passing
+│   │   │   ├── PodcastCard.test.tsx        ✅ 10 tests passing
 │   │   │   ├── PodcastStats.test.tsx       ✅ 3 tests passing
 │   │   │   ├── PodcastDetailView.test.tsx  ✅ 9 tests passing
 │   │   │   └── PodcastActions.test.tsx     ✅ 12 tests passing

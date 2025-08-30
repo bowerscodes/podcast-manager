@@ -126,8 +126,12 @@ describe('PodcastCard', () => {
     render(<PodcastCard podcast={podcastWithLongDescription} />);
     
     const description = screen.getByText(/This is a very long podcast description/);
-    expect(description.textContent).toContain('...');
-    expect(description.textContent?.length).toBeLessThan(podcastWithLongDescription.description.length);
+    
+    // Check that the description element has the line-clamp-2 class for CSS truncation
+    expect(description).toHaveClass('line-clamp-2');
+    
+    // The full text should still be present in textContent (CSS line-clamp doesn't modify text content)
+    expect(description.textContent).toBe(podcastWithLongDescription.description);
   });
 
   it('should not truncate short descriptions', () => {
