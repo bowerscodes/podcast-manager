@@ -7,8 +7,10 @@ import { formatDate } from "@/lib/date-utils";
 import { supabase } from "@/lib/supabase";
 import EditableImage from "../ui/EditableImage";
 import ExplicitTag from "../ui/ExplicitTag";
+import Tag from "../ui/Tag";
 import ExpandableText from "../ui/ExpandableText";
 import usePodcast from "@/hooks/usePodcast";
+import useEpisodes from "@/hooks/useEpisodes";
 import PodcastModal from "../modals/PodcastModal";
 import { useAuth } from "../auth/Provider";
 import { defaultArtwork } from "@/lib/data";
@@ -24,9 +26,19 @@ export default function PodcastHeader({
 }: Props) {
   const { user } = useAuth();
   const { podcast, refresh } = usePodcast(initialPodcast.id, user?.id);
+  const { episodes } = useEpisodes(initialPodcast.id);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const displayPodcast = podcast || initialPodcast;
+
+  const mostRecentEpisodeDate =
+    episodes.length > 0
+      ? episodes.reduce((latest, episode) =>
+          new Date(episode.created_at) > new Date(latest.created_at)
+            ? episode
+            : latest
+        ).created_at
+      : null;
 
   const handlePodcastUpdate = () => {
     refresh();
@@ -61,7 +73,9 @@ export default function PodcastHeader({
               <h1 className="text-3xl font-bold truncate">
                 {displayPodcast.title}
               </h1>
-              <ExplicitTag isExplicit={displayPodcast.explicit} />
+              <div className="hidden sm:block flex-shrink-0">
+                <ExplicitTag isExplicit={displayPodcast.explicit} />
+              </div>
             </div>
             <Button
               // isIconOnly
@@ -72,7 +86,6 @@ export default function PodcastHeader({
             >
               Edit <AiOutlineEdit size={20} />
             </Button>
-        
           </div>
 
           <div className="mb-2">
@@ -85,10 +98,29 @@ export default function PodcastHeader({
               {displayPodcast.author}
             </span>
           </div>
-          <div className="flex gap-4 text-sm text-gray-500">
+          {displayPodcast.categories.length > 0 && (
+            <div className="hidden sm:flex flex-wrap gap-4  mb-2">
+              {podcast?.categories.map((category, index) => (
+                <Tag key={index} color="blue">{category}</Tag>
+              ))}
+            </div>
+          )}
+          <div className="flex flex-wrap gap-4 text-sm text-gray-500 sm:justify-start">
             <span>{episodeCount} episodes</span>
-            <span>•</span>
-            <span>Created {formatDate(displayPodcast.created_at)}</span>
+            {mostRecentEpisodeDate && (
+              <div className="hidden sm:inline">
+                <Tag className="sm:inline">
+                  <strong>Latest: </strong>
+                  {formatDate(mostRecentEpisodeDate)}
+                </Tag>
+              </div>
+            )}
+            <div className="hidden md:inline">
+              <Tag className="md:inline">
+                <strong>Created: </strong>
+                {formatDate(displayPodcast.created_at)}
+              </Tag>
+            </div>
           </div>
         </div>
       </div>

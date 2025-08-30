@@ -1,6 +1,6 @@
 
 type Props = {
-  isExplicit: boolean;
+  isExplicit?: boolean;
   className?: string;
 }
 
