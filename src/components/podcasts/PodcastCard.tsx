@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
+import { Card } from "@heroui/card";
 import { Image } from "@heroui/image";
 
 import { Podcast } from "@/types/podcast";
@@ -11,11 +11,6 @@ type Props = {
 
 export default function PodcastCard({ podcast }: Props) {
   const router = useRouter();
-
-  const truncateText = (text: string, maxLength: number = 80) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength).trim() + "...";
-  };
 
   return (
     <Card
