@@ -121,6 +121,8 @@ describe('EpisodeFormClient', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Clear localStorage to prevent test interference
+    localStorage.clear();
     // Default mock for episodes query - empty array
     // Use resolved promise to ensure immediate resolution
     mockEq.mockResolvedValue({

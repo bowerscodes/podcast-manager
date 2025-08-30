@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
 import { Button } from "@heroui/button";
 import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Checkbox } from "@heroui/checkbox";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 
+import { useFormPersistence } from "@/hooks/useFormPersistence";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { PodcastFormData } from "@/types/podcast";
@@ -19,28 +20,29 @@ type Props = {
   onCancel: () => void;
 };
 
-export default function PodcastFormClient({ 
-  initialData, 
-  onSuccess, 
-  onCancel 
+export default function PodcastFormClient({
+  initialData,
+  onSuccess,
+  onCancel,
 }: Props) {
   const { user } = useAuth();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [formData, setFormData] = useState<PodcastFormData>({
-    // Only include id if it exists and is not empty
-    ...(initialData.id && initialData.id.trim() !== "" && { id: initialData.id }),
-    title: initialData.title || "",
-    description: initialData.description || "",
-    author: initialData.author || "",
-    email: initialData.email || "",
-    website: initialData.website || "",
-    artwork: initialData.artwork || "",
-    categories: initialData.categories || [],
-    explicit: initialData.explicit || false,
-  });
+  const { formData, setFormData, clearPersistedData } =
+    useFormPersistence(`podcast-form-${initialData.id || "new"}`, {
+      // Only include id if it exists and is not empty
+      // ...(initialData.id && initialData.id.trim() !== "" && { id: initialData.id }),
+      title: initialData.title || "",
+      description: initialData.description || "",
+      author: initialData.author || "",
+      email: initialData.email || "",
+      website: initialData.website || "",
+      artwork: initialData.artwork || "",
+      categories: initialData.categories || [],
+      explicit: initialData.explicit || false,
+    });
 
   useEffect(() => {
     const editMode = !!(initialData.id && initialData.id.trim() !== "");
@@ -64,24 +66,24 @@ export default function PodcastFormClient({
             website: formData.website,
             artwork: formData.artwork,
             categories: formData.categories,
-            explicit: formData.explicit
+            explicit: formData.explicit,
           })
           .eq("id", initialData.id)
           .select()
           .single();
-  
+
         if (error) {
-          console.error("Supabase update error: ", error)
+          console.error("Supabase update error: ", error);
           throw error;
         }
-  
-        toast.success("Podcast updated successfully!");
-        onSuccess();
 
+        toast.success("Podcast updated successfully!");
+        clearPersistedData();
+        onSuccess();
       } else {
         // For create operations, exclude the id field to let Supabase generate it
         const createData = Object.fromEntries(
-          Object.entries(formData).filter(([key]) => key !== 'id')
+          Object.entries(formData).filter(([key]) => key !== "id")
         );
         const { data, error } = await supabase
           .from("podcasts")
@@ -91,19 +93,39 @@ export default function PodcastFormClient({
           })
           .select()
           .single();
-  
+
         if (error) throw error;
-  
+
+        clearPersistedData();
         toast.success("Podcast created successfully!");
         router.push(`/podcasts/${data.id}`);
       }
     } catch (error) {
-      console.error(`Error ${isEditMode ? "updating" : "creating"} podcast: `, error);
+      console.error(
+        `Error ${isEditMode ? "updating" : "creating"} podcast: `,
+        error
+      );
       toast.error(`Failed to ${isEditMode ? "update" : "create"} podcast`);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleCancel = useCallback(() => {
+    clearPersistedData();
+    onCancel();
+  }, [clearPersistedData, onCancel]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleCancel();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [handleCancel]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -114,18 +136,18 @@ export default function PodcastFormClient({
         required
         autoFocus
       />
-      
-      <Textarea 
+
+      <Textarea
         label="Description"
         rows={4}
         value={formData.description}
         onChange={(e) => {
-          setFormData({ ...formData, description: e.target.value})
+          setFormData({ ...formData, description: e.target.value });
         }}
         required
       />
 
-      <Select 
+      <Select
         label="Categories"
         selectionMode="multiple"
         value={formData.categories || []}
@@ -135,7 +157,7 @@ export default function PodcastFormClient({
         }}
       >
         {podcastCategories.map((category) => (
-          <SelectItem key={category} >{category}</SelectItem>
+          <SelectItem key={category}>{category}</SelectItem>
         ))}
       </Select>
 
@@ -168,21 +190,23 @@ export default function PodcastFormClient({
         onChange={(e) => setFormData({ ...formData, artwork: e.target.value })}
       />
 
-        <Checkbox
-          isSelected={formData.explicit}
-          onValueChange={(checked) => setFormData({ ...formData, explicit: checked })}
-        >
-          Explicit
-        </Checkbox>
+      <Checkbox
+        isSelected={formData.explicit}
+        onValueChange={(checked) =>
+          setFormData({ ...formData, explicit: checked })
+        }
+      >
+        Explicit
+      </Checkbox>
 
       <div className="flex gap-4 mt-6">
         <Button type="submit" color="primary" isLoading={isLoading}>
           {isEditMode ? "Update" : "Create"} Podcast
         </Button>
-        <Button type="button" variant="light" onPress={() => onCancel()}>
+        <Button type="button" variant="light" onPress={() => handleCancel()}>
           Cancel
         </Button>
       </div>
     </form>
   );
-};
+}

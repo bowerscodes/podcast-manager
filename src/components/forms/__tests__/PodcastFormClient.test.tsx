@@ -212,6 +212,8 @@ describe("PodcastFormClient", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Clear localStorage to prevent test interference
+    localStorage.clear();
   });
 
   it("should render all form fields", () => {

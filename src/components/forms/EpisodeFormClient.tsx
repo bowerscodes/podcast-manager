@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { EpisodeFormData } from "@/types/podcast";
+import { useFormPersistence } from "@/hooks/useFormPersistence";
 import { Button } from "@heroui/button";
 import { Input, Textarea } from "@heroui/input";
 import { Checkbox } from "@heroui/checkbox";
@@ -27,15 +28,18 @@ export default function EpisodeFormClient({
   >([]);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [formData, setFormData] = useState<EpisodeFormData>({
-    id: initialData.id || "",
-    title: initialData.title || "",
-    description: initialData.description || "",
-    audio_url: initialData.audio_url || "",
-    season_number: initialData.season_number || undefined,
-    episode_number: initialData.episode_number || undefined,
-    explicit: initialData.explicit || false,
-  });
+  const { formData, setFormData, clearPersistedData } = useFormPersistence(
+    `episode-form-${podcastId}-${initialData.id || "new"}`,
+    {
+      id: initialData.id || "",
+      title: initialData.title || "",
+      description: initialData.description || "",
+      audio_url: initialData.audio_url || "",
+      season_number: initialData.season_number || undefined,
+      episode_number: initialData.episode_number || undefined,
+      explicit: initialData.explicit || false,
+    }
+  );
 
   useEffect(() => {
     const fetchEpisodesAndSetDefaults = async () => {
@@ -68,7 +72,7 @@ export default function EpisodeFormClient({
     };
 
     fetchEpisodesAndSetDefaults();
-  }, [podcastId, initialData.season_number, initialData.episode_number]);
+  }, [podcastId, initialData.season_number, initialData.episode_number, setFormData]);
 
   const calculateDefaults = (
     episodesData: Array<{ season_number: string; episode_number: string }>
@@ -259,6 +263,7 @@ export default function EpisodeFormClient({
           ? "Episode updated successfully!"
           : "Episode created successfully!"
       );
+      clearPersistedData();
       onSuccess();
     } catch (error) {
       console.error(
@@ -270,6 +275,22 @@ export default function EpisodeFormClient({
       setLoading(false);
     }
   };
+
+  const handleCancel = useCallback(() => {
+    clearPersistedData();
+    onCancel();
+  }, [clearPersistedData, onCancel]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleCancel();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [handleCancel]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -330,7 +351,7 @@ export default function EpisodeFormClient({
         <Button type="submit" color="primary" isLoading={isLoading}>
           {isEditMode ? "Update" : "Add"} Episode
         </Button>
-        <Button type="button" variant="light" onPress={onCancel}>
+        <Button type="button" variant="light" onPress={() => handleCancel()}>
           Cancel
         </Button>
       </div>
