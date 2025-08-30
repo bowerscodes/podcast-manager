@@ -60,6 +60,29 @@ jest.mock('react-icons/md', () => ({
   MdDeleteForever: () => <span data-testid="delete-icon">🗑️</span>,
 }));
 
+// Mock ExpandableText component
+jest.mock('@/components/ui/ExpandableText', () => {
+  return function MockExpandableText({ text }: { text: string }) {
+    return <div data-testid="expandable-text">{text}</div>;
+  };
+});
+
+// Mock ExplicitTag component
+jest.mock('@/components/ui/ExplicitTag', () => {
+  return function MockExplicitTag({ isExplicit }: { isExplicit: boolean }) {
+    return isExplicit ? <span data-testid="explicit-tag">EXPLICIT</span> : null;
+  };
+});
+
+// Mock date formatting utility
+jest.mock('@/lib/date-utils', () => ({
+  formatDate: (date: Date) => date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  }),
+}));
+
 // Mock the episode data
 const mockEpisode: Episode = {
   id: '1',
@@ -211,5 +234,58 @@ describe('EpisodeRow', () => {
     expect(deleteButton?.className).toContain('aspect-square');
     expect(editButton?.className).toContain('px-1');
     expect(deleteButton?.className).toContain('px-1');
+  });
+
+  it('should display formatted creation date', () => {
+    render(<EpisodeRow {...defaultProps} />);
+
+    const formattedDate = mockEpisode.created_at.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+    
+    expect(screen.getByText(formattedDate)).toBeTruthy();
+  });
+
+  it('should show ExplicitTag when episode is explicit', () => {
+    const explicitEpisode = { ...mockEpisode, explicit: true };
+    render(<EpisodeRow episode={explicitEpisode} onUpdate={mockOnUpdate} />);
+
+    expect(screen.getByTestId('explicit-tag')).toBeTruthy();
+    expect(screen.getByText('EXPLICIT')).toBeTruthy();
+  });
+
+  it('should not show ExplicitTag when episode is not explicit', () => {
+    const nonExplicitEpisode = { ...mockEpisode, explicit: false };
+    render(<EpisodeRow episode={nonExplicitEpisode} onUpdate={mockOnUpdate} />);
+
+    expect(screen.queryByTestId('explicit-tag')).toBeFalsy();
+    expect(screen.queryByText('EXPLICIT')).toBeFalsy();
+  });
+
+  it('should render ExpandableText component for description', () => {
+    render(<EpisodeRow {...defaultProps} />);
+
+    expect(screen.getByTestId('expandable-text')).toBeTruthy();
+    expect(screen.getByTestId('expandable-text')).toHaveTextContent('Test Description');
+  });
+
+  it('should display episode information in header layout', () => {
+    render(<EpisodeRow {...defaultProps} />);
+
+    // Check that title, date, and ExplicitTag are all in the header area
+    const heading = screen.getByRole('heading', { level: 3 });
+    const formattedDate = mockEpisode.created_at.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+    
+    expect(heading).toHaveTextContent('1. Test Episode');
+    expect(screen.getByText(formattedDate)).toBeTruthy();
+    
+    // ExplicitTag should not be present for non-explicit content
+    expect(screen.queryByTestId('explicit-tag')).toBeFalsy();
   });
 });
