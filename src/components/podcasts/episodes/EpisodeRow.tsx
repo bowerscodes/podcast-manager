@@ -24,7 +24,7 @@ export default function EpisodeRow({ episode, onUpdate }: EpisodeRowProps) {
     <>
       <div>
         <Card className="flex flex-col mb-3">
-          <CardHeader className="flex justify-between items-center pb-0 gap-3">
+          <CardHeader className="flex justify-between items-center pb-0 gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <h3 className="break-words truncate flex-shrink">
                 {episode.episode_number}. {episode.title}

@@ -67,10 +67,18 @@ jest.mock('@/components/ui/ExpandableText', () => {
   };
 });
 
-// Mock ExplicitTag component
-jest.mock('@/components/ui/ExplicitTag', () => {
-  return function MockExplicitTag({ isExplicit }: { isExplicit: boolean }) {
-    return isExplicit ? <span data-testid="explicit-tag">EXPLICIT</span> : null;
+// Mock Tag component
+jest.mock('@/components/ui/Tag', () => {
+  return function MockTag({ children, explicit, className }: { children?: React.ReactNode; explicit?: boolean; className?: string }) {
+    // If explicit prop is true, render explicit tag
+    if (explicit) {
+      return <span data-testid="explicit-tag">EXPLICIT</span>;
+    }
+    // Otherwise render children (for date tags)
+    if (children) {
+      return <span className={className}>{children}</span>;
+    }
+    return null;
   };
 });
 

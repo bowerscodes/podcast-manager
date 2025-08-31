@@ -15,6 +15,17 @@ jest.mock("@/hooks/usePodcast", () => ({
   })),
 }));
 
+// Mock the useEpisodes hook
+jest.mock("@/hooks/useEpisodes", () => ({
+  __esModule: true,
+  default: jest.fn(() => ({
+    episodes: [],
+    loading: false,
+    error: null,
+    refresh: jest.fn(),
+  })),
+}));
+
 // Mock the auth provider
 jest.mock("@/components/auth/Provider", () => ({
   useAuth: () => ({
@@ -94,9 +105,17 @@ jest.mock("@/components/ui/EditableImage", () => {
 });
 
 // Mock other UI components
-jest.mock("@/components/ui/ExplicitTag", () => {
-  return function MockExplicitTag({ isExplicit }: { isExplicit: boolean }) {
-    return isExplicit ? <span data-testid="explicit-tag">Explicit</span> : null;
+jest.mock("@/components/ui/Tag", () => {
+  return function MockTag({ children, explicit, className }: { children?: React.ReactNode; explicit?: boolean; className?: string }) {
+    // If explicit prop is true, render explicit tag
+    if (explicit) {
+      return <span data-testid="explicit-tag">EXPLICIT</span>;
+    }
+    // Otherwise render children (for other tag usage)
+    if (children) {
+      return <span className={className}>{children}</span>;
+    }
+    return null;
   };
 });
 
