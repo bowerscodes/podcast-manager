@@ -88,7 +88,7 @@ export default function PodcastHeader({
           </div>
 
           <div className="mb-2">
-            <ExpandableText text={displayPodcast.description} maxLines={3} />
+            <ExpandableText text={displayPodcast.description} maxLines={2} />
           </div>
           <div className="text-sm text-gray-500 mb-2">
             By

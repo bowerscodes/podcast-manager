@@ -27,7 +27,7 @@ export default function Tag({ children, className, color = "gray", explicit }: P
   const colorClasses = colorMap[finalColor as keyof typeof colorMap] || colorMap.gray;
   
   return (
-    <span className={`${className} inline-flex items-center px-1 py-0.5 text-xs font-medium rounded-sm border-1.5 ${colorClasses}`}>
+    <span className={`${className} inline-flex items-center px-1 py-0.5 text-xs font-medium rounded-sm border-1.5 cursor-default ${colorClasses}`}>
       {finalContent}
     </span>
   );
