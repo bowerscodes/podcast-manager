@@ -18,7 +18,6 @@ const colorMap = {
 
 
 export default function Tag({ children, className, color = "gray", explicit }: Props) {
-  // Override color and content if explicit is true
   const finalColor = explicit ? "red" : color;
   const finalContent = explicit ? "EXPLICIT" : children;
   
@@ -27,7 +26,7 @@ export default function Tag({ children, className, color = "gray", explicit }: P
   const colorClasses = colorMap[finalColor as keyof typeof colorMap] || colorMap.gray;
   
   return (
-    <span className={`${className} inline-flex items-center px-1 py-0.5 text-xs font-medium rounded-sm border-1.5 cursor-default ${colorClasses}`}>
+    <span className={`${className} inline-flex items-center px-1 py-0.5 text-xs font-medium rounded-sm border-1.5 cursor-default select-none ${colorClasses}`}>
       {finalContent}
     </span>
   );
