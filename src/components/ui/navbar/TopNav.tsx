@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
 import { Button } from '@heroui/button';
 import { useDisclosure } from '@heroui/modal';
 import { useRouter } from "next/navigation";
@@ -26,8 +24,9 @@ export default function TopNav() {
         <div className="relative flex items-center justify-between p-4">
           <div className="flex items-center space-x-4">
             <h1 
-              className="text-2xl font-bold text-stone-800 cursor-pointer hover:text-stone-600 transition-colors duration-150"
+              className="text-2xl font-bold cursor-pointer transition-colors duration-150"
               style={{
+                color: "white",
                 textShadow: "1px 1px 6px rgba(0, 0, 0, 0.5)"
               }} 
               onClick={handleLogoClick}

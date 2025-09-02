@@ -70,7 +70,7 @@ describe('ExpandableText', () => {
     render(<ExpandableText text={shortText} />);
     
     const textElement = screen.getByText(shortText);
-    expect(textElement).toHaveClass('text-sm', 'text-gray-600', 'leading-relaxed');
+    expect(textElement).toHaveClass('text-sm', 'leading-relaxed');
   });
 
   describe('truncation detection', () => {

@@ -20,7 +20,7 @@ export default function EpisodeModal({
 }: EpisodeModalProps) {
   return (
     <Modal isOpen={isOpen} onOpenChange={onClose} placement="center">
-      <ModalContent className="max-h-[90vh] overflow-y-auto">
+      <ModalContent className="max-h-[90vh] overflow-y-auto bg-white">
         <EpisodeForm
           podcastId={podcastId}
           initialData={initialData}

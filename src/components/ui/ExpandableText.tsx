@@ -6,12 +6,14 @@ type EpisodeDescriptionProps = {
   text: string;
   maxLines?: number;
   className?: string;
+  textColor?: "black" | "white";
 };
 
 export default function ExpandableText({
   text,
   maxLines = 1,
-  className
+  className,
+  textColor = "black"
 }: EpisodeDescriptionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [shouldTruncate, setShouldTruncate] = useState(false);
@@ -85,7 +87,7 @@ export default function ExpandableText({
       >
         <p
           ref={textRef}
-          className={`text-sm text-gray-600 leading-relaxed transition-all duration-300 ease-in-out ${className}`}
+          className={`text-sm leading-relaxed transition-all duration-300 ease-in-out ${className} text-${textColor}`}
         >
           {text}
         </p>
@@ -95,7 +97,8 @@ export default function ExpandableText({
         <Button
           size="sm"
           variant="light"
-          className="h-auto px-0 py-0.5 w-fit justify-start text-blue-600 hover:bg-transparent rounded"
+          color="primary"
+          className="h-auto px-1 py-0.5 w-fit justify-start text-blue-400 hover:bg-transparent rounded"
           onPress={() => setIsExpanded(!isExpanded)}
         >
           <span className="flex items-center gap-1 text-xs">

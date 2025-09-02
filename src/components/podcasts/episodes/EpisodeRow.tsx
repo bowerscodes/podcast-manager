@@ -23,17 +23,17 @@ export default function EpisodeRow({ episode, onUpdate }: EpisodeRowProps) {
   return (
     <>
       <div>
-        <Card className="flex flex-col mb-3">
+        <Card className="flex flex-col mb-3 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
           <CardHeader className="flex justify-between items-center pb-0 gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <h3 className="break-words truncate flex-shrink">
                 {episode.episode_number}. {episode.title}
               </h3>
-              <Tag className="flex-shrink-0" explicit={episode.explicit} />
+              <Tag className="flex-shrink-0" explicit={episode.explicit} mode="light" />
             </div>
 
             <div className="flex items-center gap-2 flex-shrink-0">
-              <Tag className="text-left text-sm font-medium bg-gray-200 px-1 rounded-sm">
+              <Tag className="text-left text-sm font-medium" mode="light">
                 {formatDate(episode.created_at)}
               </Tag>
 
@@ -58,7 +58,7 @@ export default function EpisodeRow({ episode, onUpdate }: EpisodeRowProps) {
             </div>
           </CardHeader>
           <CardBody className="flex-grow pt-2">
-            <ExpandableText text={episode.description} />
+            <ExpandableText className="text-black" text={episode.description} />
           </CardBody>
         </Card>
       </div>

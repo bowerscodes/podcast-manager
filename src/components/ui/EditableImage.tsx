@@ -60,15 +60,14 @@ export default function EditableImage({
       }
     };
 
-      document.addEventListener("keydown", handleEscape);
-      document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isEditing, handleCancel]);
-
 
   const handleSave = async () => {
     if (imageUrl === src) {
@@ -114,7 +113,7 @@ export default function EditableImage({
       return (
         <div className="w-full h-full flex items-center justify-center text-red-400">
           <div className="text-sm">Invalid URL</div>
-        </div>      
+        </div>
       );
     }
     return (
@@ -132,7 +131,7 @@ export default function EditableImage({
             backgroundImage: `url(${imageUrl})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            backgroundRepeat: "no-repeat"
+            backgroundRepeat: "no-repeat",
           }}
         />
       </>
@@ -143,30 +142,34 @@ export default function EditableImage({
     <>
       {/* Main Image Display */}
       <div
-        className={`relative inline-block ${className}`}
+        className="relative inline-block"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {src ? (
-          <Image
-            src={src}
-            alt={alt}
-            className="w-48 h-48 rounded-lg object-cover cursor-pointer"
-            onClick={() => setIsEditing(true)}
-          />
+          <div className={`relative p-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-500 ${className}`}>
+            <Image
+              src={src}
+              alt={alt}
+              className="w-48 h-48 rounded-lg object-cover cursor-pointer"
+              onClick={() => setIsEditing(true)}
+            />
+          </div>
         ) : (
-          <div
-            className="w-48 h-48 rounded-lg overflow-hidden cursor-pointer"
-            onClick={() => setIsEditing(true)}
-          >
-            {fallback}
+          <div className={`relative p-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-500 ${className}`}>
+            <div
+              className="w-48 h-48 rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => setIsEditing(true)}
+            >
+              {fallback}
+            </div>
           </div>
         )}
 
         {/* Hover overlay with Edit icon */}
         {isHovered && (
           <div
-            className="absolute inset-0 bg-black rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 z-20"
+            className="absolute inset-0.5 bg-black rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 z-20"
             onClick={() => setIsEditing(true)}
             style={{
               pointerEvents: "auto",
@@ -188,9 +191,12 @@ export default function EditableImage({
         >
           <div
             ref={modalRef}
-            className="bg-white rounded-lg p-6 max-w-md w-full mx-4"
+            className="rounded-lg p-6 max-w-md w-full mx-4"
+            style={{ background: "var(--gradient-card-subtle)" }}
           >
-            <h3 className="text-lg text-gradient font-semibold mb-4">Update Image</h3>
+            <h3 className="text-lg text-gradient font-semibold mb-4">
+              Update Image
+            </h3>
 
             {/* Image Preview */}
             <div className="mb-4 flex justify-center">
@@ -257,4 +263,4 @@ export default function EditableImage({
       )}
     </>
   );
-};
+}

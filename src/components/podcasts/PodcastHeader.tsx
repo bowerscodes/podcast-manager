@@ -69,7 +69,7 @@ export default function PodcastHeader({
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-4 mb-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <h1 className="text-3xl font-bold truncate">
+              <h1 className="text-3xl font-bold heading-primary truncate">
                 {displayPodcast.title}
               </h1>
               <div className="hidden sm:block flex-shrink-0">
@@ -77,10 +77,9 @@ export default function PodcastHeader({
               </div>
             </div>
             <Button
-              // isIconOnly
               variant="light"
               color="primary"
-              className="top-0 right-0 z-10"
+              className="top-0 right-0 z-10 text-blue-400"
               onPress={() => setIsEditModalOpen(true)}
             >
               Edit <AiOutlineEdit size={20} />
@@ -88,9 +87,9 @@ export default function PodcastHeader({
           </div>
 
           <div className="mb-2">
-            <ExpandableText text={displayPodcast.description} maxLines={2} />
+            <ExpandableText text={displayPodcast.description} maxLines={2} textColor="white" />
           </div>
-          <div className="text-sm text-gray-500 mb-2">
+          <div className="text-sm text-white mb-2">
             By
             <span className="truncate font-medium">
               {" "}
@@ -104,7 +103,7 @@ export default function PodcastHeader({
               ))}
             </div>
           )}
-          <div className="flex flex-wrap gap-4 text-sm text-gray-500 sm:justify-start">
+          <div className="flex flex-wrap gap-4 text-sm text-white sm:justify-start">
             <span>{episodeCount} episodes</span>
             {mostRecentEpisodeDate && (
               <div className="hidden sm:inline">

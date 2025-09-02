@@ -18,13 +18,13 @@ export default function EpisodesList({ podcast }: EpisodesListProps) {
   if (error) throw error;
 
   return (
-    <Card className="mb-6">
+    <Card className="mb-6" style={{ background: "var(--gradient-card-subtle)" }}>
       <CardHeader>
         <h2 className="heading-secondary">Episodes</h2>
       </CardHeader>
-      <CardBody className="">
+      <CardBody>
         {episodes.map((ep) => (
-          <EpisodeRow key={ep.id} episode={ep}  onUpdate={refresh} />
+          <EpisodeRow key={ep.id} episode={ep} onUpdate={refresh} />
         ))}
         <PlaceholderEpisodeRow podcastId={podcast.id} onEpisodeCreated={refresh} />
       </CardBody>

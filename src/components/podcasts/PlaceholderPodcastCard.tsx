@@ -10,9 +10,9 @@ export default function PlaceholderPodcastCard({ isFirstInList, onCreateClick }:
 
   return (
     <Card
-      className="podcast-card group border-2 border-dashed"
+      className="podcast-card group border-2 h-[300px] border-dashed"
       style={{
-        borderColor: 'rgba(139, 92, 246, 0.3)',
+        borderColor: 'rgba(139, 92, 246, 0.8)',
         background: 'rgba(139, 92, 246, 0.05)'
       }}
       isPressable

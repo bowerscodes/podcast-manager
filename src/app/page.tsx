@@ -4,7 +4,7 @@ import { MdPodcasts, MdRssFeed, MdLink } from "react-icons/md";
 
 export default function Home() {
   return (
-    <div className="gradient-bg min-h-screen">
+    <div className="min-h-screen">
       <main className="page-container">
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto text-center mb-16">

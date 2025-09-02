@@ -47,8 +47,8 @@ export default function DeleteModal(props: DeleteModalProps) {
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onClose} placement="center">
-      <ModalContent className="max-h-[90vh] overflow-y-auto">
-        <Card>
+      <ModalContent className="max-h-[90vh] overflow-y-auto bg-white">
+        <Card className="bg-white border-0 shadow-none">
           <CardHeader>
             <h3 className="heading-secondary">Delete {itemType}</h3>
           </CardHeader>

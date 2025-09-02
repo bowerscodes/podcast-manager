@@ -12,20 +12,19 @@ type Props = {
 };
 
 export default function PodcastRSSSection({ podcast }: Props) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const rssUrl = `${baseUrl}/api/rss/${podcast.id}`;
-
-  const copyRSSUrl = () => {
-    navigator.clipboard.writeText(rssUrl);
-    toast.success("RSS URL copied to clipboard!");
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success("RSS URL copied to clipboard");
   };
 
+  const rssUrl = `${window.location.origin}/api/rss/${podcast.id}`;
+
   return (
-    <Card className="mb-4">
+    <Card className="mb-6 border border-gray-200 shadow-md" style={{ background: "var(--gradient-card-subtle)" }}>
       <CardHeader>
-        <h2 className="heading-secondary">RSS Feed</h2>
+        <h2 className="heading-secondary">RSS Feed & Distribution</h2>
       </CardHeader>
-      <CardBody>
+      <CardBody className="space-y-4">
         <p className="text-gray-600 mb-4">
           Use this RSS Feed to submit your podcast to platforms like Apple
           Podcasts and Spotify:
@@ -37,7 +36,7 @@ export default function PodcastRSSSection({ podcast }: Props) {
             readOnly
             className="flex-1 p-2 border rounded-lg bg-gray-50"
           />
-          <Button onPress={copyRSSUrl}>
+          <Button onPress={() => copyToClipboard(rssUrl)}>
             Copy
           </Button>
         </div>

@@ -38,7 +38,7 @@ export default function PodcastStats({
   return (
     <div className="podcast-stats-container gap-4 mb-6">
       {statsCards.map((card, index) => (
-        <Card key={index} className="stats-card">
+        <Card key={index} className="stats-card" style={{ background: "var(--gradient-card-subtle)" }}>
           <CardBody className="text-center">
             <h3 className="text-2xl font-bold text-gradient">
               {card.value}

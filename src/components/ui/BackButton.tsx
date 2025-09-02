@@ -10,7 +10,7 @@ export default function BackButton({ to, fallbackPath = "/podcasts" }: Props) {
 
   return (
     <button 
-      className="flex px-0 text-primary hover:text-primary-600 transition-colors"
+      className="flex px-0 text-blue-400 hover:text-primary-500 transition-colors"
       onClick={() => handleBack(fallbackPath)}
       style={{ 
         background: 'transparent', 

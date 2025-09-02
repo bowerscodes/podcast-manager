@@ -17,7 +17,12 @@ export default function PodcastForm({
   const isEditing = Object.keys(initialData).length > 0;
 
   return (
-    <Card>
+    <Card 
+      className="border border-gray-200 shadow-sm"
+      style={{
+        background: "var(--gradient-card-subtle)"
+      }}
+      >
       <CardHeader>
         <h2 className="heading-secondary">
           {isEditing ? "Edit Podcast" : "Create Podcast"}
