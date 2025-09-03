@@ -227,6 +227,6 @@ describe('SeasonAccordion', () => {
     render(<SeasonAccordion {...defaultProps} />);
     
     const accordionContainer = screen.getByRole('button').closest('.season-accordion');
-    expect(accordionContainer).toHaveClass('season-accordion', 'mb-6');
+    expect(accordionContainer).toHaveClass('season-accordion');
   });
 });

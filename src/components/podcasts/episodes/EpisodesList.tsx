@@ -48,13 +48,14 @@ export default function EpisodesList({ podcast }: EpisodesListProps) {
         <h2 className="heading-secondary">Episodes</h2>
       </CardHeader>
       <CardBody>
-        {episodesBySeasons.map(({ seasonNumber, episodes }) => (
+        {episodesBySeasons.map(({ seasonNumber, episodes }, index) => (
           <SeasonAccordion
             key={seasonNumber}
             seasonNumber={seasonNumber}
             episodes={episodes}
             onUpdate={refresh}
             defaultExpanded={true}
+            isLastSeason={index === episodesBySeasons.length - 1}
           />
         ))}
         <PlaceholderEpisodeRow podcastId={podcast.id} onEpisodeCreated={refresh} />

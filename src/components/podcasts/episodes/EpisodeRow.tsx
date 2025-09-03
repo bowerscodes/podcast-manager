@@ -14,15 +14,16 @@ import { formatDate } from "@/lib/date-utils";
 type EpisodeRowProps = {
   episode: Episode;
   onUpdate: () => void;
+  className?: string;
 };
 
-export default function EpisodeRow({ episode, onUpdate }: EpisodeRowProps) {
+export default function EpisodeRow({ episode, onUpdate, className = "" }: EpisodeRowProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   return (
     <>
-      <div>
+      <div className={className}>
         <Card className="flex flex-col mb-3 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
           <CardHeader className="flex justify-between items-center pb-0 gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">

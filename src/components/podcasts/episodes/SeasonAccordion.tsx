@@ -1,24 +1,26 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Episode } from '@/types/podcast';
-import EpisodeRow from './EpisodeRow';
-import Tag from '@/components/ui/Tag';
+import { Episode } from "@/types/podcast";
+import EpisodeRow from "./EpisodeRow";
+import Tag from "@/components/ui/Tag";
 
 type SeasonAccordionProps = {
   seasonNumber: string;
   episodes: Episode[];
   onUpdate: () => void;
   defaultExpanded?: boolean;
+  className?: string;
+  isLastSeason?: boolean;
 };
 
 // CSS-based chevron component
 const ChevronIcon = ({ isExpanded }: { isExpanded: boolean }) => (
   <div 
     className={`w-2 h-2 border-r-2 border-b-2 transform transition-transform duration-200 ${
-      isExpanded ? 'rotate-45' : 'rotate-[-135deg]'
+      isExpanded ? "rotate-45" : "rotate-[-135deg]"
     }`}
     style={{ 
-      marginTop: isExpanded ? '0px' : '-1px',
+      marginTop: isExpanded ? "0px" : "-1px",
       borderColor: "var(--color-primary)"
     }}
   />
@@ -28,7 +30,9 @@ export default function SeasonAccordion({
   seasonNumber, 
   episodes, 
   onUpdate, 
-  defaultExpanded = true 
+  defaultExpanded = true, 
+  className = "",
+  isLastSeason = false
 }: SeasonAccordionProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
@@ -36,12 +40,12 @@ export default function SeasonAccordion({
     setIsExpanded(!isExpanded);
   };
 
-  const seasonLabel = seasonNumber === 'null' || !seasonNumber 
-    ? 'No Season' 
+  const seasonLabel = seasonNumber === "null" || !seasonNumber 
+    ? "No Season" 
     : `Season ${seasonNumber}`;
 
   return (
-    <div className="season-accordion mb-6">
+    <div className={`season-accordion ${className}`}>
       {/* Season Header */}
       <div className="relative mb-4">
         {/* Background border line */}
@@ -65,7 +69,7 @@ export default function SeasonAccordion({
               {seasonLabel}
             </span>
             <Tag mode="light" color="blue">
-              {episodes.length} episode{episodes.length !== 1 ? 's' : ''}
+              {episodes.length} episode{episodes.length !== 1 ? "s" : ""}
             </Tag>
           </button>
         </div>
@@ -73,11 +77,19 @@ export default function SeasonAccordion({
 
       {/* Episodes Container */}
       <div className={`season-episodes transition-all duration-300 ease-in-out overflow-hidden ${
-        isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+        isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
       }`}>
         <div className="space-y-2">
-          {episodes.map((episode) => (
-            <EpisodeRow key={episode.id} episode={episode} onUpdate={onUpdate} />
+          {episodes.map((episode, index) => (
+            <EpisodeRow 
+              key={episode.id} 
+              episode={episode} 
+              onUpdate={onUpdate} 
+              className={
+                // Add margin to last episode if not the last season
+                !isLastSeason && index === episodes.length - 1 ? "mb-8" : ""
+              }
+            />
           ))}
         </div>
       </div>
