@@ -1,7 +1,8 @@
 import { Card, CardHeader, CardBody } from '@heroui/card';
+import { useMemo } from 'react';
 
 import { Podcast } from '@/types/podcast';
-import EpisodeRow from './EpisodeRow';
+import SeasonAccordion from './SeasonAccordion';
 import PlaceholderEpisodeRow from './PlaceholderEpisodeRow';
 import useEpisodes from '@/hooks/useEpisodes';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -13,6 +14,30 @@ type EpisodesListProps = {
 export default function EpisodesList({ podcast }: EpisodesListProps) {
   const { episodes, loading, error, refresh } = useEpisodes(podcast.id);
 
+  // Group episodes by season
+  const episodesBySeasons = useMemo(() => {
+    const grouped = episodes.reduce((acc, episode) => {
+      const seasonKey = episode.season_number || 'null';
+      if (!acc[seasonKey]) {
+        acc[seasonKey] = [];
+      }
+      acc[seasonKey].push(episode);
+      return acc;
+    }, {} as Record<string, typeof episodes>);
+
+    // Sort seasons: numbered seasons first (ascending), then 'null' last
+    const sortedSeasons = Object.keys(grouped).sort((a, b) => {
+      if (a === 'null') return 1;
+      if (b === 'null') return -1;
+      return parseInt(a) - parseInt(b);
+    });
+
+    return sortedSeasons.map(seasonNumber => ({
+      seasonNumber,
+      episodes: grouped[seasonNumber]
+    }));
+  }, [episodes]);
+
   if (loading) return <LoadingSpinner />;
 
   if (error) throw error;
@@ -23,8 +48,14 @@ export default function EpisodesList({ podcast }: EpisodesListProps) {
         <h2 className="heading-secondary">Episodes</h2>
       </CardHeader>
       <CardBody>
-        {episodes.map((ep) => (
-          <EpisodeRow key={ep.id} episode={ep} onUpdate={refresh} />
+        {episodesBySeasons.map(({ seasonNumber, episodes }) => (
+          <SeasonAccordion
+            key={seasonNumber}
+            seasonNumber={seasonNumber}
+            episodes={episodes}
+            onUpdate={refresh}
+            defaultExpanded={true}
+          />
         ))}
         <PlaceholderEpisodeRow podcastId={podcast.id} onEpisodeCreated={refresh} />
       </CardBody>

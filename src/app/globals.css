@@ -114,7 +114,7 @@ body::before {
   background: 
     /* Pink burst - top right */
     radial-gradient(600px circle at 85% 15%, 
-      rgba(255, 88, 216, 0.2) 0%, 
+      rgba(255, 88, 216, 0.25) 0%, 
       rgba(255, 88, 216, 0.08) 30%, 
       transparent 70%
     ),
@@ -132,16 +132,38 @@ body::before {
     ),
     /* Additional small bursts for depth */
     radial-gradient(300px circle at 25% 25%, 
-      rgba(255, 255, 255, 0.03) 0%, 
+      rgba(255, 255, 255, 0.1) 0%, 
       transparent 50%
     ),
     radial-gradient(400px circle at 75% 70%, 
-      rgba(255, 255, 255, 0.02) 0%, 
+      rgba(255, 255, 255, 0.1) 0%, 
       transparent 60%
     );
 }
 
 /* END SPACE BACKGROUND SECTION */
+
+/* Season Accordion Animations */
+.season-accordion .season-episodes {
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.2s ease-in-out;
+}
+
+.season-accordion .season-episodes.collapsed {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.season-accordion .season-episodes.expanded {
+  max-height: 2000px;
+  opacity: 1;
+}
+
+/* Chevron rotation animation */
+.chevron-icon {
+  transition: transform 0.2s ease-in-out;
+}
 
 /* Ensure light backgrounds for all cards and components against space background */
 .podcast-card,

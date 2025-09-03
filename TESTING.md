@@ -4,18 +4,18 @@
 This podcast management application features comprehensive testing with Jest and React Testing Library, demonstrating professional testing practices and high code quality standards.
 
 ## Test Statistics
-- **32 test suites** with **306 tests** - 100% passing
+- **33 test suites** with **323 tests** - 100% passing
 - **~70% code coverage** across all component types
 - **Sub-3 second execution time** for the full test suite
 
 ## Coverage Highlights
-| Component Type | Coverage | Notes                                                   |
-|----------------|----------|---------------------------------------------------------|
-| Custom Hooks   | 100%     | Complete coverage of data fetching and state management |
-| Authentication | 98%      | OAuth integration, protected routes, login flows        |
-| Forms          | 83%      | Complex form validation, file uploads, persistence      |
-| UI Components  | 84%      | Interactive components, modals, responsive behavior     |
-| API Routes     | 77%      | RSS generation, database integration                    |
+| Component Type | Coverage | Notes                                                           |
+|----------------|----------|-----------------------------------------------------------------|
+| Custom Hooks   | 100%     | Complete coverage of data fetching and state management         |
+| Authentication | 98%      | OAuth integration, protected routes, login flows                |
+| Forms          | 83%      | Complex form validation, file uploads, persistence              |
+| UI Components  | 85%      | Interactive components, modals, accordions, responsive behavior |
+| API Routes     | 77%      | RSS generation, database integration                            |
 
 ## Key Testing Features
 
