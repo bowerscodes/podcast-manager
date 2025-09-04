@@ -14,7 +14,7 @@ export default function PodcastCard({ podcast }: Props) {
 
   return (
     <Card
-      className="w-full h-[300px] podcast-card group relative overflow-hidden"
+      className="w-full h-[300px] podcast-card border-gradient group relative overflow-hidden"
       isPressable
       onPress={() => router.push(`/podcasts/${podcast.id}`)}
     >

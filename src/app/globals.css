@@ -353,6 +353,22 @@ h5 {
 }
 
 /* Card Components */
+.border-gradient {
+  border: 2px solid transparent;
+  background-image: 
+    var(--gradient-card),
+    linear-gradient(-45deg, rgba(139, 92, 246, 0.6) 0%, rgba(6, 182, 212, 0.6) 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.border-gradient:hover {
+  background-image: 
+    var(--gradient-card),
+    linear-gradient(-45deg, rgba(139, 92, 246, 0.8) 0%, rgba(6, 182, 212, 0.8) 100%);
+}
+
+/* Card Components */
 .action-card {
   width: 18rem;
   aspect-ratio: 1;
@@ -369,14 +385,7 @@ h5 {
 }
 
 .podcast-card {
-  background: var(--gradient-card) padding-box;
-  border: 2px solid transparent;
   border-radius: 0.75rem;
-  background-image: 
-    var(--gradient-card),
-    linear-gradient(-45deg, rgba(139, 92, 246, 0.6) 0%, rgba(6, 182, 212, 0.6) 100%);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
   box-shadow: 
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -386,9 +395,6 @@ h5 {
 }
 
 .podcast-card:hover {
-  background-image: 
-    var(--gradient-card),
-    linear-gradient(-45deg, rgba(139, 92, 246, 0.8) 0%, rgba(6, 182, 212, 0.8) 100%);
   box-shadow: 
     var(--shadow-strong),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);

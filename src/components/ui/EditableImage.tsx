@@ -147,18 +147,18 @@ export default function EditableImage({
         onMouseLeave={() => setIsHovered(false)}
       >
         {src ? (
-          <div className={`relative p-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-500 ${className}`}>
+          <div className={`relative rounded-lg ${className}`}>
             <Image
               src={src}
               alt={alt}
-              className="w-48 h-48 rounded-lg object-cover cursor-pointer"
+              className="w-48 h-48 border-gradient rounded-lg object-cover cursor-pointer"
               onClick={() => setIsEditing(true)}
             />
           </div>
         ) : (
-          <div className={`relative p-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-500 ${className}`}>
+          <div className={`relative rounded-lg ${className}`}>
             <div
-              className="w-48 h-48 rounded-lg overflow-hidden cursor-pointer"
+              className="w-48 h-48 border-gradient rounded-lg overflow-hidden cursor-pointer"
               onClick={() => setIsEditing(true)}
             >
               {fallback}
@@ -169,7 +169,7 @@ export default function EditableImage({
         {/* Hover overlay with Edit icon */}
         {isHovered && (
           <div
-            className="absolute inset-0.5 bg-black rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 z-20"
+            className="absolute inset-0 bg-black rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 z-20"
             onClick={() => setIsEditing(true)}
             style={{
               pointerEvents: "auto",
