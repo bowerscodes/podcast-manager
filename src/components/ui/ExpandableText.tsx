@@ -2,7 +2,7 @@ import { Button } from "@heroui/button";
 import { useEffect, useRef, useState } from "react";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
 
-type EpisodeDescriptionProps = {
+type ExpandableTextProps = {
   text: string;
   maxLines?: number;
   className?: string;
@@ -14,7 +14,7 @@ export default function ExpandableText({
   maxLines = 1,
   className,
   textColor = "black"
-}: EpisodeDescriptionProps) {
+}: ExpandableTextProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [shouldTruncate, setShouldTruncate] = useState(false);
   const [fullHeight, setFullHeight] = useState<number>(0);
@@ -94,33 +94,35 @@ export default function ExpandableText({
       </div>
 
       {shouldTruncate && (
-        <Button
-          size="sm"
-          variant="light"
-          color="primary"
-          className="h-auto px-1 py-0.5 w-fit justify-start text-blue-400 hover:bg-transparent rounded"
-          onPress={() => setIsExpanded(!isExpanded)}
-        >
-          <span className="flex items-center gap-1 text-xs">
-            {isExpanded ? (
-              <>
-                Show less{" "}
-                <MdExpandLess
-                  size={16}
-                  className="transition-transform duration-200"
-                />
-              </>
-            ) : (
-              <>
-                Show more{" "}
-                <MdExpandMore
-                  size={16}
-                  className="transition-transform duration-200"
-                />
-              </>
-            )}
-          </span>
-        </Button>
+        <div className="flex justify-end">
+          <Button
+            size="sm"
+            variant="light"
+            color="primary"
+            className="h-auto px-1 py-0.5 w-fit justify-start text-blue-400 hover:bg-transparent rounded"
+            onPress={() => setIsExpanded(!isExpanded)}
+          >
+            <span className="flex items-center gap-1 text-xs">
+              {isExpanded ? (
+                <>
+                  Show less{" "}
+                  <MdExpandLess
+                    size={16}
+                    className="transition-transform duration-200"
+                  />
+                </>
+              ) : (
+                <>
+                  Show more{" "}
+                  <MdExpandMore
+                    size={16}
+                    className="transition-transform duration-200"
+                  />
+                </>
+              )}
+            </span>
+          </Button>
+        </div>
       )}
     </>
   );
