@@ -286,11 +286,16 @@ describe("PodcastHeader", () => {
   });
 
   it("should handle different episode counts", () => {
-    render(<PodcastHeader podcast={mockPodcast} episodeCount={1} />);
-    expect(screen.getByText("1 episodes")).toBeInTheDocument();
+    render(<PodcastHeader podcast={mockPodcast} episodeCount={2} />);
+    expect(screen.getByText("2 episodes")).toBeInTheDocument();
 
+    render(<PodcastHeader podcast={mockPodcast} episodeCount={1} />);
+    expect(screen.getByText("1 episode")).toBeInTheDocument();
+  });
+
+  it("should handle podcasts with zero episodes", () => {
     render(<PodcastHeader podcast={mockPodcast} episodeCount={0} />);
-    expect(screen.getByText("0 episodes")).toBeInTheDocument();
+    expect(screen.queryByText(/episode/)).not.toBeInTheDocument();
   });
 
   it("should apply correct styling to edit button", () => {

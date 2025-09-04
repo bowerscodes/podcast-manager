@@ -87,7 +87,11 @@ export default function PodcastHeader({
           </div>
 
           <div className="mb-2">
-            <ExpandableText text={displayPodcast.description} maxLines={2} textColor="white" />
+            <ExpandableText
+              text={displayPodcast.description}
+              maxLines={2}
+              textColor="white"
+            />
           </div>
           <div className="text-sm text-white mb-2">
             By
@@ -99,12 +103,18 @@ export default function PodcastHeader({
           {displayPodcast.categories.length > 0 && (
             <div className="hidden sm:flex flex-wrap gap-2  mb-2">
               {podcast?.categories.map((category, index) => (
-                <Tag key={index} color="blue">{category}</Tag>
+                <Tag key={index} color="blue">
+                  {category}
+                </Tag>
               ))}
             </div>
           )}
           <div className="flex flex-wrap gap-4 text-sm text-white sm:justify-start">
-            <span>{episodeCount} episodes</span>
+            {episodeCount > 0 && (
+              <span>
+                {`${episodeCount} episode${episodeCount > 1 ? "s" : ""}`}
+              </span>
+            )}
             {mostRecentEpisodeDate && (
               <div className="hidden sm:inline">
                 <Tag className="sm:inline">
