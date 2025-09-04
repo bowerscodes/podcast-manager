@@ -362,10 +362,30 @@ h5 {
   background-clip: padding-box, border-box;
 }
 
+.border-gradient-md {
+  border: 2px solid transparent;
+  border-radius: 0.6rem;
+  background-image: 
+    var(--gradient-card),
+    linear-gradient(-45deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.9) 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.border-gradient-xl {
+  border: 2px solid transparent;
+  border-radius: 1rem;
+  background-image: 
+    var(--gradient-card),
+    linear-gradient(-45deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.9) 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
 .border-gradient:hover {
   background-image: 
     var(--gradient-card),
-    linear-gradient(-45deg, rgba(139, 92, 246, 0.8) 0%, rgba(6, 182, 212, 0.8) 100%);
+    linear-gradient(-45deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 1) 100%);
 }
 
 /* Card Components */

@@ -43,23 +43,25 @@ export default function EpisodesList({ podcast }: EpisodesListProps) {
   if (error) throw error;
 
   return (
-    <Card className="mb-6" style={{ background: "var(--gradient-card-subtle)" }}>
-      <CardHeader>
-        <h2 className="heading-secondary">Episodes</h2>
-      </CardHeader>
-      <CardBody>
-        {episodesBySeasons.map(({ seasonNumber, episodes }, index) => (
-          <SeasonAccordion
-            key={seasonNumber}
-            seasonNumber={seasonNumber}
-            episodes={episodes}
-            onUpdate={refresh}
-            defaultExpanded={true}
-            isLastSeason={index === episodesBySeasons.length - 1}
-          />
-        ))}
-        <PlaceholderEpisodeRow podcastId={podcast.id} onEpisodeCreated={refresh} />
-      </CardBody>
-    </Card>
+    <div className="border-gradient-xl rounded-lg mb-6">
+      <Card style={{ background: "var(--gradient-card-subtle)" }}>
+        <CardHeader>
+          <h2 className="heading-secondary">Episodes</h2>
+        </CardHeader>
+        <CardBody>
+          {episodesBySeasons.map(({ seasonNumber, episodes }, index) => (
+            <SeasonAccordion
+              key={seasonNumber}
+              seasonNumber={seasonNumber}
+              episodes={episodes}
+              onUpdate={refresh}
+              defaultExpanded={true}
+              isLastSeason={index === episodesBySeasons.length - 1}
+            />
+          ))}
+          <PlaceholderEpisodeRow podcastId={podcast.id} onEpisodeCreated={refresh} />
+        </CardBody>
+      </Card>
+    </div>
   );
 };
