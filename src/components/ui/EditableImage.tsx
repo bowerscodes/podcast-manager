@@ -151,7 +151,7 @@ export default function EditableImage({
             <Image
               src={src}
               alt={alt}
-              className="w-48 h-48 border-gradient rounded-lg object-cover cursor-pointer"
+              className="w-48 h-48 border-gradient-md rounded-lg object-cover cursor-pointer"
               onClick={() => setIsEditing(true)}
             />
           </div>
