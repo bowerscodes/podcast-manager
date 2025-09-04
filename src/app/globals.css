@@ -388,7 +388,7 @@ h5 {
 .podcast-card:hover {
   background-image: 
     var(--gradient-card),
-    linear-gradient(135deg, rgba(139, 92, 246, 0.8) 0%, rgba(6, 182, 212, 0.8) 100%);
+    linear-gradient(-45deg, rgba(139, 92, 246, 0.8) 0%, rgba(6, 182, 212, 0.8) 100%);
   box-shadow: 
     var(--shadow-strong),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
