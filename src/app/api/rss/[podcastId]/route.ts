@@ -58,7 +58,7 @@ export async function GET(
       .select("*")
       .eq("podcast_id", podcastId)
       .eq("status", "published")
-      .order("published_at", { ascending: false });
+      .order("publish_date", { ascending: false });
     
     // Generate RSS
     const rssXml = generateRSSFeed(podcast, episodes || []);

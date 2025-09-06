@@ -225,6 +225,7 @@ export default function EpisodeFormClient({
             season_number: formData.season_number,
             episode_number: formData.episode_number,
             explicit: formData.explicit,
+            status: "published"
           })
           .eq("id", initialData.id)
           .select()
@@ -246,7 +247,8 @@ export default function EpisodeFormClient({
             episode_number: formData.episode_number,
             explicit: formData.explicit,
             podcast_id: podcastId,
-            publish_date: new Date().toISOString()
+            publish_date: new Date().toISOString(),
+            status: "published"
           })
           .select()
           .single();

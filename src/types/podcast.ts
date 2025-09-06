@@ -26,6 +26,7 @@ export interface Episode {
   season_number?: string;
   episode_number?: string;
   explicit: boolean;
+  status: "draft" | "published";
   created_at: Date;
 };
 
@@ -49,4 +50,5 @@ export interface EpisodeFormData {
   season_number?: string;
   episode_number?: string;
   explicit: boolean;
+  status: "draft" | "published";
 };

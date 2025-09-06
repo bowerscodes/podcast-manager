@@ -13,7 +13,29 @@ jest.mock('next/navigation', () => ({
   }),
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
-}))
+}));
+
+// Mock Web APIs that aren't available in Node.js test environment
+// We'll create a simpler mock that doesn't conflict with Next.js types
+
+// Mock URL constructor for NextRequest
+global.URL = global.URL || class MockURL {
+  constructor(url, base) {
+    if (base) {
+      this.href = new URL(url, base).href;
+    } else {
+      this.href = url;
+    }
+    const parsed = new URL(this.href);
+    this.protocol = parsed.protocol;
+    this.hostname = parsed.hostname;
+    this.port = parsed.port;
+    this.pathname = parsed.pathname;
+    this.search = parsed.search;
+    this.hash = parsed.hash;
+    this.origin = parsed.origin;
+  }
+};
 
 // Mock Supabase client
 jest.mock('@/lib/supabase', () => ({
@@ -41,7 +63,7 @@ jest.mock('@/lib/supabase', () => ({
       single: jest.fn(),
     })),
   },
-}))
+}));
 
 // Mock HeroUI components
 jest.mock('@heroui/react', () => ({
@@ -61,7 +83,7 @@ jest.mock('@heroui/react', () => ({
     onClose: jest.fn(),
     onOpenChange: jest.fn(),
   }),
-}))
+}));
 
 // Mock react-hot-toast
 jest.mock('react-hot-toast', () => ({
@@ -70,7 +92,7 @@ jest.mock('react-hot-toast', () => ({
     error: jest.fn(),
     loading: jest.fn(),
   },
-}))
+}));
 
 // Mock framer-motion
 jest.mock('framer-motion', () => ({
@@ -79,7 +101,7 @@ jest.mock('framer-motion', () => ({
     button: ({ children, ...props }) => <button {...props}>{children}</button>,
   },
   AnimatePresence: ({ children }) => children,
-}))
+}));
 
 
 // Only suppress the specific JSDOM navigation warning (this is acceptable)

@@ -76,6 +76,9 @@ describe('RSS Utils', () => {
         publish_date: new Date('2024-01-01T00:00:00Z'),
         podcast_id: 'test-id',
         explicit: false,
+        season_number: '1',
+        episode_number: '1',
+        status: 'published',
         created_at: new Date('2024-01-01T00:00:00Z'),
       },
       {
@@ -87,7 +90,10 @@ describe('RSS Utils', () => {
         duration: 2700, // 45 minutes in seconds
         publish_date: new Date('2024-01-02T00:00:00Z'),
         podcast_id: 'test-id',
-        explicit: false,
+        explicit: true,
+        season_number: '1', 
+        episode_number: '2',
+        status: 'published',
         created_at: new Date('2024-01-02T00:00:00Z'),
       }
     ];
@@ -102,11 +108,24 @@ describe('RSS Utils', () => {
 
       expect(rss).toContain('<?xml version="1.0" encoding="UTF-8"?>');
       expect(rss).toContain('<rss version="2.0"');
+      expect(rss).toContain('xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"');
+      expect(rss).toContain('xmlns:content="http://purl.org/rss/1.0/modules/content/"');
+      expect(rss).toContain('xmlns:atom="http://www.w3.org/2005/Atom"');
       expect(rss).toContain('<title>Test Podcast</title>');
       expect(rss).toContain('<description>A test podcast</description>');
       expect(rss).toContain('<itunes:author>Test Author</itunes:author>');
       expect(rss).toContain('<language>en</language>');
       expect(rss).toContain('<itunes:image href="https://example.com/artwork.jpg" />');
+      expect(rss).toContain('<itunes:email>test@example.com</itunes:email>');
+      expect(rss).toContain('<itunes:explicit>false</itunes:explicit>');
+      expect(rss).toContain('<itunes:category text="Technology" />');
+      expect(rss).toContain('<itunes:link href="https://example.com" />');
+      expect(rss).toContain('<managingEditor>test@example.com (Test Author)</managingEditor>');
+      expect(rss).toContain('<webMaster>test@example.com (Test Author)</webMaster>');
+      expect(rss).toContain('<generator>Podcast Manager</generator>');
+      expect(rss).toContain('<itunes:type>episodic</itunes:type>');
+      expect(rss).toContain('<itunes:complete>no</itunes:complete>');
+      expect(rss).toContain('<atom:link href="https://example.com/api/rss/test-id" rel="self" type="application/rss+xml" />');
     });
 
     it('should include all episodes in the feed', () => {
@@ -118,6 +137,12 @@ describe('RSS Utils', () => {
       expect(rss).toContain('<description>Second episode</description>');
       expect(rss).toContain('<enclosure url="https://example.com/episode1.mp3"');
       expect(rss).toContain('<enclosure url="https://example.com/episode2.mp3"');
+      expect(rss).toContain('<itunes:season>1</itunes:season>');
+      expect(rss).toContain('<itunes:episode>1</itunes:episode>');
+      expect(rss).toContain('<itunes:episode>2</itunes:episode>');
+      expect(rss).toContain('<content:encoded><![CDATA[First episode]]></content:encoded>');
+      expect(rss).toContain('<itunes:episodeType>full</itunes:episodeType>');
+      expect(rss).toContain('<itunes:summary>First episode</itunes:summary>');
     });
 
     it('should escape XML in podcast and episode data', () => {
@@ -173,6 +198,57 @@ describe('RSS Utils', () => {
       const rss = generateRSSFeed(mockPodcast, mockEpisodes);
 
       expect(rss).toContain('<link>localhost:3000/podcasts/test-id</link>');
+    });
+
+    it('should handle explicit podcast and episodes', () => {
+      const explicitPodcast = { ...mockPodcast, explicit: true };
+      const rss = generateRSSFeed(explicitPodcast, mockEpisodes);
+
+      expect(rss).toContain('<itunes:explicit>true</itunes:explicit>');
+      // First episode is not explicit, second is explicit (from mock data)
+      expect(rss).toMatch(/<item>[\s\S]*?<itunes:explicit>false<\/itunes:explicit>[\s\S]*?<\/item>/);
+      expect(rss).toMatch(/<item>[\s\S]*?<itunes:explicit>true<\/itunes:explicit>[\s\S]*?<\/item>/);
+    });
+
+    it('should handle multiple categories', () => {
+      const multiCategoryPodcast = { 
+        ...mockPodcast, 
+        categories: ['Technology', 'Education', 'Business'] 
+      };
+      const rss = generateRSSFeed(multiCategoryPodcast, mockEpisodes);
+
+      expect(rss).toContain('<itunes:category text="Technology" />');
+      expect(rss).toContain('<itunes:category text="Education" />');
+      expect(rss).toContain('<itunes:category text="Business" />');
+    });
+
+    it('should handle podcast without website', () => {
+      const podcastWithoutWebsite = { ...mockPodcast, website: undefined };
+      const rss = generateRSSFeed(podcastWithoutWebsite, mockEpisodes);
+
+      expect(rss).not.toContain('<itunes:link href=');
+      expect(rss).toContain('<title>Test Podcast</title>'); // Other content should still be there
+    });
+
+    it('should handle episodes without season/episode numbers', () => {
+      const episodesWithoutNumbers = [{
+        ...mockEpisodes[0],
+        season_number: undefined,
+        episode_number: undefined
+      }];
+
+      const rss = generateRSSFeed(mockPodcast, episodesWithoutNumbers);
+
+      expect(rss).not.toContain('<itunes:season>');
+      expect(rss).not.toContain('<itunes:episode>');
+      expect(rss).toContain('<title>Episode 1</title>'); // Other content should still be there
+    });
+
+    it('should include guid with isPermaLink="false"', () => {
+      const rss = generateRSSFeed(mockPodcast, mockEpisodes);
+
+      expect(rss).toContain('<guid isPermaLink="false">ep1</guid>');
+      expect(rss).toContain('<guid isPermaLink="false">ep2</guid>');
     });
   });
 });

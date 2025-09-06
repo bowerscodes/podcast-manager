@@ -49,6 +49,7 @@ describe('EpisodeRow', () => {
     file_size: 1073741824, // 1GB
     episode_number: '5',
     season_number: '1',
+    status: "draft",
     created_at: new Date('2023-01-01T00:00:00.000Z'),
     podcast_id: 'podcast-1',
     publish_date: new Date('2023-01-01T00:00:00.000Z'),
