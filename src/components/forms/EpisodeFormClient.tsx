@@ -38,6 +38,7 @@ export default function EpisodeFormClient({
       season_number: initialData.season_number || undefined,
       episode_number: initialData.episode_number || undefined,
       explicit: initialData.explicit || false,
+      status: initialData.status || "published"
     }
   );
 
@@ -121,7 +122,7 @@ export default function EpisodeFormClient({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, isDraft: boolean = false) => {
     e.preventDefault();
     if (!user) return;
 
@@ -213,20 +214,38 @@ export default function EpisodeFormClient({
       return;
     }
 
+    const episodeStatus = isDraft ? "draft" : "published";
+
     setLoading(true);
     try {
       if (isEditMode) {
+        const updateData: {
+          title: string;
+          description: string;
+          audio_url: string;
+          season_number: string | undefined;
+          episode_number: string | undefined;
+          explicit: boolean;
+          status: string;
+          publish_date?: string;
+        } = {
+          title: formData.title,
+          description: formData.description,
+          audio_url: formData.audio_url,
+          season_number: formData.season_number,
+          episode_number: formData.episode_number,
+          explicit: formData.explicit,
+          status: episodeStatus
+        };
+
+        // Update publish_date when publishing an episode
+        if (!isDraft) {
+          updateData.publish_date = new Date().toISOString();
+        }
+
         const { error } = await supabase
           .from("episodes")
-          .update({
-            title: formData.title,
-            description: formData.description,
-            audio_url: formData.audio_url,
-            season_number: formData.season_number,
-            episode_number: formData.episode_number,
-            explicit: formData.explicit,
-            status: "published"
-          })
+          .update(updateData)
           .eq("id", initialData.id)
           .select()
           .single();
@@ -248,7 +267,7 @@ export default function EpisodeFormClient({
             explicit: formData.explicit,
             podcast_id: podcastId,
             publish_date: new Date().toISOString(),
-            status: "published"
+            status: episodeStatus
           })
           .select()
           .single();
@@ -262,8 +281,8 @@ export default function EpisodeFormClient({
 
       toast.success(
         isEditMode
-          ? "Episode updated successfully!"
-          : "Episode created successfully!"
+          ? `Episode ${isDraft ? 'saved as draft' : 'updated'} successfully!`
+          : `Episode ${isDraft ? 'saved as draft' : 'published'} successfully!`
       );
       clearPersistedData();
       onSuccess();
@@ -276,6 +295,16 @@ export default function EpisodeFormClient({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePublish = () => {
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    handleSubmit(fakeEvent, false);
+  };
+
+  const handleSaveDraft = () => {
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    handleSubmit(fakeEvent, true);
   };
 
   const handleCancel = useCallback(() => {
@@ -350,8 +379,22 @@ export default function EpisodeFormClient({
       </label>
 
       <div className="flex gap-4 mt-6">
-        <Button type="submit" color="primary" isLoading={isLoading}>
-          {isEditMode ? "Update" : "Add"} Episode
+        <Button 
+          type="button" 
+          color="primary" 
+          isLoading={isLoading}
+          onPress={handlePublish}
+        >
+          Publish Episode
+        </Button>
+        <Button 
+          type="button" 
+          variant="bordered" 
+          color="primary" 
+          isLoading={isLoading}
+          onPress={handleSaveDraft}
+        >
+          Save Draft
         </Button>
         <Button type="button" variant="light" onPress={() => handleCancel()}>
           Cancel

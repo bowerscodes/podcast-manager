@@ -17,7 +17,11 @@ type EpisodeRowProps = {
   className?: string;
 };
 
-export default function EpisodeRow({ episode, onUpdate, className = "" }: EpisodeRowProps) {
+export default function EpisodeRow({
+  episode,
+  onUpdate,
+  className = "",
+}: EpisodeRowProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -30,14 +34,23 @@ export default function EpisodeRow({ episode, onUpdate, className = "" }: Episod
               <h3 className="break-words truncate flex-shrink">
                 {episode.episode_number}. {episode.title}
               </h3>
-              <Tag className="flex-shrink-0" explicit={episode.explicit} mode="light" />
+              <Tag
+                className="flex-shrink-0"
+                explicit={episode.explicit}
+                mode="light"
+              />
             </div>
 
             <div className="flex items-center gap-2 flex-shrink-0">
-              <Tag className="text-left text-sm font-medium" mode="light">
-                {formatDate(episode.created_at)}
-              </Tag>
-
+              {episode.status === "draft" ? (
+                <Tag className="text-left text-sm" color="yellow" mode="light">
+                  DRAFT
+                </Tag>
+              ) : (
+                <Tag className="text-left text-sm" mode="light">
+                  {formatDate(episode.publish_date)}
+                </Tag>
+              )}
               <div className="flex items-center flex-row gap-1 flex-shrink-0 ">
                 <Button
                   className="flex items-center justify-center px-1 aspect-square w-6 h-6 min-w-0"

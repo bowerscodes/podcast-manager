@@ -37,6 +37,7 @@ jest.mock('@/providers/Providers', () => ({
 
 // Mock Supabase
 const mockInsert = jest.fn();
+const mockUpdate = jest.fn();
 const mockSelect = jest.fn();
 const mockEq = jest.fn();
 const mockSingle = jest.fn();
@@ -48,6 +49,14 @@ mockInsert.mockReturnValue({
   })
 });
 
+mockUpdate.mockReturnValue({
+  eq: jest.fn().mockReturnValue({
+    select: jest.fn().mockReturnValue({
+      single: mockSingle
+    })
+  })
+});
+
 mockSelect.mockReturnValue({
   eq: mockEq
 });
@@ -56,6 +65,7 @@ jest.mock('@/lib/supabase', () => ({
   supabase: {
     from: jest.fn(() => ({
       insert: mockInsert,
+      update: mockUpdate,
       select: mockSelect
     }))
   }
@@ -147,6 +157,39 @@ describe('EpisodeFormClient', () => {
     });
   });
 
+  it('should render correct buttons', async () => {
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
+
+    // Wait for initial fetch to complete
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /publish episode/i })).toBeTruthy();
+      expect(screen.getByRole('button', { name: /save draft/i })).toBeTruthy();
+      expect(screen.getByRole('button', { name: /cancel/i })).toBeTruthy();
+    });
+  });
+
+  it('should render correct buttons in edit mode', async () => {
+    const initialData = {
+      id: 'episode-123',
+      title: 'Edit Episode',
+      season_number: '1',
+      episode_number: '5'
+    };
+
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+    });
+
+    // Wait for initial fetch to complete
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /publish episode/i })).toBeTruthy();
+      expect(screen.getByRole('button', { name: /save draft/i })).toBeTruthy();
+      expect(screen.getByRole('button', { name: /cancel/i })).toBeTruthy();
+    });
+  });
+
   it('should populate form with initial data', async () => {
     const initialData = {
       title: 'Test Episode',
@@ -234,7 +277,7 @@ describe('EpisodeFormClient', () => {
         target: { value: `https://example.com/audio${format}` }
       });
 
-      fireEvent.click(screen.getByRole('button', { name: /add episode/i }));
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
 
       await waitFor(() => {
         expect(toast.error).not.toHaveBeenCalledWith('Audio URL must point to a valid audio file (e.g. .mp3, .m4a, .wav)');
@@ -244,7 +287,7 @@ describe('EpisodeFormClient', () => {
     }
   });
 
-  it('should submit form successfully', async () => {
+  it('should submit form successfully for publishing episode', async () => {
     // Mock episodes query to return empty array (no existing episodes)
     mockEq.mockResolvedValueOnce({
       data: [],
@@ -277,7 +320,7 @@ describe('EpisodeFormClient', () => {
       target: { value: '1' }
     });
 
-    fireEvent.click(screen.getByRole('button', { name: /add episode/i }));
+    fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
 
     await waitFor(() => {
       expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
@@ -287,11 +330,173 @@ describe('EpisodeFormClient', () => {
         season_number: '1',
         episode_number: '1',
         explicit: false,
-        podcast_id: 'podcast-123'
+        podcast_id: 'podcast-123',
+        status: 'published'
       }));
     });
 
-    expect(toast.success).toHaveBeenCalledWith('Episode created successfully!');
+    expect(toast.success).toHaveBeenCalledWith('Episode published successfully!');
+    expect(defaultProps.onSuccess).toHaveBeenCalled();
+  });
+
+  it('should submit form successfully for saving as draft', async () => {
+    // Mock episodes query to return empty array (no existing episodes)
+    mockEq.mockResolvedValueOnce({
+      data: [],
+      error: null
+    });
+
+    // Mock successful insert
+    mockSingle.mockResolvedValueOnce({
+      data: { id: 'episode-123' },
+      error: null
+    });
+
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} />);
+    });
+
+    fireEvent.change(screen.getByLabelText(/episode title/i), {
+      target: { value: 'Test Episode' }
+    });
+    fireEvent.change(screen.getByLabelText(/description/i), {
+      target: { value: 'Test Description' }
+    });
+    fireEvent.change(screen.getByLabelText(/audio url/i), {
+      target: { value: 'https://example.com/audio.mp3' }
+    });
+    fireEvent.change(screen.getByLabelText(/season number/i), {
+      target: { value: '1' }
+    });
+    fireEvent.change(screen.getByLabelText(/episode number/i), {
+      target: { value: '1' }
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /save draft/i }));
+
+    await waitFor(() => {
+      expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Test Episode',
+        description: 'Test Description',
+        audio_url: 'https://example.com/audio.mp3',
+        season_number: '1',
+        episode_number: '1',
+        explicit: false,
+        podcast_id: 'podcast-123',
+        status: 'draft'
+      }));
+    });
+
+    expect(toast.success).toHaveBeenCalledWith('Episode saved as draft successfully!');
+    expect(defaultProps.onSuccess).toHaveBeenCalled();
+  });
+
+  it('should update publish_date when publishing episode in edit mode', async () => {
+    const initialData = {
+      id: 'episode-123',
+      title: 'Test Episode',
+      season_number: '1',
+      episode_number: '1',
+      status: 'draft' as const
+    };
+
+    // Mock episodes query to return empty array
+    mockEq.mockResolvedValueOnce({
+      data: [],
+      error: null
+    });
+
+    // Mock successful update
+    mockSingle.mockResolvedValueOnce({
+      data: { id: 'episode-123' },
+      error: null
+    });
+
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+    });
+
+    // Wait for form to be populated
+    await waitFor(() => {
+      expect((screen.getByLabelText(/episode title/i) as HTMLInputElement).value).toBe('Test Episode');
+    });
+
+    fireEvent.change(screen.getByLabelText(/audio url/i), {
+      target: { value: 'https://example.com/audio.mp3' }
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+    await waitFor(() => {
+      expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Test Episode',
+        audio_url: 'https://example.com/audio.mp3',
+        season_number: '1',
+        episode_number: '1',
+        explicit: false,
+        status: 'published',
+        publish_date: expect.any(String)
+      }));
+    });
+
+    expect(toast.success).toHaveBeenCalledWith('Episode updated successfully!');
+    expect(defaultProps.onSuccess).toHaveBeenCalled();
+  });
+
+  it('should not update publish_date when saving as draft in edit mode', async () => {
+    const initialData = {
+      id: 'episode-123',
+      title: 'Test Episode',
+      season_number: '1',
+      episode_number: '1',
+      status: 'published' as const
+    };
+
+    // Mock episodes query to return empty array
+    mockEq.mockResolvedValueOnce({
+      data: [],
+      error: null
+    });
+
+    // Mock successful update
+    mockSingle.mockResolvedValueOnce({
+      data: { id: 'episode-123' },
+      error: null
+    });
+
+    await act(async () => {
+      render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+    });
+
+    // Wait for form to be populated
+    await waitFor(() => {
+      expect((screen.getByLabelText(/episode title/i) as HTMLInputElement).value).toBe('Test Episode');
+    });
+
+    fireEvent.change(screen.getByLabelText(/audio url/i), {
+      target: { value: 'https://example.com/audio.mp3' }
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /save draft/i }));
+
+    await waitFor(() => {
+      // Verify update was called but without publish_date
+      expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Test Episode',
+        audio_url: 'https://example.com/audio.mp3',
+        season_number: '1',
+        episode_number: '1',
+        explicit: false,
+        status: 'draft'
+      }));
+      
+      // Verify publish_date was NOT included in the update
+      expect(mockUpdate).toHaveBeenCalledWith(expect.not.objectContaining({
+        publish_date: expect.any(String)
+      }));
+    });
+
+    expect(toast.success).toHaveBeenCalledWith('Episode saved as draft successfully!');
     expect(defaultProps.onSuccess).toHaveBeenCalled();
   });
 
@@ -334,8 +539,7 @@ describe('EpisodeFormClient', () => {
       target: { value: '1' }
     });
 
-    const form = document.querySelector('form');
-    fireEvent.submit(form!);
+    fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('Failed to create episode');

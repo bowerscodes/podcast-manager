@@ -257,6 +257,35 @@ describe('EpisodeRow', () => {
     expect(screen.getByText(formattedDate)).toBeTruthy();
   });
 
+  it('should display "DRAFT" tag for draft episodes instead of date', () => {
+    const draftEpisode = { ...mockEpisode, status: 'draft' as const };
+    render(<EpisodeRow episode={draftEpisode} onUpdate={mockOnUpdate} />);
+
+    expect(screen.getByText('DRAFT')).toBeTruthy();
+    
+    // Should not show the formatted date for draft episodes
+    const formattedDate = mockEpisode.created_at.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+    expect(screen.queryByText(formattedDate)).toBeFalsy();
+  });
+
+  it('should display formatted date for published episodes', () => {
+    const publishedEpisode = { ...mockEpisode, status: 'published' as const };
+    render(<EpisodeRow episode={publishedEpisode} onUpdate={mockOnUpdate} />);
+
+    const formattedDate = mockEpisode.created_at.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+    
+    expect(screen.getByText(formattedDate)).toBeTruthy();
+    expect(screen.queryByText('DRAFT')).toBeFalsy();
+  });
+
   it('should show ExplicitTag when episode is explicit', () => {
     const explicitEpisode = { ...mockEpisode, explicit: true };
     render(<EpisodeRow episode={explicitEpisode} onUpdate={mockOnUpdate} />);
