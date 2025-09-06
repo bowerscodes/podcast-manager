@@ -33,10 +33,10 @@ export default function PodcastHeader({
   const mostRecentEpisodeDate =
     episodes.length > 0
       ? episodes.reduce((latest, episode) =>
-          new Date(episode.created_at) > new Date(latest.created_at)
+          new Date(episode.publish_date) > new Date(latest.publish_date)
             ? episode
             : latest
-        ).created_at
+        ).publish_date
       : null;
 
   const handlePodcastUpdate = () => {
