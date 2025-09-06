@@ -41,6 +41,7 @@ describe('SeasonAccordion', () => {
       episode_number: '1',
       explicit: false,
       created_at: new Date('2024-01-01'),
+      status: 'published'
     },
     {
       id: '2',
@@ -55,6 +56,7 @@ describe('SeasonAccordion', () => {
       episode_number: '2',
       explicit: false,
       created_at: new Date('2024-01-08'),
+      status: 'published'
     },
   ];
 

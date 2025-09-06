@@ -104,6 +104,7 @@ const mockEpisode: Episode = {
   explicit: false,
   created_at: new Date('2023-01-01'),
   podcast_id: 'podcast-1',
+  status: 'published'
 };
 
 describe('EpisodeRow', () => {
