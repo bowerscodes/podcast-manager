@@ -47,12 +47,12 @@ export default function SeasonAccordion({
   return (
     <div className={`season-accordion ${className}`}>
       {/* Season Header */}
-      <div className="relative mb-4">
+      <div className="relative mb-4  pt-0">
         {/* Background border line */}
         <div 
           className="absolute inset-x-0 top-1/2 h-px"
           style={{ background: "var(--gradient-primary)" }}
-        ></div>
+        />
         
         {/* Season label with background */}
         <div className="relative flex justify-center">

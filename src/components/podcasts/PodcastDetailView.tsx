@@ -12,6 +12,7 @@ import PodcastStats from "./PodcastStats";
 import PodcastRSSSection from "./PodcastRSSSection";
 import PodcastActions from "./PodcastActions";
 import EpisodesList from "./episodes/EpisodesList";
+import ExpandableContent from "../ui/ExpandableContent";
 
 interface AnalyticsData {
   totalDownloads: number;
@@ -120,6 +121,9 @@ export default function PodcastDetailView() {
     );
   }
 
+  const episodesList = <EpisodesList podcast={podcast} />;
+  const rssSection = <PodcastRSSSection podcast={podcast} />;
+
   return (
     
     <div className="container mx-auto p-8 pt-5 max-w-4xl">
@@ -130,8 +134,20 @@ export default function PodcastDetailView() {
         uniqueListeners={analytics.uniqueListeners}
         platformBreakdown={analytics.platformBreakdown}
       />
-      <EpisodesList podcast={podcast} />
-      <PodcastRSSSection podcast={podcast} />
+      <ExpandableContent
+        title="Episodes"
+        defaultExpanded={true}
+        contentClassName="p-0"
+      >
+        {episodesList}
+      </ExpandableContent>
+      <ExpandableContent
+        title="RSS Feed & Distribution"
+        defaultExpanded={false}
+        contentClassName="p-0"
+      >
+        {rssSection}
+      </ExpandableContent>
       <PodcastActions podcast={podcast} />
     </div>
   );
