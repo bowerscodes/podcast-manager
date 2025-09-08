@@ -143,7 +143,7 @@ export default function PodcastDetailView() {
       </ExpandableContent>
       <ExpandableContent
         title="RSS Feed & Distribution"
-        defaultExpanded={false}
+        defaultExpanded={true}
         contentClassName="p-0"
       >
         {rssSection}
