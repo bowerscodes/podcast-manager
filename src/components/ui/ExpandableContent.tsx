@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@heroui/card";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
 
 type ExpandableContentProps = {
@@ -24,7 +24,33 @@ export default function ExpandableContent({
   showChevron = true,
 }: ExpandableContentProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const [contentHeight, setContentHeight] = useState<number>(0);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const calculateHeight = () => {
+      if (contentRef.current) {
+        setContentHeight(contentRef.current.scrollHeight)
+      }
+    };
+
+    calculateHeight();
+
+    const timer = setTimeout(calculateHeight, 100);
+
+    return () => clearTimeout(timer);
+  }, [children, isExpanded]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (contentRef.current) {
+        setContentHeight(contentRef.current.scrollHeight);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return() => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div className={`border-gradient-xl rounded-lg mb-6 ${className}`}>
@@ -55,9 +81,9 @@ export default function ExpandableContent({
         </div>
 
         <div
-          className="overflow-hidden transition-all duration-300 ease-in-out"
+          className="overflow-hidden transition-all duration-400 ease-in-out"
           style={{
-            maxHeight: isExpanded ? "none" : "0px",
+            maxHeight: isExpanded ? `${contentHeight + 40}px` : "0px",
             height: isExpanded ? "auto" : "0px",
             opacity: isExpanded ? 1 : 0,
           }}
@@ -65,7 +91,7 @@ export default function ExpandableContent({
           <div>
             <div
               ref={contentRef}
-              className={`px-3 pb-3 transition-all duration-300 ease-in-out ${contentClassName}`}
+              className={`px-3 pb-3 transition-all duration-400 ease-in-out ${contentClassName}`}
             >
               {children}
             </div>
