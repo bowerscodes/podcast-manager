@@ -4,9 +4,9 @@
 This podcast management application features comprehensive testing with Jest and React Testing Library, demonstrating professional testing practices and high code quality standards.
 
 ## Test Statistics
-- **34 test suites** with **359 tests** - 100% passing
-- **72.13% overall code coverage** (72.13% statements, 71.56% branches, 72.45% functions, 73.8% lines)
-- **3.755 second execution time** for the full test suite
+- **34 test suites** with **360 tests** - 100% passing
+- **72.52% overall code coverage** (72.52% statements, 70.8% branches, 72.54% functions, 74.12% lines)
+- **4.142 second execution time** for the full test suite
 
 ## Coverage Highlights
 | Component Type | Coverage | Notes                                                                                 |
