@@ -25,21 +25,41 @@ export default function ExpandableContent({
 }: ExpandableContentProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [contentHeight, setContentHeight] = useState<number>(0);
+  const [mounted, setMounted] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const calculateHeight = () => {
       if (contentRef.current) {
-        setContentHeight(contentRef.current.scrollHeight)
+        const newHeight = contentRef.current.scrollHeight;
+        setContentHeight(newHeight);
       }
     };
 
-    calculateHeight();
+    if (mounted) {
+      
+      calculateHeight();
 
-    const timer = setTimeout(calculateHeight, 100);
+      // Immediate recalculation
+      const timer1 = setTimeout(calculateHeight, 50);
 
-    return () => clearTimeout(timer);
-  }, [children, isExpanded]);
+      // Recalculate again once components have had time to render
+      const timer2 = setTimeout(calculateHeight, 200);
+
+      // Final recalculation for complex nested components
+      const timer3 = setTimeout(calculateHeight, 500);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        clearTimeout(timer3);
+      };
+    }
+  }, [children, isExpanded, mounted]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -51,6 +71,11 @@ export default function ExpandableContent({
     window.addEventListener("resize", handleResize);
     return() => window.removeEventListener("resize", handleResize);
   }, []);
+
+
+  const maxHeightStyle = isExpanded 
+  ? (contentHeight > 0 ?`${contentHeight + 60}px` : "2000px")
+  : "0px";
 
   return (
     <div className={`border-gradient-xl rounded-lg mb-6 ${className}`}>
@@ -83,8 +108,7 @@ export default function ExpandableContent({
         <div
           className="overflow-hidden transition-all duration-400 ease-in-out"
           style={{
-            maxHeight: isExpanded ? `${contentHeight + 40}px` : "0px",
-            height: isExpanded ? "auto" : "0px",
+            maxHeight: maxHeightStyle,
             opacity: isExpanded ? 1 : 0,
           }}
         >
