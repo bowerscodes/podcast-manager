@@ -3,7 +3,7 @@
 import toast from "react-hot-toast";
 
 import { Podcast } from "@/types/podcast";
-import { Card, CardHeader, CardBody } from "@heroui/card";
+import { CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { applePodcastsSubmitLink, spotifyPodcastsSubmitLink } from "@/lib/data";
 
