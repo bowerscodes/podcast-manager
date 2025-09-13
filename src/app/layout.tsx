@@ -1,10 +1,9 @@
-import type { Metadata } from 'next';
-import { Roboto } from 'next/font/google';
+import type { Metadata } from "next";
+import { Roboto } from "next/font/google";
 
-import './globals.css';
-import Providers from '@/providers/Providers';
-import AuthProvider from '@/providers/Providers';
-import TopNav from '@/components/ui/navbar/TopNav';
+import "./globals.css";
+import Providers from "@/providers/Providers";
+import TopNav from "@/components/ui/navbar/TopNav";
 
 const robotoSans = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -27,10 +26,8 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className={`${robotoSans.variable} antialiased font-sans h-full`}>
         <Providers>
-          <AuthProvider>
-            <TopNav />
-            <main className="relative z-10 min-h-screen">{children}</main>
-          </AuthProvider>
+          <TopNav />
+          <main className="relative z-10 min-h-screen">{children}</main>
         </Providers>
       </body>
     </html>
