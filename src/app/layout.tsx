@@ -24,10 +24,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${robotoSans.variable} antialiased font-sans h-full`}>
+      <body className={`${robotoSans.variable} antialiased font-sans min-h-screen flex flex-col`}>
         <Providers>
           <TopNav />
-          <main className="relative z-10 min-h-screen">{children}</main>
+          <main className="relative z-10 ">{children}</main>
         </Providers>
       </body>
     </html>
