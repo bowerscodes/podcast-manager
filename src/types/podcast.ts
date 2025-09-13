@@ -2,6 +2,7 @@ export interface Podcast {
   id: string;
   user_id: string;
   title: string;
+  podcast_name: string;
   description: string;
   artwork: string;
   website?: string;
@@ -33,6 +34,7 @@ export interface Episode {
 export interface PodcastFormData {
   id?: string;
   title: string;
+  podcast_name?: string;
   description: string;
   author: string;
   email: string;

@@ -1,23 +1,45 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import { Podcast } from "@/types/podcast";
 import { CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { applePodcastsSubmitLink, spotifyPodcastsSubmitLink } from "@/lib/data";
+import { supabase } from "@/lib/supabase";
 
 type Props = {
   podcast: Podcast;
 };
 
 export default function PodcastRSSSection({ podcast }: Props) {
+  const [profile, setProfile] = useState<{ username: string } | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", podcast.user_id)
+        .single();
+      
+      if (data) {
+        setProfile(data);
+      }
+    };
+
+    fetchProfile();
+  }, [podcast.user_id]);
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("RSS URL copied to clipboard");
   };
 
-  const rssUrl = `${window.location.origin}/api/rss/${podcast.id}`;
+  const rssUrl = profile?.username 
+  ? `${window.location.origin}/${profile.username}/${podcast.podcast_name}/rss`
+  : "Loading RSS URL...";
 
   return (
     <div className="">

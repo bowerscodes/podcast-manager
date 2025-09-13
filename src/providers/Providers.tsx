@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 
 import { supabase } from '@/lib/supabase';
+import UsernameSetupModal from '@/components/auth/UsernameSetupModal';
 
 
 type AuthContextType = {
@@ -55,6 +56,7 @@ export default function Providers ({ children }: { children: React.ReactNode }) 
       <HeroUIProvider>
         <Toaster position='top-right' />
         {children}
+        {user && <UsernameSetupModal />}
       </HeroUIProvider>
     </AuthContext.Provider>
   );

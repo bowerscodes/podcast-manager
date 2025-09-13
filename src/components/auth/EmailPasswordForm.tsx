@@ -21,6 +21,8 @@ export default function EmailPasswordForm({ isSignUp, onToggleMode, onSuccess }:
     e.preventDefault();
     setLoading(true);
 
+
+    
     try {
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({

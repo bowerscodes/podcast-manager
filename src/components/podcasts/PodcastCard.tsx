@@ -1,9 +1,11 @@
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Card } from "@heroui/card";
 import { Image } from "@heroui/image";
 
 import { Podcast } from "@/types/podcast";
 import { defaultArtwork } from "@/lib/data";
+import { supabase } from "@/lib/supabase";
 
 type Props = {
   podcast: Podcast;
@@ -12,11 +14,33 @@ type Props = {
 export default function PodcastCard({ podcast }: Props) {
   const router = useRouter();
 
+  const [profile, setProfile] = useState<{ username: string } | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", podcast.user_id)
+        .single();
+      
+      if (data) {
+        setProfile(data);
+      }
+    }
+
+    fetchProfile();
+  }, [podcast.user_id]);
+
   return (
     <Card
       className="w-full h-[300px] podcast-card border-gradient group relative overflow-hidden"
       isPressable
-      onPress={() => router.push(`/podcasts/${podcast.id}`)}
+      onPress={() => {
+        if (profile?.username) {
+          router.push(`/${profile.username}/${podcast.podcast_name}`);
+        }
+      }}
     >
       {podcast.artwork ? (
         <Image

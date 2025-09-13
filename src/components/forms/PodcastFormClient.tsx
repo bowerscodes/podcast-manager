@@ -30,11 +30,11 @@ export default function PodcastFormClient({
   const [isLoading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const { formData, setFormData, clearPersistedData } =
-    useFormPersistence(`podcast-form-${initialData.id || "new"}`, {
-      // Only include id if it exists and is not empty
-      // ...(initialData.id && initialData.id.trim() !== "" && { id: initialData.id }),
+  const { formData, setFormData, clearPersistedData } = useFormPersistence(
+    `podcast-form-${initialData.id || "new"}`,
+    {
       title: initialData.title || "",
+      podcast_name: initialData.podcast_name || "",
       description: initialData.description || "",
       author: initialData.author || "",
       email: initialData.email || "",
@@ -42,7 +42,24 @@ export default function PodcastFormClient({
       artwork: initialData.artwork || "",
       categories: initialData.categories || [],
       explicit: initialData.explicit || false,
-    });
+    }
+  );
+
+  // Generate  podcast_name from title
+  useEffect(() => {
+    if (!formData.podcast_name && formData.title) {
+      const podcastName = formData.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-");
+
+      setFormData({
+        ...formData,
+        podcast_name: podcastName,
+      });
+    }
+  }, [formData, setFormData]);
 
   useEffect(() => {
     const editMode = !!(initialData.id && initialData.id.trim() !== "");
@@ -60,6 +77,7 @@ export default function PodcastFormClient({
           .from("podcasts")
           .update({
             title: formData.title,
+            podcast_name: formData.podcast_name,
             description: formData.description,
             author: formData.author,
             email: formData.email,
@@ -96,9 +114,22 @@ export default function PodcastFormClient({
 
         if (error) throw error;
 
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", user.id)
+          .single();
+        
+        const username = profile?.username;
+        if (!username) {
+          toast.error("Please set your username first");
+          setLoading(false);
+          return;
+        }
+
         clearPersistedData();
         toast.success("Podcast created successfully!");
-        router.push(`/podcasts/${data.id}`);
+        router.push(`/${username}/${data.podcast_name}`);
       }
     } catch (error) {
       console.error(
@@ -135,6 +166,18 @@ export default function PodcastFormClient({
         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
         required
         autoFocus
+      />
+
+      <Input
+        label="Podcast URL Name"
+        value={formData.podcast_name}
+        onChange={(e) => {
+          // Only allow URL-friendly characters
+          const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+          setFormData({ ...formData, podcast_name: value });
+        }}
+        description="This will be form part of your podcast URL - only lowercase letters, numbers, and hyphens are allowed."
+        required
       />
 
       <Textarea

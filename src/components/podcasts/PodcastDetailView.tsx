@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 
 import { useAuth } from "@/providers/Providers";
 import { supabase } from "@/lib/supabase";
@@ -20,8 +19,7 @@ interface AnalyticsData {
   platformBreakdown: Record<string, number>
 };
 
-export default function PodcastDetailView() {
-  const params = useParams();
+export default function PodcastDetailView({ podcastId }: { podcastId: string}) {
   const { user } = useAuth();
   const [podcast, setPodcast] = useState<Podcast | null>(null);
   const [episodeCount, setEpisodeCount] = useState(0);
@@ -32,8 +30,6 @@ export default function PodcastDetailView() {
   });
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-
-  const podcastId = params.id as string;
 
   useEffect(() => {
     if (!user || !podcastId) return;

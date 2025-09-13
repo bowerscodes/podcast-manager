@@ -1,3 +1,5 @@
+"use client";
+
 import useNavigation from '@/hooks/useNavigation';
 
 type Props = {
