@@ -29,6 +29,8 @@ export default function PodcastFormClient({
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [profileUsername, setProfileUsername] = useState<string>("");
+  const [hasEditedPodcastName, setHasEditedPodcastName] = useState(false);
 
   const { formData, setFormData, clearPersistedData } = useFormPersistence(
     `podcast-form-${initialData.id || "new"}`,
@@ -45,29 +47,52 @@ export default function PodcastFormClient({
     }
   );
 
-  // Generate  podcast_name from title
+  // Fetch profile username on mount
   useEffect(() => {
-    if (!formData.podcast_name && formData.title) {
-      const podcastName = formData.title
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .trim()
-        .replace(/\s+/g, "-");
-
-      setFormData({
-        ...formData,
-        podcast_name: podcastName,
-      });
-    }
-  }, [formData, setFormData]);
+    if (!user) return;
+    const fetchProfile = async () => {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
+      if (profile?.username) setProfileUsername(profile.username);
+    };
+    fetchProfile();
+  }, [user]);
 
   useEffect(() => {
     const editMode = !!(initialData.id && initialData.id.trim() !== "");
     setIsEditMode(editMode);
   }, [initialData.id]);
 
+  // Generate  podcast_name from title
+  useEffect(() => {
+    if (hasEditedPodcastName) return;
+    if (!formData.title) return;
+    const handler = setTimeout(() => {
+      const podcastName = formData.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-");
+
+      setFormData((prev) => ({
+        ...prev,
+        podcast_name: podcastName,
+      }));
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [formData.title, hasEditedPodcastName, setFormData]);
+
+  const handlePodcastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setHasEditedPodcastName(true);
+    setFormData({ ...formData, podcast_name: e.target.value });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!user) return;
 
     setLoading(true);
@@ -112,14 +137,18 @@ export default function PodcastFormClient({
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          toast.error("Failed to create podcast");
+          setLoading(false);
+          return;
+        }
 
         const { data: profile } = await supabase
           .from("profiles")
           .select("username")
           .eq("id", user.id)
           .single();
-        
+
         const username = profile?.username;
         if (!username) {
           toast.error("Please set your username first");
@@ -162,32 +191,39 @@ export default function PodcastFormClient({
     <form onSubmit={handleSubmit} className="space-y-6">
       <Input
         label="Podcast Title"
+        labelPlacement="outside-top"
         value={formData.title}
         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-        required
+        isRequired
+        variant="bordered"
         autoFocus
       />
 
       <Input
-        label="Podcast URL Name"
         value={formData.podcast_name}
-        onChange={(e) => {
-          // Only allow URL-friendly characters
-          const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
-          setFormData({ ...formData, podcast_name: value });
-        }}
-        description="This will be form part of your podcast URL - only lowercase letters, numbers, and hyphens are allowed."
-        required
+        onChange={handlePodcastNameChange}
+        label="Podcast URL"
+        labelPlacement="outside-top"
+        startContent={
+          <span className="text-gray-500 font-normal">
+            {process.env.NEXT_PUBLIC_BASE_URL}/{profileUsername}/
+          </span>
+        }
+        isRequired
+        minLength={3}
+        variant="bordered"
       />
 
       <Textarea
         label="Description"
+        labelPlacement="outside-top"
         rows={4}
         value={formData.description}
         onChange={(e) => {
           setFormData({ ...formData, description: e.target.value });
         }}
-        required
+        isRequired
+        variant="bordered"
       />
 
       <Select
@@ -198,39 +234,49 @@ export default function PodcastFormClient({
           const selectedArray = Array.from(keys) as string[];
           setFormData({ ...formData, categories: selectedArray });
         }}
+        variant="flat"
+        className=" border-2 border-gray-300 rounded-xl"
       >
         {podcastCategories.map((category) => (
-          <SelectItem key={category}>{category}</SelectItem>
+          <SelectItem key={category} className="border-0 outline-0">{category}</SelectItem>
         ))}
       </Select>
 
       <Input
         label="Author name"
+        labelPlacement="outside-top"
         value={formData.author}
         onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-        required
+        variant="bordered"
+        isRequired
       />
 
       <Input
         label="Contact email"
+        labelPlacement="outside-top"
         type="email"
         value={formData.email}
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-        required
+        variant="bordered"
+        isRequired
       />
 
       <Input
         label="Website (optional)"
+        labelPlacement="outside-top"
         type="url"
         value={formData.website}
         onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+        variant="bordered"
       />
 
       <Input
         label="Artwork URL (optional)"
+        labelPlacement="outside-top"
         type="url"
         value={formData.artwork}
         onChange={(e) => setFormData({ ...formData, artwork: e.target.value })}
+        variant="bordered"
       />
 
       <Checkbox

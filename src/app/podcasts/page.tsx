@@ -77,7 +77,7 @@ export default function PodcastsList() {
         </div>
         {podcasts.length === 0 ? (
           <div className="text-center py-12">
-            <h2 className="text-xl mb-4">No podcasts yet</h2>
+            <h2 className="text-xl mb-4 heading-secondary">No podcasts yet</h2>
             <p className="text-muted mb-6">
               Create your first podcast to get started
             </p>

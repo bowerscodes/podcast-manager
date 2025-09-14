@@ -54,6 +54,7 @@ describe('RSS Utils', () => {
     const mockPodcast = {
       id: 'test-id',
       title: 'Test Podcast',
+      podcast_name: 'test-podcast',
       description: 'A test podcast',
       author: 'Test Author',
       email: 'test@example.com',

@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { supabase } from "@/lib/supabase";
 
 import { useAuth } from "@/providers/Providers";
+import URLPreviewInput from "../ui/URLPreviewInput";
 
 export default function UsernameSetupModal() {
   const { user } = useAuth();
@@ -38,7 +39,7 @@ export default function UsernameSetupModal() {
         setUsername(suggestedUsername);
         setIsOpen(true);
       }
-      setIsChecking(true);
+      setIsChecking(false);
     };
 
     checkUsername();
@@ -55,13 +56,13 @@ export default function UsernameSetupModal() {
     }
 
     // Only allow lowercase letters, numbers & hyphens
-    const validUsername = username
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, "-");
+    const validUsername = username.toLowerCase().replace(/[^a-z0-9-]/g, "-");
 
     if (validUsername !== username) {
       setUsername(validUsername);
-      toast.error("Username can only contain lowercase letters, numbers and hyphens");
+      toast.error(
+        "Username can only contain lowercase letters, numbers and hyphens"
+      );
       return;
     }
 
@@ -87,8 +88,11 @@ export default function UsernameSetupModal() {
         .from("profiles")
         .update({ username })
         .eq("id", user.id);
-      
-      if (error) throw error;
+
+      if (error) {
+        console.error("Supabase error: ", error)
+        throw error
+      };
 
       toast.success("Username set successfully");
       setIsOpen(false);
@@ -124,22 +128,30 @@ export default function UsernameSetupModal() {
         </ModalHeader>
         <ModalBody className="p-6">
           <p className="mb-4">
-            Choose a username for your podcasting profile. This will appear in your pordcast URL.
+            Please choose a username for your podcasting profile. This will appear in
+            your podcast URL.
           </p>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input 
-              label="Username"
+            <Input
               value={username}
-              onChange={(e) => {
-                const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
-                setUsername(value);
-              }}
-              description="Only lowercase letters, numbers and hyphens are allowed"
-              required
-              autoFocus
+              label="Username"
+              labelPlacement="outside-top"
+              startContent={
+                <span className="text-gray-500 font-normal">
+                  {process.env.NEXT_PUBLIC_BASE_URL}/
+                </span>
+              }
+              isRequired
+              minLength={3}
+              variant="bordered"
             />
-            <div className="text-sm text-gray-500">
-              Your podcast URLs will look like: {window.location.origin}/{username}/your-podcast
+            <div className="text-sm text-gray-400">
+              <span className="font-medium w-full">
+                Your podcast URL will look like: 
+              </span>
+              {" "}
+              {window.location.origin}/
+              {username}/your-podcast
             </div>
             <Button
               type="submit"
@@ -153,5 +165,5 @@ export default function UsernameSetupModal() {
         </ModalBody>
       </ModalContent>
     </Modal>
-  )
+  );
 }
