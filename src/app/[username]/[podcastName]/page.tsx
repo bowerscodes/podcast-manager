@@ -79,7 +79,7 @@ export default async function PodcastPage(props: {
   return (
     <>
       <div className="ml-8 mt-0 mb-0">
-        <BackButton to="/podcasts" />
+        <BackButton to="podcasts" />
       </div>
       <PodcastDetailView podcastId={podcast.id} />
     </>

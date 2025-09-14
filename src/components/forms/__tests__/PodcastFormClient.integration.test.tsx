@@ -129,6 +129,28 @@ jest.mock("@heroui/checkbox", () => ({
   ),
 }));
 
+const TEST_USERNAME = "user1";
+const TEST_PODCAST_NAME = "new-podcast";
+
+jest.mock("@/lib/supabase", () => ({
+  __esModule: true,
+  supabase: {
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+    })),
+    auth: {
+      getUser: jest.fn(),
+      onAuthStateChange: jest.fn(),
+    },
+  },
+}));
+
 describe("PodcastFormClient Integration Tests", () => {
   const mockOnSuccess = jest.fn();
   const mockOnCancel = jest.fn();
@@ -140,19 +162,34 @@ describe("PodcastFormClient Integration Tests", () => {
 
   describe("Create Mode - Database Integration", () => {
     it("should successfully create a podcast without passing empty id to Supabase", async () => {
-      // Mock successful Supabase insert
+      // Mock successful Supabase insert and profiles lookup
       const mockInsert = jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
           single: jest.fn().mockResolvedValue({
-            data: { id: "podcast-456", title: "New Podcast" },
+            data: { id: "podcast-456", title: "New Podcast", podcast_name: TEST_PODCAST_NAME },
             error: null,
           }),
         }),
       });
-
-      const supabaseSpy = jest.spyOn(supabase, "from").mockReturnValue({
-        insert: mockInsert,
-      } as never);
+      const mockProfiles = {
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            single: jest.fn().mockResolvedValue({
+              data: { id: "user-123", username: TEST_USERNAME },
+              error: null,
+            }),
+          })),
+        })),
+      };
+      // Save original
+      const originalFrom = supabase.from;
+      // Replace with our mock
+      // @ts-expect-error test mock
+      supabase.from = (table: string) => {
+        if (table === "profiles") return mockProfiles;
+        if (table === "podcasts") return { insert: mockInsert };
+        return {};
+      };
 
       render(
         <PodcastFormClient
@@ -190,6 +227,7 @@ describe("PodcastFormClient Integration Tests", () => {
           categories: [],
           explicit: false,
           user_id: "user-123",
+          podcast_name: TEST_PODCAST_NAME,
         });
       });
 
@@ -198,9 +236,10 @@ describe("PodcastFormClient Integration Tests", () => {
       expect(insertCall).not.toHaveProperty("id");
 
       expect(toast.success).toHaveBeenCalledWith("Podcast created successfully!");
-      expect(mockPush).toHaveBeenCalledWith("/podcasts/podcast-456");
+      expect(mockPush).toHaveBeenCalledWith(`/${TEST_USERNAME}/${TEST_PODCAST_NAME}`);
 
-      supabaseSpy.mockRestore();
+      // Restore original
+      supabase.from = originalFrom;
     });
 
     it("should not include empty string id in create operation", async () => {
@@ -213,9 +252,11 @@ describe("PodcastFormClient Integration Tests", () => {
         }),
       });
 
-      const supabaseSpy = jest.spyOn(supabase, "from").mockReturnValue({
+      const originalFrom = supabase.from;
+      // @ts-expect-error test mock
+      supabase.from = () => ({
         insert: mockInsert,
-      } as never);
+      });
 
       // Pass empty string id to simulate the bug scenario
       render(
@@ -249,7 +290,7 @@ describe("PodcastFormClient Integration Tests", () => {
       const insertCall = mockInsert.mock.calls[0][0];
       expect(insertCall).not.toHaveProperty("id");
 
-      supabaseSpy.mockRestore();
+      supabase.from = originalFrom;
     });
 
     it("should handle Supabase UUID validation error gracefully", async () => {
@@ -264,9 +305,11 @@ describe("PodcastFormClient Integration Tests", () => {
         }),
       });
 
-      const supabaseSpy = jest.spyOn(supabase, "from").mockReturnValue({
+      const originalFrom = supabase.from;
+      // @ts-expect-error test mock
+      supabase.from = () => ({
         insert: mockInsert,
-      } as never);
+      });
 
       render(
         <PodcastFormClient
@@ -298,7 +341,7 @@ describe("PodcastFormClient Integration Tests", () => {
       expect(mockOnSuccess).not.toHaveBeenCalled();
       expect(mockPush).not.toHaveBeenCalled();
 
-      supabaseSpy.mockRestore();
+      supabase.from = originalFrom;
     });
   });
 
@@ -327,9 +370,11 @@ describe("PodcastFormClient Integration Tests", () => {
         }),
       });
 
-      const supabaseSpy = jest.spyOn(supabase, "from").mockReturnValue({
+      const originalFrom = supabase.from;
+      // @ts-expect-error test mock
+      supabase.from = () => ({
         update: mockUpdate,
-      } as never);
+      });
 
       render(
         <PodcastFormClient
@@ -356,6 +401,7 @@ describe("PodcastFormClient Integration Tests", () => {
           artwork: "https://artwork.com/image.jpg",
           categories: ["Technology"],
           explicit: true,
+          podcast_name: "existing-podcast",
         });
       });
 
@@ -363,7 +409,8 @@ describe("PodcastFormClient Integration Tests", () => {
       expect(mockOnSuccess).toHaveBeenCalled();
       expect(mockPush).not.toHaveBeenCalled(); // Should not redirect on update
 
-      supabaseSpy.mockRestore();
+      // test mock restore
+      supabase.from = originalFrom;
     });
 
     it("should handle update errors gracefully", async () => {
@@ -377,9 +424,11 @@ describe("PodcastFormClient Integration Tests", () => {
         }),
       });
 
-      const supabaseSpy = jest.spyOn(supabase, "from").mockReturnValue({
+      const originalFrom = supabase.from;
+      // @ts-expect-error test mock
+      supabase.from = () => ({
         update: mockUpdate,
-      } as never);
+      });
 
       render(
         <PodcastFormClient
@@ -397,7 +446,7 @@ describe("PodcastFormClient Integration Tests", () => {
 
       expect(mockOnSuccess).not.toHaveBeenCalled();
 
-      supabaseSpy.mockRestore();
+      supabase.from = originalFrom;
     });
   });
 

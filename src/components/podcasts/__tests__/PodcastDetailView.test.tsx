@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import PodcastDetailView from '../PodcastDetailView';
 import { useAuth } from '@/providers/Providers';
+import { supabase } from '@/lib/supabase';
 
 // Mock Next.js router
 const mockParams = { id: 'test-podcast-id' };
@@ -14,17 +15,23 @@ jest.mock('@/providers/Providers', () => ({
 }));
 
 // Mock Supabase with proper query chain
-const mockSingle = jest.fn();
-const mockSelect = jest.fn();
-const mockEq = jest.fn();
-const mockSupabaseQuery = {
-  select: mockSelect,
-};
-
 jest.mock('@/lib/supabase', () => ({
+  __esModule: true,
   supabase: {
-    from: jest.fn(() => mockSupabaseQuery),
-  }
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+    })),
+    auth: {
+      getUser: jest.fn(),
+      onAuthStateChange: jest.fn(),
+    },
+  },
 }));
 
 // Mock child components
@@ -77,42 +84,43 @@ describe('PodcastDetailView', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useAuth as jest.Mock).mockReturnValue({ user: mockUser });
-    
-    // Set up default chain
-    mockSelect.mockReturnValue({
-      eq: mockEq
-    });
-    mockEq.mockReturnValue({
-      eq: jest.fn().mockReturnValue({
-        single: mockSingle
-      }),
-      single: mockSingle
+    // Patch supabase.from('podcasts')...select().eq().eq().single() to return mockPodcast
+    (supabase.from as jest.Mock).mockImplementation((table: string) => {
+      if (table === 'podcasts') {
+        // Support chained .select().eq().eq().single() with Promises
+        const chain = {
+          select: () => chain,
+          eq: () => chain,
+          single: () => Promise.resolve({ data: mockPodcast }),
+          maybeSingle: () => Promise.resolve({ data: mockPodcast }),
+        };
+        return chain;
+      }
+      // fallback for other tables
+      const fallback = {
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockReturnThis(),
+        maybeSingle: jest.fn().mockReturnThis(),
+        insert: jest.fn().mockReturnThis(),
+        update: jest.fn().mockReturnThis(),
+        delete: jest.fn().mockReturnThis(),
+      };
+      return fallback;
     });
   });
 
   it('should show loading spinner initially', () => {
-    // Mock hanging promise to test loading state
-    mockSingle.mockImplementation(() => new Promise(() => {}));
-
-    render(<PodcastDetailView />);
-
+    render(<PodcastDetailView podcastId="test-podcast-id" />);
     expect(screen.getByTestId('loading-spinner')).toBeTruthy();
     expect(screen.getByText('Loading podcast...')).toBeTruthy();
   });
 
   it('should render podcast details when loaded successfully', async () => {
-    // Mock successful podcast fetch, then count fetch, then analytics
-    mockSingle
-      .mockResolvedValueOnce({ data: mockPodcast, error: null })
-      .mockResolvedValueOnce({ count: 2, error: null })
-      .mockResolvedValueOnce({ data: [], error: null });
-
-    render(<PodcastDetailView />);
-
+    render(<PodcastDetailView podcastId="test-podcast-id" />);
     await waitFor(() => {
       expect(screen.getByTestId('podcast-header')).toBeTruthy();
     });
-
     expect(screen.getByText('Header: Test Podcast')).toBeTruthy();
   });
 });

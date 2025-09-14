@@ -1,6 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import PodcastCard from '@/components/podcasts/PodcastCard';
 import { Podcast } from '@/types/podcast';
+import { supabase } from '@/lib/supabase';
 
 // Mock Next.js router
 const mockPush = jest.fn();
@@ -53,6 +54,25 @@ jest.mock('@/lib/data', () => ({
   defaultArtwork: () => <div data-testid="default-artwork">Default Artwork</div>,
 }));
 
+jest.mock('@/lib/supabase', () => ({
+  __esModule: true,
+  supabase: {
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+    })),
+    auth: {
+      getUser: jest.fn(),
+      onAuthStateChange: jest.fn(),
+    },
+  },
+}));
+
 describe('PodcastCard', () => {
   const mockPodcast: Podcast = {
     id: '1',
@@ -64,6 +84,7 @@ describe('PodcastCard', () => {
     categories: ['Technology'],
     artwork: 'https://example.com/artwork.jpg',
     user_id: 'user1',
+    podcast_name: 'test-podcast', // Added for new route
     created_at: new Date('2024-01-01'),
     updated_at: new Date('2024-01-01'),
     explicit: false
@@ -108,13 +129,42 @@ describe('PodcastCard', () => {
     expect(defaultArtwork.textContent).toBe('Default Artwork');
   });
 
-  it('should navigate to podcast detail when clicked', () => {
-    render(<PodcastCard podcast={mockPodcast} />);
-    
-    const card = screen.getByRole('button'); // Card is pressable, so it's a button
-    fireEvent.click(card);
-    
-    expect(mockPush).toHaveBeenCalledWith('/podcasts/1');
+  it('should navigate to podcast detail when clicked', async () => {
+    (supabase.from as jest.Mock).mockImplementation((table: string) => {
+      if (table === 'profiles') {
+        return {
+          select: () => ({
+            eq: () => ({
+              single: () => Promise.resolve({ data: { username: 'user1' } })
+            })
+          })
+        };
+      }
+      return {
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockReturnThis(),
+        maybeSingle: jest.fn().mockReturnThis(),
+        insert: jest.fn().mockReturnThis(),
+        update: jest.fn().mockReturnThis(),
+        delete: jest.fn().mockReturnThis(),
+      };
+    });
+
+    await act(async () => {
+      render(<PodcastCard podcast={mockPodcast} />);
+    });
+    const card = screen.getByRole('button');
+    // Wait for the profile state to be set (flush microtasks)
+    await act(async () => {
+      await Promise.resolve();
+    });
+    await act(async () => {
+      fireEvent.click(card);
+    });
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith(`/user1/${mockPodcast.podcast_name}`);
+    });
   });
 
   it('should truncate long descriptions', () => {
@@ -169,7 +219,8 @@ describe('PodcastCard', () => {
     const podcastWithSpecialChars = {
       ...mockPodcast,
       title: 'Podcast & "Special" Characters <Test>',
-      description: 'Description with & special "characters" <tags>'
+      description: 'Description with & special "characters" <tags>',
+      podcast_name: 'special-podcast', // ensure valid podcast_name for route
     };
 
     render(<PodcastCard podcast={podcastWithSpecialChars} />);

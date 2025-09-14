@@ -22,6 +22,10 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  // Allow ESM for supabase and isows
+  transformIgnorePatterns: [
+    '/node_modules/(?!(@supabase|isows)(/|$))'
+  ],
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

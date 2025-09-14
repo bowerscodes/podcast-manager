@@ -42,28 +42,45 @@ const mockSelect = jest.fn();
 const mockSingle = jest.fn();
 const mockEq = jest.fn();
 
+const TEST_USERNAME = "user1";
+const TEST_PODCAST_NAME = "test-podcast";
+
 jest.mock("@/lib/supabase", () => ({
   supabase: {
-    from: jest.fn(() => ({
-      insert: mockInsert.mockReturnValue({
-        select: mockSelect.mockReturnValue({
-          single: mockSingle.mockResolvedValue({
-            data: { id: "podcast-123", title: "Test Podcast" },
-            error: null,
-          }),
-        }),
-      }),
-      update: mockUpdate.mockReturnValue({
-        eq: mockEq.mockReturnValue({
+    from: jest.fn((table) => {
+      if (table === "profiles") {
+        return {
+          select: jest.fn(() => ({
+            eq: jest.fn(() => ({
+              single: jest.fn().mockResolvedValue({
+                data: { id: "user-123", username: TEST_USERNAME },
+                error: null,
+              }),
+            })),
+          })),
+        };
+      }
+      return {
+        insert: mockInsert.mockReturnValue({
           select: mockSelect.mockReturnValue({
             single: mockSingle.mockResolvedValue({
-              data: { id: "podcast-123", title: "Updated Podcast" },
+              data: { id: "podcast-123", title: "Test Podcast", podcast_name: TEST_PODCAST_NAME },
               error: null,
             }),
           }),
         }),
-      }),
-    })),
+        update: mockUpdate.mockReturnValue({
+          eq: mockEq.mockReturnValue({
+            select: mockSelect.mockReturnValue({
+              single: mockSingle.mockResolvedValue({
+                data: { id: "podcast-123", title: "Updated Podcast", podcast_name: TEST_PODCAST_NAME },
+                error: null,
+              }),
+            }),
+          }),
+        }),
+      };
+    }),
   },
 }));
 
@@ -320,11 +337,12 @@ describe("PodcastFormClient", () => {
         artwork: "",
         explicit: true,
         user_id: "user-123",
+        podcast_name: TEST_PODCAST_NAME,
       });
       expect(toast.success).toHaveBeenCalledWith(
         "Podcast created successfully!"
       );
-      expect(mockPush).toHaveBeenCalledWith("/podcasts/podcast-123");
+      expect(mockPush).toHaveBeenCalledWith(`/${TEST_USERNAME}/${TEST_PODCAST_NAME}`);
     });
   });
 
@@ -339,7 +357,8 @@ describe("PodcastFormClient", () => {
         email: "existing@example.com",
         website: "https://existing.com",
         artwork: "https://existing.com/art.jpg",
-        explicit: false
+        explicit: false,
+        podcast_name: TEST_PODCAST_NAME,
       },
       onSuccess: mockOnSuccess,
       onCancel: mockOnCancel,
@@ -367,7 +386,8 @@ describe("PodcastFormClient", () => {
         email: "existing@example.com",
         website: "https://existing.com",
         artwork: "https://existing.com/art.jpg",
-        explicit: false
+        explicit: false,
+        podcast_name: TEST_PODCAST_NAME,
       });
       expect(mockEq).toHaveBeenCalledWith("id", "podcast-123");
       expect(toast.success).toHaveBeenCalledWith(
