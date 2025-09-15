@@ -8,7 +8,6 @@ import toast from "react-hot-toast";
 import { supabase } from "@/lib/supabase";
 
 import { useAuth } from "@/providers/Providers";
-import URLPreviewInput from "../ui/URLPreviewInput";
 
 export default function UsernameSetupModal() {
   const { user } = useAuth();
