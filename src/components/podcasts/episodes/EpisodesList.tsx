@@ -16,6 +16,7 @@ export default function EpisodesList({ podcast }: EpisodesListProps) {
   // Group episodes by season
   const episodesBySeasons = useMemo(() => {
     const grouped = episodes.reduce((acc, episode) => {
+      // Handle undefined season_number by providing a default value
       const seasonKey = episode.season_number || "null";
       if (!acc[seasonKey]) {
         acc[seasonKey] = [];
@@ -33,7 +34,12 @@ export default function EpisodesList({ podcast }: EpisodesListProps) {
 
     return sortedSeasons.map((seasonNumber) => ({
       seasonNumber,
-      episodes: grouped[seasonNumber],
+      episodes: grouped[seasonNumber].sort((a, b) => {
+        // Sort episodes within each season by episode number
+      const episodeA = parseInt(a.episode_number ?? "0");
+      const episodeB = parseInt(b.episode_number ?? "0");
+      return episodeA - episodeB;
+      }),
     }));
   }, [episodes]);
 

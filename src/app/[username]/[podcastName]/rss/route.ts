@@ -68,7 +68,8 @@ export async function GET(
       .select("*")
       .eq("podcast_id", podcast.id)
       .eq("status", "published")
-      .order("publish_date", { ascending: false });
+      .order("season_number", { ascending: true })
+      .order("episode_number", { ascending: true });
     
     if (episodesError) {
       console.error('Episodes error:', episodesError);

@@ -146,64 +146,89 @@ export default function EpisodeFormClient({
       // use cached episode data instead of fetching again
       const episodesData = episodes;
 
-      // Get all episode numbers in current season
+      // Get all episode numbers in current season, excluding the current episode if editing
       const episodesInSeason = episodesData?.filter(
-        (ep) =>
-          parseInt(ep.season_number as string) ===
-          parseInt(formData.season_number as string)
+        (ep) => {
+          const isSameSeason = parseInt(ep.season_number as string) ===
+            parseInt(formData.season_number as string);
+          
+          // If we're in edit mode, exclude the current episode from the list
+          if (isEditMode) {
+            const isCurrentEpisode =
+              ep.season_number === initialData.season_number &&
+              ep.episode_number === initialData.episode_number;
+            return isSameSeason && !isCurrentEpisode;
+          }
+          
+          return isSameSeason;
+        }
       );
       const existingEpisodeNumbers = episodesInSeason
         ?.map((ep) => parseInt(ep.episode_number))
         .filter((n) => !isNaN(n));
-      const maxEpisode = existingEpisodeNumbers?.length
-        ? Math.max(...existingEpisodeNumbers)
-        : 0;
+
       const selectedEpisode = parseInt(formData.episode_number as string);
 
-      if (
-        selectedEpisode > maxEpisode + 1 ||
-        (maxEpisode > 0 &&
-          selectedEpisode < maxEpisode &&
-          !existingEpisodeNumbers?.includes(selectedEpisode))
-      ) {
-        toast.error(
-          `you cannot skip episode numbers. the next episode should be ${
-            maxEpisode + 1
-          }`
-        );
+      if (selectedEpisode < 1) {
+        toast.error("Episode number must be 1 or greater.");
         return;
       }
 
-      // Check for duplicate episode number in the same season
-      const duplicate = episodesData?.some((ep) => {
-        const isSameSeason =
-          parseInt(ep.season_number as string) ===
-          parseInt(formData.season_number as string);
-        const isSameEpisodeNumber =
-          ep.episode_number === formData.episode_number;
-
-        // If we're in edit mode, exclude the current episode from duplicate check
-        if (isEditMode) {
-          const isCurrentEpisode =
-            ep.season_number === initialData.season_number &&
-            ep.episode_number === initialData.episode_number;
-          return isSameSeason && isSameEpisodeNumber && !isCurrentEpisode;
-        }
-        // For new episodes, check normally
-        return isSameSeason && isSameEpisodeNumber;
-      });
-
-      if (duplicate) {
+      // Check for duplicate episode number (using filtered list that excludes current episode)
+      if (existingEpisodeNumbers?.includes(selectedEpisode)) {
         toast.error(
           "This episode number already exists in the selected season. Pick an unused episode number."
         );
         return;
       }
 
+      // Smart episode validation - allow consecutive episodes OR filling gaps
+      if (existingEpisodeNumbers?.length > 0) {
+        const minEpisode = Math.min(...existingEpisodeNumbers);
+        const maxEpisode = Math.max(...existingEpisodeNumbers);
+
+        // Allow if:
+        // 1. It's the next consecutive episode (maxEpisode + 1)
+        // 2. It's filling a gap (between minEpisode and maxEpisode but not already taken)
+        // 3. It's before the first episode (e.g., adding episode 1 when you have 2,3,4)
+        const isNextEpisode = selectedEpisode === maxEpisode + 1;
+        const isFillingGap =
+          selectedEpisode >= minEpisode &&
+          selectedEpisode <= maxEpisode &&
+          !existingEpisodeNumbers.includes(selectedEpisode);
+        const isBeforeFirst = selectedEpisode < minEpisode;
+
+        if (!isNextEpisode && !isFillingGap && !isBeforeFirst) {
+          // Check if there are actual gaps to fill
+          const hasGaps =
+            maxEpisode - minEpisode + 1 > existingEpisodeNumbers.length;
+
+          let errorMessage = `Episode ${selectedEpisode} is not allowed. You can create episode ${
+            maxEpisode + 1
+          }`;
+
+          if (hasGaps) {
+            errorMessage += ` or fill gaps between episodes ${minEpisode}-${maxEpisode}`;
+          }
+
+          errorMessage += ".";
+
+          toast.error(errorMessage);
+          return;
+        }
+      } else {
+        // If no episodes exist in this season, only allow episode 1
+        if (selectedEpisode !== 1) {
+          toast.error("The first episode in a season must be episode 1.");
+          return;
+        }
+      }
+
       // Prevent skipped seasons
       const existingSeasons = episodesData
         ?.map((ep) => parseInt(ep.season_number))
         .filter((n) => !isNaN(n));
+
       const maxSeason = existingSeasons?.length
         ? Math.max(...existingSeasons)
         : 0;
@@ -220,8 +245,13 @@ export default function EpisodeFormClient({
         );
         return;
       }
+
+      if (selectedSeason < 1) {
+        toast.error("Season number must be 1 or greater.");
+        return;
+      }
     }
-    
+
     const episodeStatus = isDraft ? "draft" : "published";
 
     setLoading(true);
