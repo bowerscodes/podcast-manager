@@ -38,7 +38,7 @@ export default function EpisodeFormClient({
       season_number: initialData.season_number || undefined,
       episode_number: initialData.episode_number || undefined,
       explicit: initialData.explicit || false,
-      status: initialData.status || "published"
+      status: initialData.status || "published",
     }
   );
 
@@ -73,7 +73,12 @@ export default function EpisodeFormClient({
     };
 
     fetchEpisodesAndSetDefaults();
-  }, [podcastId, initialData.season_number, initialData.episode_number, setFormData]);
+  }, [
+    podcastId,
+    initialData.season_number,
+    initialData.episode_number,
+    setFormData,
+  ]);
 
   const calculateDefaults = (
     episodesData: Array<{ season_number: string; episode_number: string }>
@@ -126,94 +131,97 @@ export default function EpisodeFormClient({
     e.preventDefault();
     if (!user) return;
 
-    const audioExtensions = [".mp3", ".m4a", ".wav", ".ogg", ".aac", ".flac"];
-    const url = formData.audio_url.toLowerCase();
-    const isAudio = audioExtensions.some((ext) => url.endsWith(ext));
+    if (!isDraft) {
+      const audioExtensions = [".mp3", ".m4a", ".wav", ".ogg", ".aac", ".flac"];
+      const url = formData.audio_url.toLowerCase();
+      const isAudio = audioExtensions.some((ext) => url.endsWith(ext));
 
-    if (!isAudio) {
-      toast.error(
-        "Audio URL must point to a valid audio file (e.g. .mp3, .m4a, .wav)"
-      );
-      return;
-    }
-
-    // use cached episode data instead of fetching again
-    const episodesData = episodes;
-
-    // Get all episode numbers in current season
-    const episodesInSeason = episodesData?.filter(
-      (ep) =>
-        parseInt(ep.season_number as string) ===
-        parseInt(formData.season_number as string)
-    );
-    const existingEpisodeNumbers = episodesInSeason
-      ?.map((ep) => parseInt(ep.episode_number))
-      .filter((n) => !isNaN(n));
-    const maxEpisode = existingEpisodeNumbers?.length
-      ? Math.max(...existingEpisodeNumbers)
-      : 0;
-    const selectedEpisode = parseInt(formData.episode_number as string);
-
-    if (
-      selectedEpisode > maxEpisode + 1 ||
-      (maxEpisode > 0 &&
-        selectedEpisode < maxEpisode &&
-        !existingEpisodeNumbers?.includes(selectedEpisode))
-    ) {
-      toast.error(
-        `you cannot skip episode numbers. the next episode should be ${
-          maxEpisode + 1
-        }`
-      );
-      return;
-    }
-
-    // Check for duplicate episode number in the same season
-    const duplicate = episodesData?.some((ep) => {
-      const isSameSeason =
-        parseInt(ep.season_number as string) ===
-        parseInt(formData.season_number as string);
-      const isSameEpisodeNumber = ep.episode_number === formData.episode_number;
-
-      // If we're in edit mode, exclude the current episode from duplicate check
-      if (isEditMode) {
-        const isCurrentEpisode =
-          ep.season_number === initialData.season_number &&
-          ep.episode_number === initialData.episode_number;
-        return isSameSeason && isSameEpisodeNumber && !isCurrentEpisode;
+      if (!isAudio) {
+        toast.error(
+          "Audio URL must point to a valid audio file (e.g. .mp3, .m4a, .wav)"
+        );
+        return;
       }
-      // For new episodes, check normally
-      return isSameSeason && isSameEpisodeNumber;
-    });
 
-    if (duplicate) {
-      toast.error(
-        "This episode number already exists in the selected season. Pick an unused episode number."
+      // use cached episode data instead of fetching again
+      const episodesData = episodes;
+
+      // Get all episode numbers in current season
+      const episodesInSeason = episodesData?.filter(
+        (ep) =>
+          parseInt(ep.season_number as string) ===
+          parseInt(formData.season_number as string)
       );
-      return;
+      const existingEpisodeNumbers = episodesInSeason
+        ?.map((ep) => parseInt(ep.episode_number))
+        .filter((n) => !isNaN(n));
+      const maxEpisode = existingEpisodeNumbers?.length
+        ? Math.max(...existingEpisodeNumbers)
+        : 0;
+      const selectedEpisode = parseInt(formData.episode_number as string);
+
+      if (
+        selectedEpisode > maxEpisode + 1 ||
+        (maxEpisode > 0 &&
+          selectedEpisode < maxEpisode &&
+          !existingEpisodeNumbers?.includes(selectedEpisode))
+      ) {
+        toast.error(
+          `you cannot skip episode numbers. the next episode should be ${
+            maxEpisode + 1
+          }`
+        );
+        return;
+      }
+
+      // Check for duplicate episode number in the same season
+      const duplicate = episodesData?.some((ep) => {
+        const isSameSeason =
+          parseInt(ep.season_number as string) ===
+          parseInt(formData.season_number as string);
+        const isSameEpisodeNumber =
+          ep.episode_number === formData.episode_number;
+
+        // If we're in edit mode, exclude the current episode from duplicate check
+        if (isEditMode) {
+          const isCurrentEpisode =
+            ep.season_number === initialData.season_number &&
+            ep.episode_number === initialData.episode_number;
+          return isSameSeason && isSameEpisodeNumber && !isCurrentEpisode;
+        }
+        // For new episodes, check normally
+        return isSameSeason && isSameEpisodeNumber;
+      });
+
+      if (duplicate) {
+        toast.error(
+          "This episode number already exists in the selected season. Pick an unused episode number."
+        );
+        return;
+      }
+
+      // Prevent skipped seasons
+      const existingSeasons = episodesData
+        ?.map((ep) => parseInt(ep.season_number))
+        .filter((n) => !isNaN(n));
+      const maxSeason = existingSeasons?.length
+        ? Math.max(...existingSeasons)
+        : 0;
+      const selectedSeason = parseInt(formData.season_number as string);
+
+      if (
+        selectedSeason > maxSeason + 1 ||
+        (maxSeason > 0 &&
+          selectedSeason < maxSeason &&
+          !existingSeasons?.includes(selectedSeason))
+      ) {
+        toast.error(
+          `You cannot skip seasons. the next season should be ${maxSeason + 1}`
+        );
+        return;
+      }
     }
-
-    // Prevent skipped seasons
-    const existingSeasons = episodesData
-      ?.map((ep) => parseInt(ep.season_number))
-      .filter((n) => !isNaN(n));
-    const maxSeason = existingSeasons?.length
-      ? Math.max(...existingSeasons)
-      : 0;
-    const selectedSeason = parseInt(formData.season_number as string);
-
-    if (
-      selectedSeason > maxSeason + 1 ||
-      (maxSeason > 0 &&
-        selectedSeason < maxSeason &&
-        !existingSeasons?.includes(selectedSeason))
-    ) {
-      toast.error(
-        `You cannot skip seasons. the next season should be ${maxSeason + 1}`
-      );
-      return;
-    }
-
+    
     const episodeStatus = isDraft ? "draft" : "published";
 
     setLoading(true);
@@ -235,7 +243,7 @@ export default function EpisodeFormClient({
           season_number: formData.season_number,
           episode_number: formData.episode_number,
           explicit: formData.explicit,
-          status: episodeStatus
+          status: episodeStatus,
         };
 
         // Update publish_date when publishing an episode
@@ -254,7 +262,6 @@ export default function EpisodeFormClient({
           console.error("Supabase update error:", error);
           throw error;
         }
-
       } else {
         const { error } = await supabase
           .from("episodes")
@@ -267,7 +274,7 @@ export default function EpisodeFormClient({
             explicit: formData.explicit,
             podcast_id: podcastId,
             publish_date: new Date().toISOString(),
-            status: episodeStatus
+            status: episodeStatus,
           })
           .select()
           .single();
@@ -276,13 +283,12 @@ export default function EpisodeFormClient({
           console.error("Supabase insert error:", error);
           throw error;
         }
-
       }
 
       toast.success(
         isEditMode
-          ? `Episode ${isDraft ? 'saved as draft' : 'updated'} successfully!`
-          : `Episode ${isDraft ? 'saved as draft' : 'published'} successfully!`
+          ? `Episode ${isDraft ? "saved as draft" : "updated"} successfully!`
+          : `Episode ${isDraft ? "saved as draft" : "published"} successfully!`
       );
       clearPersistedData();
       onSuccess();
@@ -332,13 +338,13 @@ export default function EpisodeFormClient({
         required
         autoFocus
       />
-      
-      <Textarea 
+
+      <Textarea
         label="Description"
         rows={4}
         value={formData.description}
         onChange={(e) => {
-          setFormData({ ...formData, description: e.target.value})
+          setFormData({ ...formData, description: e.target.value });
         }}
         required
       />
@@ -373,24 +379,26 @@ export default function EpisodeFormClient({
       <label>
         <Checkbox
           isSelected={formData.explicit}
-          onValueChange={(checked) => setFormData({ ...formData, explicit: checked })}
+          onValueChange={(checked) =>
+            setFormData({ ...formData, explicit: checked })
+          }
         />
         Explicit
       </label>
 
       <div className="flex gap-4 mt-6">
-        <Button 
-          type="button" 
-          color="primary" 
+        <Button
+          type="button"
+          color="primary"
           isLoading={isLoading}
           onPress={handlePublish}
         >
           Publish Episode
         </Button>
-        <Button 
-          type="button" 
-          variant="bordered" 
-          color="primary" 
+        <Button
+          type="button"
+          variant="bordered"
+          color="primary"
           isLoading={isLoading}
           onPress={handleSaveDraft}
         >
