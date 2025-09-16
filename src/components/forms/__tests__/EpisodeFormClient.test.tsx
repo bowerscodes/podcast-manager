@@ -59,7 +59,9 @@ mockUpdate.mockReturnValue({
 });
 
 mockSelect.mockReturnValue({
-  eq: mockEq
+  eq: jest.fn().mockReturnValue({
+    eq: mockEq
+  })
 });
 
 jest.mock('@/lib/supabase', () => ({
@@ -581,11 +583,11 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes: Season 1 has episodes 1-3, Season 2 has episodes 1-2
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '1', episode_number: '2' },
-        { season_number: '1', episode_number: '3' },
-        { season_number: '2', episode_number: '1' },
-        { season_number: '2', episode_number: '2' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '1', episode_number: '2', status: 'published' },
+        { season_number: '1', episode_number: '3', status: 'published' },
+        { season_number: '2', episode_number: '1', status: 'published' },
+        { season_number: '2', episode_number: '2', status: 'published' }
       ],
       error: null
     });
@@ -604,10 +606,10 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '1', episode_number: '2' },
-        { season_number: '1', episode_number: '3' },
-        { season_number: '2', episode_number: '1' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '1', episode_number: '2', status: 'published' },
+        { season_number: '1', episode_number: '3', status: 'published' },
+        { season_number: '2', episode_number: '1', status: 'published' }
       ],
       error: null
     });
@@ -637,9 +639,9 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '1', episode_number: '2' },
-        { season_number: '2', episode_number: '1' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '1', episode_number: '2', status: 'published' },
+        { season_number: '2', episode_number: '1', status: 'published' }
       ],
       error: null
     });
@@ -674,8 +676,8 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '2', episode_number: '1' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '2', episode_number: '1', status: 'published' }
       ],
       error: null
     });
@@ -728,8 +730,8 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes for the initial fetch
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '1', episode_number: '2' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '1', episode_number: '2', status: 'published' }
       ],
       error: null
     });
@@ -769,8 +771,8 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes: 1, 2
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '1', episode_number: '2' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '1', episode_number: '2', status: 'published' }
       ],
       error: null
     });
@@ -809,9 +811,9 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes: 1, 2, 4 (gap at 3)
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '1', episode_number: '2' },
-        { season_number: '1', episode_number: '4' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '1', episode_number: '2', status: 'published' },
+        { season_number: '1', episode_number: '4', status: 'published' }
       ],
       error: null
     });
@@ -850,9 +852,9 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes: 2, 3, 4 (can add episode 1)
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '2' },
-        { season_number: '1', episode_number: '3' },
-        { season_number: '1', episode_number: '4' }
+        { season_number: '1', episode_number: '2', status: 'published' },
+        { season_number: '1', episode_number: '3', status: 'published' },
+        { season_number: '1', episode_number: '4', status: 'published' }
       ],
       error: null
     });
@@ -891,9 +893,9 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes: 1, 2, 3
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '1', episode_number: '2' },
-        { season_number: '1', episode_number: '3' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '1', episode_number: '2', status: 'published' },
+        { season_number: '1', episode_number: '3', status: 'published' }
       ],
       error: null
     });
@@ -926,9 +928,9 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes: 1, 3, 5 (gaps at 2, 4)
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '1', episode_number: '3' },
-        { season_number: '1', episode_number: '5' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '1', episode_number: '3', status: 'published' },
+        { season_number: '1', episode_number: '5', status: 'published' }
       ],
       error: null
     });
@@ -961,8 +963,8 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes in season 1 only
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '1', episode_number: '2' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '1', episode_number: '2', status: 'published' }
       ],
       error: null
     });
@@ -998,8 +1000,8 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes for validation context
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '1', episode_number: '2' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '1', episode_number: '2', status: 'published' }
       ],
       error: null
     });
@@ -1068,8 +1070,8 @@ describe('EpisodeFormClient', () => {
     // Mock existing episodes in season 1 and 2
     mockEq.mockResolvedValueOnce({
       data: [
-        { season_number: '1', episode_number: '1' },
-        { season_number: '2', episode_number: '1' }
+        { season_number: '1', episode_number: '1', status: 'published' },
+        { season_number: '2', episode_number: '1', status: 'published' }
       ],
       error: null
     });
@@ -1101,10 +1103,10 @@ describe('EpisodeFormClient', () => {
   it('should allow publishing draft episode without validation errors', async () => {
     // Mock episodes with 1-4 published (episode 5 exists as draft but will be excluded during edit)
     const existingEpisodes = [
-      { season_number: '1', episode_number: '1' },
-      { season_number: '1', episode_number: '2' },
-      { season_number: '1', episode_number: '3' },
-      { season_number: '1', episode_number: '4' },
+      { season_number: '1', episode_number: '1', status: 'published' },
+      { season_number: '1', episode_number: '2', status: 'published' },
+      { season_number: '1', episode_number: '3', status: 'published' },
+      { season_number: '1', episode_number: '4', status: 'published' },
     ];
 
     mockEq.mockResolvedValueOnce({
@@ -1158,5 +1160,840 @@ describe('EpisodeFormClient', () => {
 
     // Should not show any error toasts
     expect(toast.error).not.toHaveBeenCalled();
+  });
+
+  // TDD Tests for Season/Episode Validation - Edge Cases and Requirements
+  describe('TDD: Season Validation Requirements', () => {
+    it('should allow creating season 1 when no episodes exist', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Test Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '1' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '1' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+          season_number: '1',
+          episode_number: '1'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should allow creating season 2 when season 1 exists', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Test Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '2' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '1' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+          season_number: '2',
+          episode_number: '1'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should prevent skipping seasons (cannot create season 3 when only season 1 exists)', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' }
+        ],
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Test Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '3' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '1' }
+      });
+
+      const form = document.querySelector('form');
+      fireEvent.submit(form!);
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith('You cannot skip seasons. the next season should be 2');
+      });
+    });
+
+    it('should allow creating season 3 when seasons 1 and 2 exist', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' },
+          { season_number: '2', episode_number: '1', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Test Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '3' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '1' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+          season_number: '3',
+          episode_number: '1'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should prevent creating season 0 or negative seasons', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [],
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Test Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '0' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '1' }
+      });
+
+      const form = document.querySelector('form');
+      fireEvent.submit(form!);
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith('Season number must be 1 or greater.');
+      });
+    });
+  });
+
+  describe('TDD: Episode Validation Requirements', () => {
+    it('should allow creating episode 2 when episode 1 exists in same season', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Test Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '1' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '2' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+          season_number: '1',
+          episode_number: '2'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should allow creating episode 5 when episodes 1-4 exist in same season', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' },
+          { season_number: '1', episode_number: '3', status: 'published' },
+          { season_number: '1', episode_number: '4', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Test Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '1' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '5' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+          season_number: '1',
+          episode_number: '5'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should prevent skipping episodes (cannot create episode 3 when only episode 1 exists)', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' }
+        ],
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Test Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '1' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '3' }
+      });
+
+      const form = document.querySelector('form');
+      fireEvent.submit(form!);
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith('Episode 3 is not allowed. You can create episode 2.');
+      });
+    });
+
+    it('should allow creating episode 1 in new season even when other seasons have multiple episodes', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' },
+          { season_number: '1', episode_number: '3', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Test Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '2' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '1' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+          season_number: '2',
+          episode_number: '1'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should prevent creating episode 2 as first episode in new season', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' }
+        ],
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Test Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '2' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '2' }
+      });
+
+      const form = document.querySelector('form');
+      fireEvent.submit(form!);
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith('The first episode in a season must be episode 1.');
+      });
+    });
+  });
+
+  describe('TDD: Draft Mode Validation Bypass', () => {
+    it('should allow saving invalid season as draft (skipping seasons)', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Draft Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '5' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '10' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /save draft/i }));
+
+      await waitFor(() => {
+        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+          title: 'Draft Episode',
+          season_number: '5',
+          episode_number: '10',
+          status: 'draft'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should allow saving invalid episode as draft (skipping episodes)', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Draft Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '1' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '15' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /save draft/i }));
+
+      await waitFor(() => {
+        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+          title: 'Draft Episode',
+          season_number: '1',
+          episode_number: '15',
+          status: 'draft'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should allow saving draft with negative season/episode numbers', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Draft Episode' }
+      });
+      fireEvent.change(screen.getByLabelText(/season number/i), {
+        target: { value: '-1' }
+      });
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '-5' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /save draft/i }));
+
+      await waitFor(() => {
+        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+          title: 'Draft Episode',
+          season_number: '-1',
+          episode_number: '-5',
+          status: 'draft'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('TDD: Draft to Published Validation', () => {
+    it('should apply validation when editing a draft and publishing it', async () => {
+      // Mock existing episodes for the initial fetch
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' }
+        ],
+        error: null
+      });
+
+      const initialData = {
+        id: 'episode-123',
+        title: 'Draft Episode',
+        season_number: '1',
+        episode_number: '15', // Invalid episode number saved as draft
+        status: 'draft' as const
+      };
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+      });
+
+      // Wait for form to be populated
+      await waitFor(() => {
+        expect((screen.getByLabelText(/episode title/i) as HTMLInputElement).value).toBe('Draft Episode');
+        expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('15');
+      });
+
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+
+      // Try to publish the draft with invalid episode number
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith('Episode 15 is not allowed. You can create episode 3.');
+      });
+    });
+
+    it('should allow publishing draft after fixing validation issues', async () => {
+      // Mock existing episodes for the initial fetch
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      const initialData = {
+        id: 'episode-123',
+        title: 'Draft Episode',
+        season_number: '1',
+        episode_number: '15', // Invalid episode number saved as draft
+        status: 'draft' as const
+      };
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+      });
+
+      // Wait for form to be populated
+      await waitFor(() => {
+        expect((screen.getByLabelText(/episode title/i) as HTMLInputElement).value).toBe('Draft Episode');
+        expect((screen.getByLabelText(/episode number/i) as HTMLInputElement).value).toBe('15');
+      });
+
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      
+      // Fix the episode number to be valid
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '3' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+          title: 'Draft Episode',
+          audio_url: 'https://example.com/audio.mp3',
+          season_number: '1',
+          episode_number: '3',
+          status: 'published'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should allow re-saving invalid draft without validation', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-123' },
+        error: null
+      });
+
+      const initialData = {
+        id: 'episode-123',
+        title: 'Draft Episode',
+        season_number: '1',
+        episode_number: '15', // Invalid episode number
+        status: 'draft' as const
+      };
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/episode title/i), {
+        target: { value: 'Updated Draft Episode' }
+      });
+
+      // Save as draft again - should not validate
+      fireEvent.click(screen.getByRole('button', { name: /save draft/i }));
+
+      await waitFor(() => {
+        expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+          title: 'Updated Draft Episode',
+          season_number: '1',
+          episode_number: '15',
+          status: 'draft'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('TDD: Edit Mode Episode Exclusion', () => {
+    it('should prevent editing episode 5 to be episode 6 when episodes 1-5 exist (creates gap)', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' },
+          { season_number: '1', episode_number: '3', status: 'published' },
+          { season_number: '1', episode_number: '4', status: 'published' },
+          { season_number: '1', episode_number: '5', status: 'published' }
+        ],
+        error: null
+      });
+
+      const initialData = {
+        id: 'episode-5',
+        title: 'Episode 5',
+        season_number: '1',
+        episode_number: '5',
+        status: 'published' as const
+      };
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      
+      // Change episode 5 to episode 6 - should NOT be allowed (creates gap at 5)
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '6' }
+      });
+
+      const form = document.querySelector('form');
+      fireEvent.submit(form!);
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith('Episode 6 is not allowed. You can create episode 5.');
+      });
+      expect(mockUpdate).not.toHaveBeenCalled();
+    });
+
+    it('should allow editing episode 5 to remain episode 5 when episodes 1-5 exist', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' },
+          { season_number: '1', episode_number: '3', status: 'published' },
+          { season_number: '1', episode_number: '4', status: 'published' },
+          { season_number: '1', episode_number: '5', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-5' },
+        error: null
+      });
+
+      const initialData = {
+        id: 'episode-5',
+        title: 'Episode 5',
+        season_number: '1',
+        episode_number: '5',
+        status: 'published' as const
+      };
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      
+      // Keep episode 5 as episode 5 - should be allowed
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+          season_number: '1',
+          episode_number: '5'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should allow editing episode 3 to be episode 2 when episodes 1-3 exist (reordering)', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' },
+          { season_number: '1', episode_number: '3', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-3' },
+        error: null
+      });
+
+      const initialData = {
+        id: 'episode-3',
+        title: 'Episode 3',
+        season_number: '1',
+        episode_number: '3',
+        status: 'published' as const
+      };
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      
+      // Change episode 3 to episode 2 - should fail because episode 2 exists
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '2' }
+      });
+
+      const form = document.querySelector('form');
+      fireEvent.submit(form!);
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith('This episode number already exists in the selected season. Pick an unused episode number.');
+      });
+    });
+
+    it('should allow editing episode 2 to fill gap at episode 5 when episodes 1,2,3,6 exist', async () => {
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '1', status: 'published' },
+          { season_number: '1', episode_number: '2', status: 'published' },
+          { season_number: '1', episode_number: '3', status: 'published' },
+          { season_number: '1', episode_number: '6', status: 'published' }
+        ],
+        error: null
+      });
+
+      mockSingle.mockResolvedValueOnce({
+        data: { id: 'episode-2' },
+        error: null
+      });
+
+      const initialData = {
+        id: 'episode-2',
+        title: 'Episode 2',
+        season_number: '1',
+        episode_number: '2',
+        status: 'published' as const
+      };
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+      
+      // Change episode 2 to episode 5 (filling gap) - should be allowed
+      fireEvent.change(screen.getByLabelText(/episode number/i), {
+        target: { value: '5' }
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+          season_number: '1',
+          episode_number: '5'
+        }));
+      });
+      expect(toast.error).not.toHaveBeenCalled();
+    });
   });
 });

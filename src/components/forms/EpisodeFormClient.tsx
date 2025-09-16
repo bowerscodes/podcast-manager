@@ -52,7 +52,8 @@ export default function EpisodeFormClient({
       const { data: epsiodesData, error } = await supabase
         .from("episodes")
         .select("season_number, episode_number")
-        .eq("podcast_id", podcastId);
+        .eq("podcast_id", podcastId)
+        .eq("status", "published");
 
       if (error) {
         console.error("Error fetching episodes: ", error);
