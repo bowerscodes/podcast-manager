@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { Podcast } from "@/types/podcast";
 import SeasonAccordion from "./SeasonAccordion";
@@ -12,6 +12,7 @@ type EpisodesListProps = {
 
 export default function EpisodesList({ podcast }: EpisodesListProps) {
   const { episodes, loading, error, refresh } = useEpisodes(podcast.id);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Group episodes by season
   const episodesBySeasons = useMemo(() => {
@@ -43,12 +44,34 @@ export default function EpisodesList({ podcast }: EpisodesListProps) {
     }));
   }, [episodes]);
 
+  // Force height recalculation when episodes change
+  useEffect(() => {
+    if (containerRef.current) {
+      // Force reflow by temporarily changing and reverting a style property
+      const container = containerRef.current;
+      const expandableContent = container.closest('[data-expanded="true"]');
+      if (expandableContent) {
+        // Trigger a reflow on the expandableContent
+        const element = expandableContent as HTMLElement;
+        element.style.height = "auto";
+        void element.offsetHeight;
+      }
+    }
+  }, [episodes.length, episodesBySeasons.length]);
+
   if (loading) return <LoadingSpinner />;
 
   if (error) throw error;
 
   return (
-    <>
+    <div
+      ref={containerRef}
+      className="episodes-list-container w-full"
+      style={{
+        minHeight: "fit-content",
+        height: "auto"
+      }}
+    >
       {episodesBySeasons.map(({ seasonNumber, episodes }, index) => (
         <SeasonAccordion
           key={seasonNumber}
@@ -63,6 +86,6 @@ export default function EpisodesList({ podcast }: EpisodesListProps) {
         podcastId={podcast.id}
         onEpisodeCreated={refresh}
       />
-    </>
+    </div>
   );
 }

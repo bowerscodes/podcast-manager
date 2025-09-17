@@ -156,7 +156,7 @@ body::before {
 }
 
 .season-accordion .season-episodes.expanded {
-  max-height: 2000px;
+  /* max-height: auto; */
   opacity: 1;
 }
 
