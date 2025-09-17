@@ -76,9 +76,10 @@ export default function SeasonAccordion({
       </div>
 
       {/* Episodes Container */}
-      <div className={`season-episodes transition-all duration-300 ease-in-out overflow-hidden ${
-        isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-      }`}>
+      <div className={`
+        season-episodes transition-all duration-300 ease-in-out overflow-hidden
+        ${isExpanded ? 'max-h-none opacity-100' : 'max-h-0 opacity-0'}`
+      }>
         <div className="space-y-2">
           {episodes.map((episode, index) => (
             <EpisodeRow 
