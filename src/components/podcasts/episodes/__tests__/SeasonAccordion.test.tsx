@@ -125,7 +125,7 @@ describe('SeasonAccordion', () => {
     
     // Initially expanded
     let episodeContainer = screen.getByTestId('episode-row-1').parentElement?.parentElement;
-    expect(episodeContainer).toHaveClass('max-h-[2000px]', 'opacity-100');
+    expect(episodeContainer).toHaveClass('max-h-none', 'opacity-100');
     
     // Click to collapse
     fireEvent.click(seasonButton);
@@ -135,7 +135,7 @@ describe('SeasonAccordion', () => {
     // Click to expand again
     fireEvent.click(seasonButton);
     episodeContainer = screen.getByTestId('episode-row-1').parentElement?.parentElement;
-    expect(episodeContainer).toHaveClass('max-h-[2000px]', 'opacity-100');
+    expect(episodeContainer).toHaveClass('overflow-hidden', 'opacity-100');
   });
 
   it('calls onUpdate when passed to EpisodeRow components', () => {

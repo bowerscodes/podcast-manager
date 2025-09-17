@@ -1820,11 +1820,11 @@ describe('EpisodeFormClient', () => {
     it('should prevent editing episode 5 to be episode 6 when episodes 1-5 exist (creates gap)', async () => {
       mockEq.mockResolvedValueOnce({
         data: [
-          { season_number: '1', episode_number: '1', status: 'published' },
-          { season_number: '1', episode_number: '2', status: 'published' },
-          { season_number: '1', episode_number: '3', status: 'published' },
-          { season_number: '1', episode_number: '4', status: 'published' },
-          { season_number: '1', episode_number: '5', status: 'published' }
+          { season_number: '1', episode_number: '1', status: 'published', id: 'ep1' },
+          { season_number: '1', episode_number: '2', status: 'published', id: 'ep2' },
+          { season_number: '1', episode_number: '3', status: 'published', id: 'ep3' },
+          { season_number: '1', episode_number: '4', status: 'published', id: 'ep4' },
+          { season_number: '1', episode_number: '5', status: 'published', id: 'episode-5' }
         ],
         error: null
       });
@@ -1850,8 +1850,7 @@ describe('EpisodeFormClient', () => {
         target: { value: '6' }
       });
 
-      const form = document.querySelector('form');
-      fireEvent.submit(form!);
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith('Episode 6 is not allowed. You can create episode 5.');
@@ -1862,11 +1861,11 @@ describe('EpisodeFormClient', () => {
     it('should allow editing episode 5 to remain episode 5 when episodes 1-5 exist', async () => {
       mockEq.mockResolvedValueOnce({
         data: [
-          { season_number: '1', episode_number: '1', status: 'published' },
-          { season_number: '1', episode_number: '2', status: 'published' },
-          { season_number: '1', episode_number: '3', status: 'published' },
-          { season_number: '1', episode_number: '4', status: 'published' },
-          { season_number: '1', episode_number: '5', status: 'published' }
+          { season_number: '1', episode_number: '1', status: 'published', id: 'ep1' },
+          { season_number: '1', episode_number: '2', status: 'published', id: 'ep2' },
+          { season_number: '1', episode_number: '3', status: 'published', id: 'ep3' },
+          { season_number: '1', episode_number: '4', status: 'published', id: 'ep4' },
+          { season_number: '1', episode_number: '5', status: 'published', id: 'episode-5' }
         ],
         error: null
       });
@@ -1994,6 +1993,40 @@ describe('EpisodeFormClient', () => {
         }));
       });
       expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it('should prevent publishing draft with duplicate episode number when edited', async () => {
+      // Mock existing published episode 5
+      mockEq.mockResolvedValueOnce({
+        data: [
+          { season_number: '1', episode_number: '5', id: 'published-ep-5', status: 'published' }
+        ],
+        error: null
+      });
+
+      // Initial data for editing a DRAFT episode that also has episode number 5
+      const initialData = {
+        id: 'draft-ep-5', // Different ID but same episode number
+        title: 'Draft Episode 5',
+        season_number: '1',
+        episode_number: '5', // Duplicate number!
+        status: 'draft' as const
+      };
+
+      await act(async () => {
+        render(<EpisodeFormClient {...defaultProps} initialData={initialData} />);
+      });
+
+      fireEvent.change(screen.getByLabelText(/audio url/i), {
+        target: { value: 'https://example.com/audio.mp3' }
+      });
+
+      // Try to publish the draft - should fail because episode 5 already exists
+      fireEvent.click(screen.getByRole('button', { name: /publish episode/i }));
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith('This episode number already exists in the selected season. Pick an unused episode number.');
+      });
     });
   });
 });

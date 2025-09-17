@@ -24,7 +24,7 @@ export default function EpisodeFormClient({
   const { user } = useAuth();
   const [isLoading, setLoading] = useState(false);
   const [episodes, setEpisodes] = useState<
-    Array<{ season_number: string; episode_number: string }>
+    Array<{ season_number: string; episode_number: string; id: string }>
   >([]);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -51,7 +51,7 @@ export default function EpisodeFormClient({
 
       const { data: epsiodesData, error } = await supabase
         .from("episodes")
-        .select("season_number, episode_number")
+        .select("season_number, episode_number, id")
         .eq("podcast_id", podcastId)
         .eq("status", "published");
 
@@ -153,11 +153,9 @@ export default function EpisodeFormClient({
           const isSameSeason = parseInt(ep.season_number as string) ===
             parseInt(formData.season_number as string);
           
-          // If we're in edit mode, exclude the current episode from the list
+          // If we're in edit mode, exclude the current episode from the list by ID
           if (isEditMode) {
-            const isCurrentEpisode =
-              ep.season_number === initialData.season_number &&
-              ep.episode_number === initialData.episode_number;
+            const isCurrentEpisode = ep.id === initialData.id;
             return isSameSeason && !isCurrentEpisode;
           }
           
