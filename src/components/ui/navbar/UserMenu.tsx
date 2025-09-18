@@ -5,18 +5,26 @@ import {
   DropdownItem,
   DropdownSection
 } from '@heroui/dropdown';
-import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
 import { MdAccountCircle, MdPodcasts, MdSettings, MdHelp, MdLogout } from 'react-icons/md';
+
+import { supabase } from '@/lib/supabase';
 
 type Props = {
   user: User;
 };
 
 export default function UserMenu({ user }: Props) {
+  const router = useRouter();
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
   };
+
+  const handleNavigation = (path: string) => {
+    router.push(path);
+  }
 
   const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email;
 
@@ -41,7 +49,7 @@ export default function UserMenu({ user }: Props) {
             key="profile" 
             textValue="Profile"
             className="h-14"
-            href="/account"
+            onPress={() => handleNavigation("/account")}
           >
             <div className="flex flex-col">
               <span className="text-sm font-medium">{displayName}</span>
@@ -54,7 +62,7 @@ export default function UserMenu({ user }: Props) {
         <DropdownSection title="Navigation" showDivider>
           <DropdownItem 
             key="podcasts" 
-            href="/podcasts" 
+            onPress={() => handleNavigation("/podcasts")}
             textValue="My Podcasts"
             startContent={<MdPodcasts className="text-purple-600" size={18} />}
           >
@@ -63,7 +71,7 @@ export default function UserMenu({ user }: Props) {
           
           <DropdownItem 
             key="account" 
-            href="/account" 
+            onPress={() => handleNavigation("/account")}
             textValue="Account Settings"
             startContent={<MdSettings className="text-gray-600" size={18} />}
           >
@@ -72,7 +80,7 @@ export default function UserMenu({ user }: Props) {
           
           <DropdownItem 
             key="help" 
-            href="/account/help" 
+            onPress={() => handleNavigation("/help")}
             textValue="Help & Support"
             startContent={<MdHelp className="text-blue-600" size={18} />}
           >
