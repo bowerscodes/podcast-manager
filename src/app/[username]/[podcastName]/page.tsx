@@ -1,17 +1,19 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { supabase } from "@/lib/supabase";
 import { createServerClient } from "@/lib/createServiceClient";
 import PodcastDetailView from "@/components/podcasts/PodcastDetailView";
-import BackButton from "@/components/ui/BackButton";
+import BackButton from "@/components/ui/BackButton"
+import { appTitle } from "@/lib/data";
 
 export async function generateMetadata(props: {
   params: { username: string; podcastName: string };
 }): Promise<Metadata> {
+  const supabaseServer = createServerClient();
+
   const { username, podcastName } = await props.params;
 
-  const { data: profile } = await supabase
+  const { data: profile } = await supabaseServer
     .from("profiles")
     .select("id")
     .eq("username", username)
@@ -24,7 +26,7 @@ export async function generateMetadata(props: {
     };
   }
 
-  const { data: podcast } = await supabase
+  const { data: podcast } = await supabaseServer
     .from("podcasts")
     .select("*")
     .eq("user_id", profile.id)
@@ -39,7 +41,7 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: podcast.title,
+    title: `${podcast.title} | ${appTitle}`,
     description: podcast.description,
   };
 }
