@@ -42,7 +42,7 @@ export default function PodcastRSSSection({ podcast }: Props) {
   : "Loading RSS URL...";
 
   return (
-    <div className="">
+    <div>
       <CardBody className="space-y-4">
         <p className="text-gray-600 mb-4">
           Use this RSS Feed to submit your podcast to platforms like Apple
