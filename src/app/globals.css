@@ -143,28 +143,6 @@ body::before {
 
 /* END SPACE BACKGROUND SECTION */
 
-/* Season Accordion Animations */
-.season-accordion .season-episodes {
-  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-              opacity 0.2s ease-in-out;
-}
-
-.season-accordion .season-episodes.collapsed {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-}
-
-.season-accordion .season-episodes.expanded {
-  /* max-height: auto; */
-  opacity: 1;
-}
-
-/* Chevron rotation animation */
-.chevron-icon {
-  transition: transform 0.2s ease-in-out;
-}
-
 /* Ensure light backgrounds for all cards and components against space background */
 .podcast-card,
 .stats-card,
