@@ -68,13 +68,13 @@ export default function ExpandableContent({
           }}
           style={headerStyle}
         >
-          {customHeader(isExpanded)} {/* Pass isExpanded to render prop */}
+          {customHeader(isExpanded)}
         </div>
 
         <div
           className={`
             transition-all duration-300 ease-in-out overflow-hidden
-            ${isExpanded ? 'max-h-none opacity-100' : 'max-h-0 opacity-0'}
+            ${isExpanded ? 'max-h-[100%] opacity-100' : 'max-h-0 opacity-0'}
           `}
           style={contentStyle}
         >
@@ -115,12 +115,9 @@ export default function ExpandableContent({
         </div>
 
         <div
-          className="overflow-hidden transition-all duration-400 ease-in-out"
-          style={{
-            maxHeight: isExpanded ? "none" : "0px",
-            opacity: isExpanded ? 1 : 0,
-            ...contentStyle,
-          }}
+          className={`overflow-hidden transition-all duration-400 ease-in-out
+            ${isExpanded ? "max-h-[100%] opacity-100" : "max-h-0 opacity-0"}  
+          `}
         >
           <div className={`px-3 pb-3 transition-all duration-400 ease-in-out ${contentClassName}`}>
             {children}
