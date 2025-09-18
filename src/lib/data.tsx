@@ -3,7 +3,7 @@ import { FaPodcast } from "react-icons/fa";
 export const applePodcastsSubmitLink = "https://podcastsconnect.apple.com/";
 export const spotifyPodcastsSubmitLink = "https://podcasters.spotify.com/";
 
-export const appTitle = "Podcast Manager";
+export const appTitle = "pod.it";
 
 export const appDescription = `Create, manage, and distribute your podcasts with ease. Generate RSS feeds that work 
   with Apple Podcasts, Spotify, and more.`;

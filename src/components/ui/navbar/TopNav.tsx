@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from '@/providers/Providers';
 import UserMenu from './UserMenu';
 import LoginModal from './LoginModal';
+import { appTitle } from '@/lib/data';
 
 export default function TopNav() {
   const { user } = useAuth();
@@ -31,7 +32,7 @@ export default function TopNav() {
               }} 
               onClick={handleLogoClick}
             >
-              🎙️ podly
+              🎙️ {appTitle}
             </h1>
           </div>
           <div className="flex items-center space-x-4">
