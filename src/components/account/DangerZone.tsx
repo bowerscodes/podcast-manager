@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function DangerZone({ user }: Props) {
-  const [confirmEmail, setConfirmEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDeleteAccount = async () => {
@@ -33,27 +33,38 @@ export default function DangerZone({ user }: Props) {
   };
 
   return (
-    <div className="space-y-4 p-4 border border-red-200 rounded-lg bg-red-50">
-      <div className="text-red-800">
-        <h4 className="font-semibold">Delete Account</h4>
-        <p className="text-sm mt-1">
-          This will permanently delete your account and all associated podcasts and episodes. 
-          This action cannot be undone.
-        </p>
+    <div className="flex flex-col gap-4 pt-6">
+      <div className="flex flex-col space-y-4 p-4 border gap-4 border-red-200 rounded-lg bg-red-50">
+        <div className="text-red-800">
+          <h4 className="font-semibold">Delete Account</h4>
+          <p className="text-sm mt-1">
+            This will permanently delete your account and all associated
+            podcasts and episodes. This action cannot be undone.
+          </p>
+        </div>
+        <Input
+          label={`Type "${user.email}" to confirm`}
+          labelPlacement="outside"
+          placeholder={`${user.email}`}
+          value={confirmEmail}
+          onChange={(e) => setConfirmEmail(e.target.value)}
+          variant="bordered"
+          classNames={{
+            base: "max-w-xs",
+            label: "!font-semibold !text-gray-600",
+            description: "!font-semibold",
+          }}
+        />
+        <Button
+          color="danger"
+          onPress={handleDeleteAccount}
+          isLoading={isLoading}
+          isDisabled={confirmEmail !== user.email}
+          className="self-start"
+        >
+          Delete Account
+        </Button>
       </div>
-      <Input
-        label={`Type "${user.email}" to confirm`}
-        value={confirmEmail}
-        onChange={(e) => setConfirmEmail(e.target.value)}
-      />
-      <Button 
-        color="danger" 
-        onPress={handleDeleteAccount} 
-        isLoading={isLoading}
-        isDisabled={confirmEmail !== user.email}
-      >
-        Delete Account
-      </Button>
     </div>
   );
 }

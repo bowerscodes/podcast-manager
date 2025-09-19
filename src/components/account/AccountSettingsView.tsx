@@ -33,18 +33,30 @@ export default function AccountSettingsView({ user, profile }: Props) {
 
       <div className="space-y-6">
         {/* Profile Information */}
-        <ExpandableContent 
+        <ExpandableContent
           defaultExpanded={true}
           className="p-6"
+          chevronPosition="start"
           customHeader={(isExpanded) => (
-            <div className="flex items-center gap-3 ">
-              <div className="flex-1">
-                <h3 className="heading-secondary text-lg">Profile Information</h3>
-                <p className="text-sm text-gray-600">Update your public profile details</p>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-3">
+                {" "}
+                {/* h3 and chevron on same line */}
+                <h3 className="heading-secondary text-lg">
+                  Profile Information
+                </h3>
+                <div className="text-gray-600">
+                  {isExpanded ? (
+                    <MdExpandLess size={20} />
+                  ) : (
+                    <MdExpandMore size={20} />
+                  )}
+                </div>
               </div>
-              <div className="text-gray-600">
-                {isExpanded ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
-              </div>
+              <p className="text-sm text-gray-600">
+                Update your public profile details
+              </p>{" "}
+              {/* Description below */}
             </div>
           )}
         >
@@ -52,17 +64,28 @@ export default function AccountSettingsView({ user, profile }: Props) {
         </ExpandableContent>
 
         {/* Email Settings */}
-        <ExpandableContent 
+        <ExpandableContent
           className="p-6"
           customHeader={(isExpanded) => (
-            <div className="flex items-center gap-3">
-              <div className="flex-1">
-                <h3 className="heading-secondary text-lg">Email Settings</h3>
-                <p className="text-sm text-gray-600">Manage your email address</p>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-3">
+                {" "}
+                {/* h3 and chevron on same line */}
+                <h3 className="heading-secondary text-lg">
+                  Email Settings
+                </h3>
+                <div className="text-gray-600">
+                  {isExpanded ? (
+                    <MdExpandLess size={20} />
+                  ) : (
+                    <MdExpandMore size={20} />
+                  )}
+                </div>
               </div>
-              <div className="text-gray-600">
-                {isExpanded ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
-              </div>
+              <p className="text-sm text-gray-600">
+                Manage your email address
+              </p>{" "}
+              {/* Description below */}
             </div>
           )}
         >
@@ -70,17 +93,28 @@ export default function AccountSettingsView({ user, profile }: Props) {
         </ExpandableContent>
 
         {/* Password Settings */}
-        <ExpandableContent 
+        <ExpandableContent
           className="p-6"
           customHeader={(isExpanded) => (
-            <div className="flex items-center gap-3">
-              <div className="flex-1">
-                <h3 className="heading-secondary text-lg">Password Settings</h3>
-                <p className="text-sm text-gray-600">Change your password</p>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-3">
+                {" "}
+                {/* h3 and chevron on same line */}
+                <h3 className="heading-secondary text-lg">
+                  Password Settings
+                </h3>
+                <div className="text-gray-600">
+                  {isExpanded ? (
+                    <MdExpandLess size={20} />
+                  ) : (
+                    <MdExpandMore size={20} />
+                  )}
+                </div>
               </div>
-              <div className="text-gray-600">
-                {isExpanded ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
-              </div>
+              <p className="text-sm text-gray-600">
+                Change your password
+              </p>{" "}
+              {/* Description below */}
             </div>
           )}
         >
@@ -88,18 +122,28 @@ export default function AccountSettingsView({ user, profile }: Props) {
         </ExpandableContent>
 
         {/* Danger Zone */}
-        <ExpandableContent 
+        <ExpandableContent
           defaultExpanded={false}
           className="p-6"
           customHeader={(isExpanded) => (
-            <div className="flex items-center gap-3">
-              <div className="flex-1">
-                <h3 className="heading-secondary text-lg text-red-600">Danger Zone</h3>
-                <p className="text-sm text-gray-600">Irreversible account actions</p>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-3">
+                {" "}
+                {/* h3 and chevron on same line */}
+                <h3 className="heading-secondary text-lg">
+                  Danger Zone
+                </h3>
+                <div className="text-gray-600">
+                  {isExpanded ? (
+                    <MdExpandLess size={20} />
+                  ) : (
+                    <MdExpandMore size={20} />
+                  )}
+                </div>
               </div>
-              <div className="text-gray-600">
-                {isExpanded ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
-              </div>
+              <p className="text-sm text-gray-600">
+                Irreversible account actions
+              </p>{" "}
             </div>
           )}
         >

@@ -34,20 +34,25 @@ export default function EmailForm({ user }: Props) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="text-sm text-gray-600 mb-4">
-        Current email: <span className="font-medium">{user.email}</span>
-      </div>
+    <div className="flex flex-col gap-4 pt-6">
       <Input
         label="New Email Address"
+        labelPlacement="outside"
         type="email"
         value={newEmail}
+        variant="bordered"
         onChange={(e) => setNewEmail(e.target.value)}
+        classNames={{
+          base: "max-w-xs",
+          label: "!font-semibold !text-gray-600",
+          description: "!font-semibold"
+        }}
         description="You'll need to confirm the new email address"
       />
       <Button 
         color="primary" 
         onPress={handleUpdateEmail} 
+        className="self-start"
         isLoading={isLoading}
         isDisabled={newEmail === user.email}
       >

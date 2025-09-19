@@ -1,9 +1,9 @@
-import { supabase } from '@/lib/supabase';
-import { Button } from '@heroui/button';
-import { Input } from '@heroui/input';
-import React, { useState } from 'react';
-import { FormEvent, ChangeEvent } from 'react';
-import toast from 'react-hot-toast';
+import { supabase } from "@/lib/supabase";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import React, { useState } from "react";
+import { FormEvent, ChangeEvent } from "react";
+import toast from "react-hot-toast";
 
 interface PasswordFormData {
   newPassword: string;
@@ -16,16 +16,16 @@ interface Props {
 
 export default function PasswordForm({ user }: Props) {
   const [formData, setFormData] = useState<PasswordFormData>({
-    newPassword: '',
-    confirmPassword: ''
+    newPassword: "",
+    confirmPassword: "",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleInputChange = (field: keyof PasswordFormData) => 
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setFormData(prev => ({
+  const handleInputChange =
+    (field: keyof PasswordFormData) => (e: ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({
         ...prev,
-        [field]: e.target.value
+        [field]: e.target.value,
       }));
     };
 
@@ -49,13 +49,13 @@ export default function PasswordForm({ user }: Props) {
     setIsLoading(true);
     try {
       const { error } = await supabase.auth.updateUser({
-        password: formData.newPassword
+        password: formData.newPassword,
       });
 
       if (error) throw error;
 
       toast.success("Password updated successfully");
-      setFormData({ newPassword: '', confirmPassword: '' });
+      setFormData({ newPassword: "", confirmPassword: "" });
     } catch (error) {
       console.error("Error updating password:", error);
       toast.error("Failed to update password");
@@ -64,7 +64,9 @@ export default function PasswordForm({ user }: Props) {
     }
   };
 
-  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleFormSubmit = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     await updatePassword();
   };
@@ -76,34 +78,51 @@ export default function PasswordForm({ user }: Props) {
       <input
         type="email"
         name="username"
-        value={user?.email || ''}
+        value={user?.email || ""}
         autoComplete="username"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         readOnly
         tabIndex={-1}
         aria-hidden="true"
       />
 
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4 pt-6">
         <Input
           label="New Password"
+          labelPlacement="outside"
           type="password"
+          placeholder="Enter new password" 
           value={formData.newPassword}
-          onChange={handleInputChange('newPassword')}
+          onChange={handleInputChange("newPassword")}
+          variant="bordered"
+          classNames={{
+            base: "max-w-xs",
+            label: "!font-semibold !text-gray-600",
+            description: "!font-semibold",
+          }}
           autoComplete="new-password"
         />
         <Input
           label="Confirm New Password"
+          labelPlacement="outside"
           type="password"
+          placeholder="Enter new password" 
           value={formData.confirmPassword}
-          onChange={handleInputChange('confirmPassword')}
+          variant="bordered"
+          classNames={{
+            base: "max-w-xs",
+            label: "!font-semibold !text-gray-600",
+            description: "!font-semibold",
+          }}
+          onChange={handleInputChange("confirmPassword")}
           autoComplete="new-password"
         />
-        <Button 
-          color="primary" 
-          onPress={updatePassword} 
+        <Button
+          color="primary"
+          onPress={updatePassword}
           isLoading={isLoading}
           isDisabled={!isFormValid}
+          className="self-start"
         >
           Update Password
         </Button>

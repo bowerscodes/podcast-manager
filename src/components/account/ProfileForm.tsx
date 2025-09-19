@@ -28,7 +28,6 @@ export default function ProfileForm({ user, profile }: Props) {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // Validate username
       if (username.length < 3) {
         toast.error("Username must be at least 3 characters");
         return;
@@ -75,26 +74,37 @@ export default function ProfileForm({ user, profile }: Props) {
         labelPlacement="outside"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        description="This appears in your podcast URLs"
-        size="lg"
+        variant="bordered"
+        classNames={{
+          base: "max-w-sm",
+          label: "!font-semibold !text-gray-600",
+          description: "!font-semibold"
+        }}
         startContent={
           <span className="text-gray-500">
             {process.env.NEXT_PUBLIC_BASE_URL}/
           </span>
         }
+        description="This appears in your podcast URLs"
       />
       <Input
         label="Display Name"
         labelPlacement="outside"
-        size="lg"
         value={displayName}
         onChange={(e) => setDisplayName(e.target.value)}
+        variant="bordered"
+        classNames={{
+          base: "max-w-2xs",
+          label: "!font-semibold !text-gray-600",
+          description: "!font-semibold"
+        }}
         description="Your public display name (optional)"
       />
       <Button 
         color="primary" 
         onPress={handleSave} 
         isLoading={isLoading}
+        className="self-start"
       >
         Save Changes
       </Button>
