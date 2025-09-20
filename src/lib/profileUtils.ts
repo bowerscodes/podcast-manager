@@ -2,6 +2,23 @@
 
 import { createServerClient } from "@/lib/createServiceClient";
 
+export async function fetchUserProfile(userId: string) {
+  const supabaseServer = createServerClient();
+  
+  const { data, error } = await supabaseServer
+    .from("profiles")
+    .select("display_name")
+    .eq("id", userId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching profile:", error);
+    return { profile: null, error: error.message };
+  }
+
+  return { profile: data, error: null };
+}
+
 export async function checkUsernameAvailable(username: string, currentUserId: string) {
   const supabaseServer = createServerClient();
 

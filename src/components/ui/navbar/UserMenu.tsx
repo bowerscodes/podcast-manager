@@ -13,9 +13,12 @@ import { supabase } from '@/lib/supabase';
 
 type Props = {
   user: User;
+  profile?:  {
+    display_name?: string;
+  } | null;
 };
 
-export default function UserMenu({ user }: Props) {
+export default function UserMenu({ user, profile }: Props) {
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -26,7 +29,10 @@ export default function UserMenu({ user }: Props) {
     router.push(path);
   }
 
-  const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email;
+  const displayName = profile?.display_name || 
+                      user.user_metadata?.full_name || 
+                      user.user_metadata?.name || 
+                      user.email;
 
   return (
     <Dropdown>

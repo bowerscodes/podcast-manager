@@ -6,7 +6,11 @@ import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
 
-import { checkUsernameAvailable, updateProfile, validateUsername } from "@/lib/profileUtils";
+import {
+  checkUsernameAvailable,
+  updateProfile,
+  validateUsername,
+} from "@/lib/profileUtils";
 
 type Profile = {
   id: string;
@@ -31,8 +35,12 @@ export default function ProfileForm({ user, profile }: Props) {
 
     try {
       // Await the validation function
-      const { valid, error: validationError, cleanUsername } = await validateUsername(username);
-      
+      const {
+        valid,
+        error: validationError,
+        cleanUsername,
+      } = await validateUsername(username);
+
       if (!valid) {
         toast.error(validationError);
         return;
@@ -42,7 +50,10 @@ export default function ProfileForm({ user, profile }: Props) {
 
       // Check if username is taken (if changed)
       if (cleanUsername !== currentUsername) {
-        const { available, error: checkError } = await checkUsernameAvailable(cleanUsername, user.id);
+        const { available, error: checkError } = await checkUsernameAvailable(
+          cleanUsername,
+          user.id
+        );
 
         if (checkError) {
           toast.error(checkError);
@@ -67,6 +78,8 @@ export default function ProfileForm({ user, profile }: Props) {
       }
 
       toast.success("Profile updated successfully");
+
+      window.dispatchEvent(new CustomEvent("profileUpdated"));
     } catch (error) {
       console.error("Unexpected error:", error);
       toast.error("An unexpected error occurred");
