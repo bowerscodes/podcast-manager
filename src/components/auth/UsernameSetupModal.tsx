@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { supabase } from "@/lib/supabase";
 
 import { useAuth } from "@/providers/Providers";
+import { checkUsernameAvailable, updateProfile, validateUsername } from "@/lib/profileUtils";
 
 export default function UsernameSetupModal() {
   const { user } = useAuth();
@@ -48,55 +49,48 @@ export default function UsernameSetupModal() {
     e.preventDefault();
     if (!user) return;
 
-    // Validate username
-    if (!username || username.length < 3) {
-      toast.error("Username must be at least 3 characters");
-      return;
-    }
-
-    // Only allow lowercase letters, numbers & hyphens
-    const validUsername = username.toLowerCase().replace(/[^a-z0-9-]/g, "-");
-
-    if (validUsername !== username) {
-      setUsername(validUsername);
-      toast.error(
-        "Username can only contain lowercase letters, numbers and hyphens"
-      );
-      return;
-    }
-
     setLoading(true);
 
     try {
-      // Check if username is already taken
-      const { data: existingUser } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("username", username)
-        .neq("id", user.id)
-        .single();
+      // Use shared validation function
+      const { valid, error: validationError, cleanUsername } = await validateUsername(username);
+      
+      if (!valid) {
+        toast.error(validationError);
+        setLoading(false);
+        return;
+      }
 
-      if (existingUser) {
+      // Check if username is already taken
+      const { available, error: checkError } = await checkUsernameAvailable(cleanUsername, user.id);
+
+      if (checkError) {
+        toast.error(checkError);
+        setLoading(false);
+        return;
+      }
+
+      if (!available) {
         toast.error("Username is already taken");
         setLoading(false);
         return;
       }
 
-      // Update the username
-      const { error } = await supabase
-        .from("profiles")
-        .update({ username })
-        .eq("id", user.id);
+      // Use shared update function
+      const { success, error } = await updateProfile(user.id, {
+        username: cleanUsername,
+      });
 
-      if (error) {
-        console.error("Supabase error: ", error)
-        throw error
-      };
+      if (!success) {
+        toast.error(error || "Failed to set username");
+        setLoading(false);
+        return;
+      }
 
       toast.success("Username set successfully");
       setIsOpen(false);
     } catch (error) {
-      console.error("Error setting username: ", error);
+      console.error("Error setting username:", error);
       toast.error("Failed to set username");
     } finally {
       setLoading(false);
@@ -127,12 +121,13 @@ export default function UsernameSetupModal() {
         </ModalHeader>
         <ModalBody className="p-6">
           <p className="mb-4">
-            Please choose a username for your podcasting profile. This will appear in
-            your podcast URL.
+            Please choose a username for your podcasting profile. This will
+            appear in your podcast URL.
           </p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               value={username}
+              onChange={(e) => setUsername(e.target.value)}
               label="Username"
               labelPlacement="outside-top"
               startContent={
@@ -146,11 +141,9 @@ export default function UsernameSetupModal() {
             />
             <div className="text-sm text-gray-400">
               <span className="font-medium w-full">
-                Your podcast URL will look like: 
-              </span>
-              {" "}
-              {window.location.origin}/
-              {username}/your-podcast
+                Your podcast URL will look like:
+              </span>{" "}
+              {window.location.origin}/{username}/your-podcast
             </div>
             <Button
               type="submit"

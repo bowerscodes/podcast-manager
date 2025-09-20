@@ -5,7 +5,8 @@ import { Input } from "@heroui/input";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
-import { supabase } from "@/lib/supabase";
+
+import { checkUsernameAvailable, updateProfile, validateUsername } from "@/lib/profileUtils";
 
 type Profile = {
   id: string;
@@ -21,47 +22,54 @@ type Props = {
 };
 
 export default function ProfileForm({ user, profile }: Props) {
-  const [username, setUsername] = useState(profile?.username || '');
-  const [displayName, setDisplayName] = useState(profile?.display_name || '');
+  const [username, setUsername] = useState(profile?.username || "");
+  const [displayName, setDisplayName] = useState(profile?.display_name || "");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
     setIsLoading(true);
+
     try {
-      if (username.length < 3) {
-        toast.error("Username must be at least 3 characters");
+      // Await the validation function
+      const { valid, error: validationError, cleanUsername } = await validateUsername(username);
+      
+      if (!valid) {
+        toast.error(validationError);
         return;
       }
 
-      // Check if username is taken (if changed)
-      if (username !== profile?.username) {
-        const { data: existingUser } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("username", username)
-          .neq("id", user.id)
-          .single();
+      const currentUsername = profile?.username?.toLowerCase() || "";
 
-        if (existingUser) {
+      // Check if username is taken (if changed)
+      if (cleanUsername !== currentUsername) {
+        const { available, error: checkError } = await checkUsernameAvailable(cleanUsername, user.id);
+
+        if (checkError) {
+          toast.error(checkError);
+          return;
+        }
+
+        if (!available) {
           toast.error("Username is already taken");
           return;
         }
       }
 
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          username: username.toLowerCase(),
-          display_name: displayName || null,
-        })
-        .eq("id", user.id);
+      // Update profile
+      const { success, error } = await updateProfile(user.id, {
+        username: cleanUsername,
+        display_name: displayName.trim() || null,
+      });
 
-      if (error) throw error;
+      if (!success) {
+        toast.error(error || "Failed to update profile");
+        return;
+      }
 
       toast.success("Profile updated successfully");
     } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("Failed to update profile");
+      console.error("Unexpected error:", error);
+      toast.error("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +86,7 @@ export default function ProfileForm({ user, profile }: Props) {
         classNames={{
           base: "max-w-sm",
           label: "!font-semibold !text-gray-600",
-          description: "!font-semibold"
+          description: "!font-semibold",
         }}
         startContent={
           <span className="text-gray-500">
@@ -96,13 +104,13 @@ export default function ProfileForm({ user, profile }: Props) {
         classNames={{
           base: "max-w-2xs",
           label: "!font-semibold !text-gray-600",
-          description: "!font-semibold"
+          description: "!font-semibold",
         }}
         description="Your public display name (optional)"
       />
-      <Button 
-        color="primary" 
-        onPress={handleSave} 
+      <Button
+        color="primary"
+        onPress={handleSave}
         isLoading={isLoading}
         className="self-start"
       >
