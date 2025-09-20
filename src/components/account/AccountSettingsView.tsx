@@ -41,7 +41,6 @@ export default function AccountSettingsView({ user, profile }: Props) {
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-3">
                 {" "}
-                {/* h3 and chevron on same line */}
                 <h2 className="heading-secondary text-lg">
                   Profile Information
                 </h2>
@@ -70,7 +69,6 @@ export default function AccountSettingsView({ user, profile }: Props) {
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-3">
                 {" "}
-                {/* h3 and chevron on same line */}
                 <h2 className="heading-secondary text-lg">
                   Email Settings
                 </h2>
@@ -99,7 +97,6 @@ export default function AccountSettingsView({ user, profile }: Props) {
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-3">
                 {" "}
-                {/* h3 and chevron on same line */}
                 <h2 className="heading-secondary text-lg">
                   Password Settings
                 </h2>
@@ -129,7 +126,6 @@ export default function AccountSettingsView({ user, profile }: Props) {
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-3">
                 {" "}
-                {/* h3 and chevron on same line */}
                 <h2 className="heading-secondary text-lg">
                   Danger Zone
                 </h2>

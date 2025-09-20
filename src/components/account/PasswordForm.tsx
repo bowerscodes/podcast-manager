@@ -11,7 +11,7 @@ interface PasswordFormData {
 }
 
 interface Props {
-  user?: { email?: string }; // Add user prop to get email
+  user?: { email?: string };
 }
 
 export default function PasswordForm({ user }: Props) {
