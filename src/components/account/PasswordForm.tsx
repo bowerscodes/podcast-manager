@@ -1,9 +1,13 @@
-import { supabase } from "@/lib/supabase";
+"use client";
+
 import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
 import React, { useState } from "react";
 import { FormEvent, ChangeEvent } from "react";
+import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
+
+import { validatePassword, updateUserPassword } from "@/lib/passwordUtils";
+import PasswordInput from "@/components/account/PasswordInput";
 
 interface PasswordFormData {
   newPassword: string;
@@ -11,7 +15,7 @@ interface PasswordFormData {
 }
 
 interface Props {
-  user?: { email?: string };
+  user: User;
 }
 
 export default function PasswordForm({ user }: Props) {
@@ -29,36 +33,40 @@ export default function PasswordForm({ user }: Props) {
       }));
     };
 
-  const validatePasswords = (): string | null => {
-    if (formData.newPassword !== formData.confirmPassword) {
-      return "Passwords don't match";
-    }
-    if (formData.newPassword.length < 6) {
-      return "Password must be at least 6 characters";
-    }
-    return null;
-  };
-
   const updatePassword = async (): Promise<void> => {
-    const validationError = validatePasswords();
-    if (validationError) {
-      toast.error(validationError);
-      return;
-    }
-
     setIsLoading(true);
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: formData.newPassword,
-      });
 
-      if (error) throw error;
+    try {
+      // Validate password
+      const { valid, error: validationError } = await validatePassword(
+        formData.newPassword,
+        formData.confirmPassword
+      );
+
+      if (!valid) {
+        toast.error(validationError);
+        return;
+      }
+
+      // Update password using server-side function
+      const { success, error } = await updateUserPassword(
+        user.id,
+        formData.newPassword
+      );
+
+      if (!success) {
+        toast.error(error || "Failed to update password");
+        return;
+      }
 
       toast.success("Password updated successfully");
       setFormData({ newPassword: "", confirmPassword: "" });
+
+      // Dispatch event to notify other components
+      window.dispatchEvent(new CustomEvent("passwordUpdated"));
     } catch (error) {
-      console.error("Error updating password:", error);
-      toast.error("Failed to update password");
+      console.error("Unexpected error:", error);
+      toast.error("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +79,9 @@ export default function PasswordForm({ user }: Props) {
     await updatePassword();
   };
 
-  const isFormValid = formData.newPassword && formData.confirmPassword;
+  const isFormValid = formData.newPassword && 
+                     formData.confirmPassword && 
+                     formData.newPassword === formData.confirmPassword;
 
   return (
     <form onSubmit={handleFormSubmit} className="space-y-4">
@@ -87,36 +97,24 @@ export default function PasswordForm({ user }: Props) {
       />
 
       <div className="flex flex-col gap-4 pt-6">
-        <Input
+        <PasswordInput
           label="New Password"
-          labelPlacement="outside"
-          type="password"
-          placeholder="Enter new password" 
+          placeholder="Enter new password"
           value={formData.newPassword}
           onChange={handleInputChange("newPassword")}
-          variant="bordered"
-          classNames={{
-            base: "max-w-xs",
-            label: "!font-semibold !text-gray-600",
-            description: "!font-semibold",
-          }}
-          autoComplete="new-password"
+          showStrength={true}
         />
-        <Input
+
+        <PasswordInput
           label="Confirm New Password"
-          labelPlacement="outside"
-          type="password"
-          placeholder="Enter new password" 
+          placeholder="Confirm new password"
           value={formData.confirmPassword}
-          variant="bordered"
-          classNames={{
-            base: "max-w-xs",
-            label: "!font-semibold !text-gray-600",
-            description: "!font-semibold",
-          }}
           onChange={handleInputChange("confirmPassword")}
-          autoComplete="new-password"
+          showStrength={false}
+          isConfirmField={true}
+          originalPassword={formData.newPassword}
         />
+
         <Button
           color="primary"
           onPress={updatePassword}
