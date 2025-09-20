@@ -2,7 +2,7 @@
 
 import { Button } from "@heroui/button";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Podcast } from "@/types/podcast";
 import DeleteModal from "../modals/DeleteModal";
@@ -14,20 +14,11 @@ type Props = {
 
 export default function PodcastActions({ podcast }: Props) {
   const router = useRouter();
-  const [canGoBack, setCanGoBack] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  useEffect(() => {
-    setCanGoBack(window.history.length > 1);
-  }, []);
-
-  const handleBack = () => {
-    if (canGoBack) {
-      router.back();
-    }
-    else {
-      router.push("/podcasts")
-    }
+  const handleDeleteSuccess = () => {
+    // After successful delete, navigate back to podcasts
+    router.push("/podcasts");
   };
 
   return (
@@ -49,7 +40,7 @@ export default function PodcastActions({ podcast }: Props) {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         podcastId={podcast.id}
-        onSuccess={handleBack}
+        onSuccess={handleDeleteSuccess}
       />
     </>
   );

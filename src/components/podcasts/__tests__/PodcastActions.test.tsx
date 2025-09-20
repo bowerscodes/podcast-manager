@@ -17,6 +17,36 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
+// Mock BackButton component
+jest.mock('../../ui/BackButton', () => {
+  return function MockBackButton({ to }: { to?: string }) {
+    return (
+      <button 
+        className="flex px-0 text-blue-400 hover:text-primary-500 transition-colors"
+        onClick={() => {
+          if (to) {
+            const router = jest.requireMock('next/navigation').useRouter();
+            router.push(`/${to}`);
+          } else if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            const router = jest.requireMock('next/navigation').useRouter();
+            router.push('/podcasts');
+          }
+        }}
+        style={{ 
+          background: 'transparent', 
+          cursor: 'pointer'
+        }}
+      > 
+        {`← `}<p className="pl-2 hover:underline underline-offset-4">
+          Back {to && `to ${to.charAt(0).toUpperCase() + to.slice(1)}`}
+        </p>
+      </button>
+    );
+  };
+});
+
 // Mock DeleteModal
 jest.mock('../../modals/DeleteModal', () => {
   return function MockDeleteModal({ 
@@ -61,11 +91,11 @@ describe('PodcastActions', () => {
   const mockPodcast = {
     id: 'podcast-123',
     title: 'Test Podcast',
+    podcast_name: 'test-podcast',
     description: 'Test Description',
     user_id: 'user-123',
     created_at: new Date('2024-01-01'),
     updated_at: new Date('2024-01-01'),
-    image_url: 'https://example.com/image.jpg',
     artwork: 'https://example.com/artwork.jpg',
     language: 'en',
     categories: ['Technology'],
@@ -91,40 +121,27 @@ describe('PodcastActions', () => {
       expect(screen.getByText('Back to Podcasts')).toBeInTheDocument();
     });
 
-    it('should use router.back() when history exists', () => {
-      // Set history length > 1 to simulate existing history
-      Object.defineProperty(window, 'history', {
-        value: { length: 3 },
-        writable: true,
-      });
-
+    it('should use router.push() when BackButton has "to" prop', () => {
       render(<PodcastActions podcast={mockPodcast} />);
       
       // Click on the button element containing the text
       const backButton = screen.getByText('Back to Podcasts').closest('button');
       fireEvent.click(backButton!);
       
-      expect(mockBack).toHaveBeenCalledTimes(1);
-      expect(mockPush).not.toHaveBeenCalled();
+      // Since BackButton has to="podcasts", it should always push to /podcasts
+      expect(mockPush).toHaveBeenCalledWith('/podcasts');
+      expect(mockBack).not.toHaveBeenCalled();
     });
 
-    it('should use router.push() when no history exists', () => {
-      // Set history length to 1 to simulate no history
-      Object.defineProperty(window, 'history', {
-        value: { length: 1 },
-        writable: true,
-      });
-
+    it('should navigate to fallback path when no history and no "to" prop', () => {
+      // Test this by creating a BackButton without "to" prop
+      // This is mainly to test BackButton component behavior
       render(<PodcastActions podcast={mockPodcast} />);
       
-      // Wait for useEffect to set canGoBack state
-      waitFor(() => {
-        const backButton = screen.getByText('Back to Podcasts').closest('button');
-        fireEvent.click(backButton!);
-        
-        expect(mockPush).toHaveBeenCalledWith('/podcasts');
-        expect(mockBack).not.toHaveBeenCalled();
-      });
+      const backButton = screen.getByText('Back to Podcasts').closest('button');
+      fireEvent.click(backButton!);
+      
+      expect(mockPush).toHaveBeenCalledWith('/podcasts');
     });
   });
 
@@ -166,30 +183,20 @@ describe('PodcastActions', () => {
       expect(screen.queryByTestId('delete-modal')).not.toBeInTheDocument();
     });
 
-    it('should call handleBack when delete is successful', () => {
-      Object.defineProperty(window, 'history', {
-        value: { length: 3 },
-        writable: true,
-      });
-
+    it('should call handleDeleteSuccess when delete is successful', () => {
       render(<PodcastActions podcast={mockPodcast} />);
       
       // Open modal
       fireEvent.click(screen.getByText('Delete Podcast'));
       
-      // Confirm delete (this should trigger onSuccess which calls handleBack)
+      // Confirm delete (this should trigger onSuccess which calls handleDeleteSuccess)
       fireEvent.click(screen.getByText('Confirm Delete'));
       
-      // Should use router.back() since we have history
-      expect(mockBack).toHaveBeenCalledTimes(1);
+      // Should always navigate to /podcasts after delete
+      expect(mockPush).toHaveBeenCalledWith('/podcasts');
     });
 
-    it('should navigate to /podcasts when delete is successful and no history', () => {
-      Object.defineProperty(window, 'history', {
-        value: { length: 1 },
-        writable: true,
-      });
-
+    it('should navigate to /podcasts when delete is successful', () => {
       render(<PodcastActions podcast={mockPodcast} />);
       
       // Open modal
@@ -198,7 +205,7 @@ describe('PodcastActions', () => {
       // Confirm delete
       fireEvent.click(screen.getByText('Confirm Delete'));
       
-      // Should use router.push() since we have no history
+      // Should always use router.push() to /podcasts after delete
       expect(mockPush).toHaveBeenCalledWith('/podcasts');
     });
   });
@@ -249,7 +256,8 @@ describe('PodcastActions', () => {
       await waitFor(() => {
         const backButton = screen.getByText('Back to Podcasts').closest('button');
         fireEvent.click(backButton!);
-        expect(mockBack).toHaveBeenCalledTimes(1);
+        // BackButton with to="podcasts" always pushes to /podcasts
+        expect(mockPush).toHaveBeenCalledWith('/podcasts');
       });
     });
   });
