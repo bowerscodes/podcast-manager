@@ -29,7 +29,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
     >
       <ModalContent>
         <ModalHeader className="justify-center">
-          <h2>{isSignUp ? "Sign up" : "Login"}</h2>
+          <h2 className="heading-primary">{isSignUp ? "Sign up" : "Login"}</h2>
         </ModalHeader>
         <ModalBody className="p-6">
           <LoginForm

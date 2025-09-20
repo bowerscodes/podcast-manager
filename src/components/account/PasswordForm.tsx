@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 import { validatePassword, updateUserPassword } from "@/lib/passwordUtils";
 import PasswordInput from "@/components/account/PasswordInput";
+import { supabase } from "@/lib/supabase";
 
 interface PasswordFormData {
   newPassword: string;
@@ -57,6 +58,15 @@ export default function PasswordForm({ user }: Props) {
       if (!success) {
         toast.error(error || "Failed to update password");
         return;
+      }
+
+      // Refresh the session to ensure new password is active
+      try {
+        await supabase.auth.refreshSession();
+        console.log("Session refreshed after password update");
+      } catch (refreshError) {
+        console.warn("Could not refresh session:", refreshError);
+        // Don't fail the whole operation if refresh fails
       }
 
       toast.success("Password updated successfully");

@@ -87,7 +87,7 @@ export async function checkEmailAvailable(email: string, currentUserId: string):
   }
 }
 
-export async function updateUserEmail(userId: string, newEmail: string): Promise<{
+export async function adminUpdateUserEmail(userId: string, newEmail: string): Promise<{
   success: boolean;
   error: string | null;
 }> {

@@ -1,16 +1,17 @@
 "use server";
 
-import { createServerClient } from "@/lib/createServiceClient";
+import { supabase } from "./supabase";
+
 
 export async function validatePassword(password: string, confirmPassword?: string): Promise<{
   valid: boolean;
   error: string | null;
 }> {
   // Check minimum length
-  if (password.length < 6) {
+  if (password.length < 8) {
     return {
       valid: false,
-      error: "Password must be at least 6 characters"
+      error: "Password must be at least 8 characters"
     };
   }
 
@@ -89,9 +90,8 @@ export async function updateUserPassword(userId: string, newPassword: string): P
   error: string | null;
 }> {
   try {
-    const supabaseServer = createServerClient();
-
-    const { error } = await supabaseServer.auth.admin.updateUserById(userId, {
+    // The user must be authenticated for this to work
+    const { error } = await supabase.auth.updateUser({
       password: newPassword
     });
 
