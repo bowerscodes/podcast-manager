@@ -31,7 +31,10 @@ export default function UserMenu({ user }: Props) {
   return (
     <Dropdown>
       <DropdownTrigger>
-        <button className="flex items-center gap-2 p-1 rounded-lg hover:bg-white/10 transition-colors">
+        <button 
+          className="flex items-center gap-2 p-1 rounded-lg hover:bg-white/10 transition-colors"
+          name="User Menu"  
+        >
           <MdAccountCircle 
             data-testid="account-circle-icon"
             data-name={displayName}

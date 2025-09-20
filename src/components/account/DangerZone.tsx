@@ -36,7 +36,7 @@ export default function DangerZone({ user }: Props) {
     <div className="flex flex-col gap-4 pt-6">
       <div className="flex flex-col space-y-4 p-4 border gap-4 border-red-200 rounded-lg bg-red-50">
         <div className="text-red-800">
-          <h4 className="font-semibold">Delete Account</h4>
+          <h3 className="font-semibold">Delete Account</h3>
           <p className="text-sm mt-1">
             This will permanently delete your account and all associated
             podcasts and episodes. This action cannot be undone.

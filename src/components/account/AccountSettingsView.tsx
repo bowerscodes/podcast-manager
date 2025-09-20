@@ -42,9 +42,9 @@ export default function AccountSettingsView({ user, profile }: Props) {
               <div className="flex items-center gap-3">
                 {" "}
                 {/* h3 and chevron on same line */}
-                <h3 className="heading-secondary text-lg">
+                <h2 className="heading-secondary text-lg">
                   Profile Information
-                </h3>
+                </h2>
                 <div className="text-gray-600">
                   {isExpanded ? (
                     <MdExpandLess size={20} />
@@ -71,9 +71,9 @@ export default function AccountSettingsView({ user, profile }: Props) {
               <div className="flex items-center gap-3">
                 {" "}
                 {/* h3 and chevron on same line */}
-                <h3 className="heading-secondary text-lg">
+                <h2 className="heading-secondary text-lg">
                   Email Settings
-                </h3>
+                </h2>
                 <div className="text-gray-600">
                   {isExpanded ? (
                     <MdExpandLess size={20} />
@@ -100,9 +100,9 @@ export default function AccountSettingsView({ user, profile }: Props) {
               <div className="flex items-center gap-3">
                 {" "}
                 {/* h3 and chevron on same line */}
-                <h3 className="heading-secondary text-lg">
+                <h2 className="heading-secondary text-lg">
                   Password Settings
-                </h3>
+                </h2>
                 <div className="text-gray-600">
                   {isExpanded ? (
                     <MdExpandLess size={20} />
@@ -130,9 +130,9 @@ export default function AccountSettingsView({ user, profile }: Props) {
               <div className="flex items-center gap-3">
                 {" "}
                 {/* h3 and chevron on same line */}
-                <h3 className="heading-secondary text-lg">
+                <h2 className="heading-secondary text-lg">
                   Danger Zone
-                </h3>
+                </h2>
                 <div className="text-gray-600">
                   {isExpanded ? (
                     <MdExpandLess size={20} />
