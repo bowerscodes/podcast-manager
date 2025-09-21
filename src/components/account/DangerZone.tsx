@@ -42,28 +42,40 @@ export default function DangerZone({ user }: Props) {
             podcasts and episodes. This action cannot be undone.
           </p>
         </div>
-        <Input
-          label={`Type "${user.email}" to confirm`}
-          labelPlacement="outside"
-          placeholder={`${user.email}`}
-          value={confirmEmail}
-          onChange={(e) => setConfirmEmail(e.target.value)}
-          variant="bordered"
-          classNames={{
-            base: "max-w-xs",
-            label: "!font-semibold !text-gray-600",
-            description: "!font-semibold",
-          }}
-        />
-        <Button
-          color="danger"
-          onPress={handleDeleteAccount}
-          isLoading={isLoading}
-          isDisabled={confirmEmail !== user.email}
-          className="self-start"
-        >
-          Delete Account
-        </Button>
+        <form autoComplete="off">
+          <Input
+            name={`confirm-deletion-${user}`}
+            label={`Type "${user.email}" to confirm`}
+            labelPlacement="outside"
+            placeholder={`${user.email}`}
+            value={confirmEmail}
+            onChange={(e) => setConfirmEmail(e.target.value)}
+            variant="bordered"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            data-1p-ignore
+            data-lpignore
+            data-form-type="other"
+            role="textbox"
+            aria-label="Email confirmation for account deletion"
+            classNames={{
+              base: "max-w-xs",
+              label: "!font-semibold !text-gray-600",
+              description: "!font-semibold",
+            }}
+          />
+          <Button
+            color="danger"
+            onPress={handleDeleteAccount}
+            isLoading={isLoading}
+            isDisabled={confirmEmail !== user.email}
+            className="self-start mt-4"
+          >
+            Delete Account
+          </Button>
+        </form>
       </div>
     </div>
   );
