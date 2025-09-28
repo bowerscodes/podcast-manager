@@ -18,7 +18,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  signOut: async () => {}
+  signOut: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -39,6 +39,7 @@ export default function Providers ({ children }: { children: React.ReactNode }) 
     const { data : { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log("Auth event: ", event);
+
         setUser(session?.user ?? null);
         setLoading(false);
       }
@@ -52,7 +53,12 @@ export default function Providers ({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      signOut, 
+    }}
+    >
       <HeroUIProvider>
         <Toaster position='top-right' />
         {children}

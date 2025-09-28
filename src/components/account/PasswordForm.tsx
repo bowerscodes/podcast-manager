@@ -1,16 +1,17 @@
 "use client";
 
-import { Button } from "@heroui/button";
-import React, { useState } from "react";
-import { FormEvent, ChangeEvent } from "react";
+import { useState } from "react";
 import { User } from "@supabase/supabase-js";
+import { useForm, Controller } from "react-hook-form";
+import { Button } from "@heroui/button";
 import toast from "react-hot-toast";
 
-import { validatePassword, updateUserPassword } from "@/lib/passwordUtils";
+import { validatePassword, updateUserPassword, verifyCurrentPassword } from "@/lib/passwordUtils";
 import PasswordInput from "@/components/account/PasswordInput";
-import { supabase } from "@/lib/supabase";
+import PasswordStrengthIndicator from "@/components/account/PasswordStrengthIndicator";
 
-interface PasswordFormData {
+interface FormValues {
+  currentPassword: string;
   newPassword: string;
   confirmPassword: string;
 }
@@ -20,58 +21,71 @@ interface Props {
 }
 
 export default function PasswordForm({ user }: Props) {
-  const [formData, setFormData] = useState<PasswordFormData>({
-    newPassword: "",
-    confirmPassword: "",
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const { 
+    handleSubmit, 
+    reset,
+    watch,
+    control,
+    formState: { isValid },
+    setError
+  } = useForm<FormValues>({
+    mode: "onChange",
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: ""
+    }
   });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  
+  // Watch the new password to use in confirmation validation
+  const newPassword = watch("newPassword");
 
-  const handleInputChange =
-    (field: keyof PasswordFormData) => (e: ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value,
-      }));
-    };
-
-  const updatePassword = async (): Promise<void> => {
+  const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
-
+    
     try {
-      // Validate password
-      const { valid, error: validationError } = await validatePassword(
-        formData.newPassword,
-        formData.confirmPassword
+      // 1. Verify current password
+      const { valid: currentValid, error: currentError } = await verifyCurrentPassword(
+        user.id,
+        data.currentPassword
       );
-
-      if (!valid) {
-        toast.error(validationError);
+      
+      if (!currentValid) {
+        setError("currentPassword", { 
+          type: "manual", 
+          message: currentError || "Current password is incorrect" 
+        });
+        setIsLoading(false);
+        return;
+      }
+      
+      // 2. Check if new password is same as current
+      if (data.newPassword === data.currentPassword) {
+        setError("newPassword", {
+          type: "manual",
+          message: "New password must be different from current password"
+        });
+        setIsLoading(false);
         return;
       }
 
-      // Update password using server-side function
+      // 3. Update password
       const { success, error } = await updateUserPassword(
         user.id,
-        formData.newPassword
+        data.newPassword
       );
 
       if (!success) {
         toast.error(error || "Failed to update password");
+        setIsLoading(false);
         return;
       }
 
-      // Refresh the session to ensure new password is active
-      try {
-        await supabase.auth.refreshSession();
-        console.log("Session refreshed after password update");
-      } catch (refreshError) {
-        console.warn("Could not refresh session:", refreshError);
-        // Don't fail the whole operation if refresh fails
-      }
-
       toast.success("Password updated successfully");
-      setFormData({ newPassword: "", confirmPassword: "" });
-
+      reset(); // Clear form fields
+      
       // Dispatch event to notify other components
       window.dispatchEvent(new CustomEvent("passwordUpdated"));
     } catch (error) {
@@ -82,19 +96,9 @@ export default function PasswordForm({ user }: Props) {
     }
   };
 
-  const handleFormSubmit = async (
-    e: FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    e.preventDefault();
-    await updatePassword();
-  };
-
-  const isFormValid = formData.newPassword && 
-                     formData.confirmPassword && 
-                     formData.newPassword === formData.confirmPassword;
-
   return (
-    <form onSubmit={handleFormSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* Hidden email field for password managers */}
       <input
         type="email"
         name="username"
@@ -107,29 +111,75 @@ export default function PasswordForm({ user }: Props) {
       />
 
       <div className="flex flex-col gap-4 pt-6">
-        <PasswordInput
-          label="New Password"
-          placeholder="Enter new password"
-          value={formData.newPassword}
-          onChange={handleInputChange("newPassword")}
-          showStrength={true}
-        />
+        <div>
+          <Controller 
+            name="currentPassword"
+            control={control}
+            rules={{ required: "Current password is required" }}
+            render={({ field, fieldState }) => (
+              <PasswordInput
+                label="Current Password"
+                placeholder="Enter your current password"
+                value={field.value}
+                onChange={field.onChange}
+                autoComplete="current-password"
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+        </div>
 
-        <PasswordInput
-          label="Confirm New Password"
-          placeholder="Confirm new password"
-          value={formData.confirmPassword}
-          onChange={handleInputChange("confirmPassword")}
-          showStrength={false}
-          isConfirmField={true}
-          originalPassword={formData.newPassword}
-        />
+        <div>
+          <Controller
+            name="newPassword"
+            control={control}
+            rules={{
+              required: "New password is required",
+              validate: async (value) => {
+                const result = await validatePassword(value);
+                return result.valid || result.error || "Invalid password";
+              }
+            }}
+            render={({ field, fieldState }) => (
+              <PasswordInput
+                label="New Password"
+                placeholder="Enter new password"
+                value={field.value}
+                onChange={field.onChange}
+                autoComplete="new-password"
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+          <PasswordStrengthIndicator password={newPassword} />
+        </div>
+
+        <div>
+          <Controller
+            name="confirmPassword"
+            control={control}
+            rules={{
+              required: "Please confirm your password",
+              validate: (value) => value === newPassword || "Passwords don't match"
+            }}
+            render={({ field, fieldState }) => (
+              <PasswordInput
+                label="Confirm New Password"
+                placeholder="Confirm new password"
+                value={field.value}
+                onChange={field.onChange}
+                autoComplete="new-password"
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+        </div>
 
         <Button
           color="primary"
-          onPress={updatePassword}
+          type="submit"
           isLoading={isLoading}
-          isDisabled={!isFormValid}
+          isDisabled={!isValid || isLoading}
           className="self-start"
         >
           Update Password

@@ -1,7 +1,6 @@
 "use server";
 
-import { supabase } from "./supabase";
-
+import { createServerClient } from "./createServiceClient";
 
 export async function validatePassword(password: string, confirmPassword?: string): Promise<{
   valid: boolean;
@@ -85,13 +84,54 @@ export async function validatePasswordStrength(password: string): Promise<{
   return { strength, score, suggestions };
 }
 
+export async function verifyCurrentPassword(userId: string, providedPassword: string): Promise<{
+  valid: boolean;
+  error: string | null;
+}> {
+  try {
+    const supabaseServer = createServerClient();
+
+    const { data: user, error: userError } = await supabaseServer.auth.admin.getUserById(userId);
+
+    if (userError || !user.user?.email) {
+      return {
+        valid: false,
+        error: "Unable to verify current password"
+      };
+    }
+
+    const { error } = await supabaseServer.auth.signInWithPassword({
+      email: user.user.email,
+      password: providedPassword
+    });
+
+    if (error) {
+      return {
+        valid: false,
+        error: "Current password is incorrect"
+      };
+    }
+
+    return {
+      valid: true,
+      error: null
+    };
+  } catch (error) {
+    console.error("Unexpected error verifying password: ", error);
+  } return {
+    valid: false,
+    error: "Unable to verify current password"
+  };
+}
+
 export async function updateUserPassword(userId: string, newPassword: string): Promise<{
   success: boolean;
   error: string | null;
 }> {
   try {
-    // The user must be authenticated for this to work
-    const { error } = await supabase.auth.updateUser({
+    const supabaseServer = createServerClient();
+
+    const { error } = await supabaseServer.auth.admin.updateUserById(userId, {
       password: newPassword
     });
 
