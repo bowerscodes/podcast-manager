@@ -44,6 +44,62 @@ export async function validateEmail(email: string): Promise<{
   };
 }
 
+export async function verifyCurrentEmail(userId: string, providedEmail: string): Promise<{
+  valid: boolean;
+  error: string | null;
+}> {
+  try {
+    const supabaseServer = createServerClient();
+
+    // Get the user's current email from the database
+    const { data: user, error } = await supabaseServer.auth.admin.getUserById(userId);
+
+    if (error) {
+      console.error("Error fetching user for email verification: ", error);
+      return {
+        valid: false,
+        error: "Unable to verify current email address"
+      };
+    }
+
+    if (!user.user) {
+      return {
+        valid: false,
+        error: "User not found"
+      };
+    }
+
+    // Clean and compare emails (case-sensitive)
+    const cleanProvidedEmail = providedEmail.trim().toLowerCase();
+    const actualEmail = user.user.email?.toLocaleLowerCase();
+
+    if (!actualEmail) {
+      return {
+        valid: false,
+        error: "No email address found for this account"
+      };
+    }
+    
+    if (cleanProvidedEmail !== actualEmail) {
+      return {
+        valid: false,
+        error: "Current email address is incorrect"
+      };
+    }
+
+    return {
+      valid: true,
+      error: null
+    };
+  } catch (error) {
+    console.error("Unexpected error verifying current email: ", error);
+    return {
+      valid: false,
+      error: "Unable to verify current email address"
+    };
+  }
+}
+
 export async function checkEmailAvailable(email: string, currentUserId: string): Promise<{
   available: boolean;
   error: string | null;
