@@ -62,7 +62,7 @@ export default function EmailForm({ user }: { user: User }) {
       </div>
 
       <Input
-        label="Confirm Current Email Address"
+        label="Current Email Address"
         labelPlacement="outside"
         type="email"
         value={currentEmail}
@@ -75,6 +75,7 @@ export default function EmailForm({ user }: { user: User }) {
           label: "!font-semibold !text-gray-600",
           description: "!font-semibold",
         }}
+        required
         description="Enter your current email address to verify"
         placeholder="Enter your new current address"
       />
@@ -93,6 +94,7 @@ export default function EmailForm({ user }: { user: User }) {
           label: "!font-semibold !text-gray-600",
           description: "!font-semibold",
         }}
+        required
         description="You'll need to confirm the new email address"
         placeholder="Enter your new email address"
       />
