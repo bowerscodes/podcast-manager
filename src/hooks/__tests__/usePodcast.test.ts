@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 
 import usePodcast from "@/hooks/usePodcast";
+import { PodcastQueries } from "@/lib/queries/podcast-queries";
 
 // Mock Supabase
 const mockSelect = jest.fn();
@@ -22,82 +23,62 @@ jest.mock("@/lib/supabase", () => ({
   },
 }));
 
+// Mock the PodcastQueries class
+jest.mock("@/lib/queries/podcast-queries");
+
 describe("usePodcast", () => {
+  const mockPodcastData = {
+    id: "podcast-123",
+    title: "Test Podcast",
+    // other podcast fields
+  };
+  
+  const mockEpisodes = [
+    { id: "ep-1", title: "Episode 1" },
+    { id: "ep-2", title: "Episode 2" }
+  ];
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should fetch podcast data successfully", async () => {
-    const mockPodcast = {
-      id: "podcast-123",
-      title: "Test Podcast",
-      description: "Test Description",
-      author: "Test Author",
-      email: "test@example.com",
-      website: "https://example.com",
-      artwork: "https://example.com/art.jpg",
-      categories: ["Technology"],
-      explicit: false,
-      created_at: "2023-01-01T00:00:00.000Z",
-      user_id: "user-123",
-    };
-
-    mockSingle.mockResolvedValue({
-      data: mockPodcast,
-      error: null,
+    // Mock the getPodcastWithStats method
+    (PodcastQueries.getPodcastWithStats as jest.Mock).mockResolvedValue({
+      podcast: mockPodcastData,
+      episodes: mockEpisodes,
+      episodeCount: 2,
+      totalDuration: 3600,
+      seasonCount: 1
     });
 
     const { result } = renderHook(() => usePodcast("podcast-123"));
 
     expect(result.current.loading).toBe(true);
-    expect(result.current.podcast).toBe(null);
+    expect(result.current.podcast).toBeUndefined();
     expect(result.current.error).toBe(null);
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
-      expect(result.current.podcast).toEqual(mockPodcast);
+      expect(result.current.podcast).toEqual(mockPodcastData);
+      expect(result.current.episodes).toEqual(mockEpisodes);
+      expect(result.current.episodeCount).toBe(2);
       expect(result.current.error).toBe(null);
     });
 
-    expect(mockSelect).toHaveBeenCalledWith("*");
-    expect(mockEq).toHaveBeenCalledWith("id", "podcast-123");
-    expect(mockSingle).toHaveBeenCalled();
+    expect(PodcastQueries.getPodcastWithStats).toHaveBeenCalledWith("podcast-123");
   });
 
-  it("should fetch podcast data with user filter", async () => {
-    const mockPodcast = {
-      id: "podcast-123",
-      title: "Test Podcast",
-      user_id: "user-123",
-    };
-
-    mockSingle.mockResolvedValue({
-      data: mockPodcast,
-      error: null,
-    });
-
-    renderHook(() => usePodcast("podcast-123", "user-123"));
-
-    await waitFor(() => {
-      expect(mockEq).toHaveBeenCalledWith("id", "podcast-123");
-      expect(mockEq).toHaveBeenCalledWith("user_id", "user-123");
-    });
-  });
-
-  it("should handle fetch errors", async () => {
-    const mockError = new Error("Fetch failed");
-    
-    mockSingle.mockResolvedValue({
-      data: null,
-      error: mockError,
-    });
+    it("should handle fetch errors", async () => {
+    const mockError = new Error("Failed to fetch");
+    (PodcastQueries.getPodcastWithStats as jest.Mock).mockRejectedValue(mockError);
 
     const { result } = renderHook(() => usePodcast("podcast-123"));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
-      expect(result.current.podcast).toBe(null);
-      expect(result.current.error).toBe(mockError);
+      expect(result.current.podcast).toBeUndefined(); // Changed from null to undefined
+      expect(result.current.error).toEqual(mockError);
     });
   });
 
@@ -105,7 +86,7 @@ describe("usePodcast", () => {
     const { result } = renderHook(() => usePodcast(""));
 
     expect(result.current.loading).toBe(true);
-    expect(result.current.podcast).toBe(null);
+    expect(result.current.podcast).toBeUndefined();
     expect(result.current.error).toBe(null);
     expect(mockSelect).not.toHaveBeenCalled();
   });
@@ -116,26 +97,35 @@ describe("usePodcast", () => {
       title: "Test Podcast",
     };
 
-    mockSingle.mockResolvedValue({
-      data: mockPodcast,
-      error: null,
+    // Mock initial data
+    (PodcastQueries.getPodcastWithStats as jest.Mock).mockResolvedValue({
+      podcast: mockPodcast,
+      episodes: [],
+      episodeCount: 0,
+      totalDuration: 0,
+      seasonCount: 0
     });
 
     const { result } = renderHook(() => usePodcast("podcast-123"));
-
+    
     await waitFor(() => {
       expect(result.current.podcast).toEqual(mockPodcast);
     });
-
+  
     // Clear mocks and set up new data
     jest.clearAllMocks();
     const updatedPodcast = {
       id: "podcast-123",
       title: "Updated Podcast",
     };
-    mockSingle.mockResolvedValue({
-      data: updatedPodcast,
-      error: null,
+  
+    // Mock updated data
+    (PodcastQueries.getPodcastWithStats as jest.Mock).mockResolvedValue({
+      podcast: updatedPodcast,
+      episodes: [],
+      episodeCount: 0,
+      totalDuration: 0,
+      seasonCount: 0
     });
 
     // Call refresh
@@ -145,8 +135,7 @@ describe("usePodcast", () => {
       expect(result.current.podcast).toEqual(updatedPodcast);
     });
 
-    expect(mockSelect).toHaveBeenCalledWith("*");
-    expect(mockEq).toHaveBeenCalledWith("id", "podcast-123");
-    expect(mockSingle).toHaveBeenCalled();
+    // Verify the query method was called
+    expect(PodcastQueries.getPodcastWithStats).toHaveBeenCalledWith("podcast-123");
   });
 });

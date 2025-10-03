@@ -1,36 +1,38 @@
 import { useState, useEffect, useCallback } from 'react';
 
-import { supabase } from '@/lib/supabase';
-import { Podcast } from '@/types/podcast';
+import { PodcastQueries } from '@/lib/queries/podcast-queries';
+import { PodcastWithStats } from '@/types/podcast';
 
-export default function usePodcast(podcastId: string, userId?: string) {
-  const [podcast, setPodcast] = useState<Podcast | null>(null);
+export default function usePodcast(podcastId: string) {
+  const [data, setData] = useState<PodcastWithStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchPodcast = useCallback(async () => {
-    if (!podcastId) return;
-
-    setLoading(true);
-    const query = supabase
-      .from("podcasts")
-      .select("*")
-      .eq("id", podcastId);
-
-      if (userId) {
-        query.eq("user_id", userId);
-      }
-
-      const { data, error } = await query.single();
-
-      if (error) setError(error);
-      setPodcast(data || null);
+  const refresh = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await PodcastQueries.getPodcastWithStats(podcastId);
+      setData(result);
+    } catch (error) {
+      setError(error instanceof Error ? error : new Error("Failed to fetch podcast"));
+    } finally {
       setLoading(false);
-  }, [podcastId, userId]);
+    }
+  }, [podcastId]);
 
   useEffect(() => {
-    fetchPodcast();
-  }, [fetchPodcast]);
+    refresh();
+  }, [podcastId, refresh]);
 
-  return { podcast, loading, error, refresh: fetchPodcast };
+  return {
+    podcast: data?.podcast,
+    episodes: data?.episodes,
+    episodeCount: data?.episodeCount,
+    totalDuration: data?.totalDuration,
+    seasonCount: data?.seasonCount,
+    loading,
+    error,
+    refresh
+  };
 };

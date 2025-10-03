@@ -20,15 +20,31 @@ export interface Episode {
   podcast_id: string;
   title: string;
   description: string;
-  audio_url: string; // User's self-hosted URL
-  duration?: number; // in seconds
-  file_size?: number; // in bytes
+  audio_url: string; 
+  duration?: number; 
+  file_size?: number; 
   publish_date: Date;
   season_number?: string;
   episode_number?: string;
   explicit: boolean;
   status: "draft" | "published";
   created_at: Date;
+};
+
+export type PodcastWithStats = {
+  podcast: Podcast;
+  episodeCount: number;
+  totalDuration: number;
+  seasonCount: number;
+  episodes?: Episode[];
+}
+
+export type PodcastWithEpisodes = Podcast & {
+  episodes: Episode[];
+};
+
+export type PodcastWithCount = Podcast & {
+  episodes: { count: number }[];
 };
 
 export interface PodcastFormData {
