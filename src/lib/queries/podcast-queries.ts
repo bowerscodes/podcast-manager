@@ -45,7 +45,7 @@ export class PodcastQueries {
   }
 
   // Get all podcasts for a user with basic stats
-  static async getUserPodcastsWithstats(userId: string) {
+  static async getUserPodcastsWithStats(userId: string) {
     const { data: podcasts, error } = await supabase
       .from("podcasts")
       .select(`4
