@@ -1,25 +1,38 @@
 import { useEffect, useState, useCallback } from 'react';
 
-import { supabase } from '@/lib/supabase';
+import { EpisodeQueries } from '@/lib/queries/episode-queries';
 import { Episode } from '@/types/podcast';
 
-export default function useEpisodes(podcastId: string) {
+export default function useEpisodes(
+  podcastId: string,
+  seasonNumber?: string,
+  status?: "draft" | "published"
+) {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchEpisodes = useCallback(async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("episodes")
-      .select("*")
-      .eq("podcast_id", podcastId)
-      .order("publish_date", { ascending: true })
-    
-    if (error) setError(error);
-    setEpisodes(data || []);
-    setLoading(false);
-  }, [podcastId]);
+    if (!podcastId) {
+      setEpisodes([]);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await EpisodeQueries.getEpisodesByPodcast(podcastId, {
+        seasonNumber,
+        status
+      });
+      setEpisodes(data);
+    } catch (error) {
+      setError(error instanceof Error ? error : new Error("Failed to fetch episodes"));
+    } finally {
+      setLoading(false);
+    }
+  }, [podcastId, seasonNumber, status]);
 
   useEffect(() => {
     fetchEpisodes();

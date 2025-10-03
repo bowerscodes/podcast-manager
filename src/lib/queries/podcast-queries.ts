@@ -1,10 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import { 
-  Podcast, 
   Episode, 
   PodcastWithStats,
   PodcastWithEpisodes,
-  PodcastWithCount
 } from "@/types/podcast";
 
 
@@ -45,24 +43,39 @@ export class PodcastQueries {
   }
 
   // Get all podcasts for a user with basic stats
-  static async getUserPodcastsWithStats(userId: string) {
-    const { data: podcasts, error } = await supabase
+  static async getUserPodcastWithStats(
+    podcastId: string,
+    userId: string
+  ): Promise<PodcastWithStats | null> {
+    const { data: podcast, error } = await supabase
       .from("podcasts")
-      .select(`4
+      .select(`
         *,
-        episodes(count)  
+        episodes(*)
       `)
+      .eq("id", podcastId)
       .eq("user_id", userId)
-      .order("created_at", { ascending: false });
+      .single();
+      
+    if (error || !podcast) return null;
 
-      if (error) throw error;
+    const podcastWithEpisodes = podcast as unknown as PodcastWithEpisodes;
+    const episodes = podcastWithEpisodes.episodes || [];
+    const episodeCount = episodes.length;
+    const totalDuration = episodes.reduce(
+      (sum: number, ep: Episode) => sum + (ep.duration || 0),
+      0
+    );
+    const seasonCount = new Set(
+      episodes.map((ep: Episode) => ep.season_number).filter(Boolean)
+    ).size;
 
-      return (podcasts as unknown as PodcastWithCount[])?.map((podcast) => {
-        const { episodes, ...podcastData } = podcast;
-        return {
-          ...podcastData,
-          episodeCount: episodes?.[0]?.count || 0,
-        };
-      }) as (Podcast & { episodeCount: number })[];
+    return {
+      podcast: podcastWithEpisodes,
+      episodes,
+      episodeCount,
+      totalDuration,
+      seasonCount
+    };
   }
 }

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/providers/Providers";
-import { supabase } from "@/lib/supabase";
-import { Podcast } from "@/types/podcast";
+import { PodcastQueries } from "@/lib/queries/podcast-queries";
+import { PodcastWithStats } from "@/types/podcast";
+import useAnalytics from "@/hooks/useAnalytics";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import PodcastHeader from "./PodcastHeader";
 import PodcastStats from "./PodcastStats";
@@ -13,86 +13,35 @@ import PodcastActions from "./PodcastActions";
 import EpisodesList from "./episodes/EpisodesList";
 import ExpandableContent from "../ui/ExpandableContent";
 
-interface AnalyticsData {
-  totalDownloads: number;
-  uniqueListeners: number;
-  platformBreakdown: Record<string, number>
-};
-
 export default function PodcastDetailView({ podcastId }: { podcastId: string}) {
   const { user } = useAuth();
-  const [podcast, setPodcast] = useState<Podcast | null>(null);
-  const [episodeCount, setEpisodeCount] = useState(0);
-  const [analytics, setAnalytics] = useState<AnalyticsData>({
-    totalDownloads: 0,
-    uniqueListeners: 0,
-    platformBreakdown: {}
-  });
+  const [podcastData, setPodcastData] = useState<PodcastWithStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const dataFetchedRef = useRef(false);
+  
+  const { analytics, loading: analyticsLoading } = useAnalytics(podcastId);
 
   useEffect(() => {
     if (!user || !podcastId) return;
 
+    // Skip fetching if we already have data for this podcast
+    if (dataFetchedRef.current && podcastData?.podcast?.id === podcastId) {
+      return;
+    }
+
     const fetchData = async () => {
       try {
-        const { data: podcastData, error: podcastError } = await supabase
-          .from("podcasts")
-          .select("*")
-          .eq("id", podcastId)
-          .eq("user_id", user.id)
-          .single();
-
-        if (podcastError || !podcastData) {
+        setLoading(true);
+        const result = await PodcastQueries.getUserPodcastWithStats(podcastId, user.id);
+        
+        if (!result) {
           setNotFound(true);
           return;
         }
-
-        const { count, error: countError } = await supabase
-          .from("episodes")
-          .select("*", { count: "exact", head: true })
-          .eq("podcast_id", podcastId);
-
-        if (countError) {
-          console.error("Error fetching episode count: ", countError);
-        }
-
-        const { data: analyticsData, error: analyticsError } = await supabase
-          .from("analytics")
-          .select("*")
-          .eq("podcast_id", podcastId);
-
-        let analyticsResult: AnalyticsData = {
-          totalDownloads: 0,
-          uniqueListeners: 0,
-          platformBreakdown: {}
-        };
-
-        if (!analyticsError && analyticsData) {
-          //Calculate unique listeners by IP
-          const uniqueIPs = new Set(analyticsData.map(a => a.ip_address));
-
-          // Calculate total downloads / RSS accesses
-          const totalDownloads = analyticsData.filter(a => a.event_type === "rss_access").length;
-
-          // Calculate platform breakdown
-          const platformBreakdown = analyticsData.reduce((acc, curr) => {
-            if (curr.platform && curr.event_type == "rss_access") {
-              acc[curr.platform] = (acc[curr.platform] || 0) + 1;
-            }
-            return acc;
-          }, {} as Record<string, number>);
-
-          analyticsResult = {
-            totalDownloads,
-            uniqueListeners: uniqueIPs.size,
-            platformBreakdown
-          };
-        }
-
-        setPodcast(podcastData);
-        setEpisodeCount(count || 0);
-        setAnalytics(analyticsResult);
+        
+        setPodcastData(result);
+        dataFetchedRef.current = true; 
       } catch (error) {
         console.error("Error fetching podcast: ", error);
         setNotFound(true);
@@ -102,13 +51,13 @@ export default function PodcastDetailView({ podcastId }: { podcastId: string}) {
     };
 
     fetchData();
-  }, [user, podcastId]);
+  }, [user, podcastId, podcastData]);
 
-  if (loading) {
+  if (loading || analyticsLoading) {
     return <LoadingSpinner message="Loading podcast..."/>
   }
 
-  if (notFound || !podcast) {
+  if (notFound || !podcastData) {
     return (
       <div className="p-8 text-center">
         <h1>Podcast Not Found</h1>
@@ -117,11 +66,9 @@ export default function PodcastDetailView({ podcastId }: { podcastId: string}) {
     );
   }
 
-  const episodesList = <EpisodesList podcast={podcast} />;
-  const rssSection = <PodcastRSSSection podcast={podcast} />;
+  const { podcast, episodeCount } = podcastData;
 
   return (
-    
     <div className="container mx-auto p-8 pt-5 max-w-4xl">
       <PodcastHeader podcast={podcast} episodeCount={episodeCount} />
       <PodcastStats 
@@ -135,16 +82,16 @@ export default function PodcastDetailView({ podcastId }: { podcastId: string}) {
         defaultExpanded={true}
         contentClassName="p-0"
       >
-        {episodesList}
+        <EpisodesList podcast={podcast} />
       </ExpandableContent>
       <ExpandableContent
         title="RSS Feed & Distribution"
         defaultExpanded={true}
         contentClassName="p-0"
       >
-        {rssSection}
+        <PodcastRSSSection podcast={podcast} />
       </ExpandableContent>
       <PodcastActions podcast={podcast} />
     </div>
   );
-};
+}
