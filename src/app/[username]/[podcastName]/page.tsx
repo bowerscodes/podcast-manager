@@ -6,9 +6,11 @@ import PodcastDetailView from "@/components/podcasts/PodcastDetailView";
 import BackButton from "@/components/ui/BackButton"
 import { appTitle } from "@/lib/data";
 
-export async function generateMetadata(props: {
-  params: { username: string; podcastName: string };
-}): Promise<Metadata> {
+type PageProps = {
+  params: Promise<{ username: string; podcastName: string }>;
+};
+
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const supabaseServer = createServerClient();
 
   const { username, podcastName } = await props.params;
@@ -46,9 +48,7 @@ export async function generateMetadata(props: {
   };
 }
 
-export default async function PodcastPage(props: {
-  params: { username: string; podcastName: string };
-}) {
+export default async function PodcastPage(props: PageProps) {
   const supabaseServer = createServerClient();
 
   const { username, podcastName } = await props.params;

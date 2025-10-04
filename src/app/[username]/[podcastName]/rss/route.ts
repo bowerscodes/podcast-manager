@@ -6,7 +6,7 @@ import { createServerClient } from "@/lib/createServiceClient";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { username: string; podcastName: string } }
+  { params }: { params: Promise<{ username: string; podcastName: string }> }
 ) {
   try {
     const { username, podcastName } = await params;

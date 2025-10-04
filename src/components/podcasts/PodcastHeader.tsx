@@ -11,7 +11,6 @@ import ExpandableText from "../ui/ExpandableText";
 import usePodcast from "@/hooks/usePodcast";
 import useEpisodes from "@/hooks/useEpisodes";
 import PodcastModal from "../modals/PodcastModal";
-import { useAuth } from "../auth/Provider";
 import { defaultArtwork } from "@/lib/data";
 
 type Props = {
@@ -23,8 +22,7 @@ export default function PodcastHeader({
   podcast: initialPodcast,
   episodeCount,
 }: Props) {
-  const { user } = useAuth();
-  const { podcast, refresh } = usePodcast(initialPodcast.id, user?.id);
+  const { podcast, refresh } = usePodcast(initialPodcast.id);
   const { episodes } = useEpisodes(initialPodcast.id);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
