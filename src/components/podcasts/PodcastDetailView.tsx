@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/Providers";
 import { PodcastQueries } from "@/lib/queries/podcast-queries";
 import { PodcastWithStats } from "@/types/podcast";
@@ -14,7 +15,8 @@ import EpisodesList from "./episodes/EpisodesList";
 import ExpandableContent from "../ui/ExpandableContent";
 
 export default function PodcastDetailView({ podcastId }: { podcastId: string}) {
-  const { user } = useAuth();
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [podcastData, setPodcastData] = useState<PodcastWithStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -22,8 +24,24 @@ export default function PodcastDetailView({ podcastId }: { podcastId: string}) {
   
   const { analytics, loading: analyticsLoading } = useAnalytics(podcastId);
 
+  // Redirect unauthenticated users
   useEffect(() => {
-    if (!user || !podcastId) return;
+    if (!authLoading && !user) {
+      router.push("/");
+    }
+  }, [user, authLoading, router]);
+
+  useEffect(() => {
+    // Don't fetch if no user or still checking auth
+    if (!user || authLoading) {
+      setLoading(false);
+      return;
+    }
+
+    if (!podcastId) {
+      setLoading(false);
+      return;
+    }
 
     // Skip fetching if we already have data for this podcast
     if (dataFetchedRef.current && podcastData?.podcast?.id === podcastId) {
@@ -51,7 +69,17 @@ export default function PodcastDetailView({ podcastId }: { podcastId: string}) {
     };
 
     fetchData();
-  }, [user, podcastId, podcastData]);
+  }, [user, authLoading, podcastId, podcastData]);
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return <LoadingSpinner message="Checking authentication..." />;
+  }
+
+  // Don't render anything if no user (will redirect)
+  if (!user) {
+    return null;
+  }
 
   if (loading || analyticsLoading) {
     return <LoadingSpinner message="Loading podcast..."/>

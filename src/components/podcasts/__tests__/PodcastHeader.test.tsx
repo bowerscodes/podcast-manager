@@ -5,12 +5,23 @@ import { Podcast, Episode } from "@/types/podcast";
 import usePodcast from "@/hooks/usePodcast";
 import useEpisodes from "@/hooks/useEpisodes";
 
+// Mock the auth provider
+jest.mock("@/providers/Providers", () => ({
+  useAuth: () => ({
+    user: { id: "user-123", email: "test@example.com" },
+  }),
+}));
+
 // Mock the usePodcast hook
 const mockRefresh = jest.fn();
 jest.mock("@/hooks/usePodcast", () => ({
   __esModule: true,
   default: jest.fn(() => ({
-    podcast: null,
+    podcast: undefined,
+    episodes: undefined,
+    episodeCount: undefined,
+    totalDuration: undefined,
+    seasonCount: undefined,
     loading: false,
     error: null,
     refresh: mockRefresh,
@@ -30,13 +41,6 @@ jest.mock("@/hooks/useEpisodes", () => ({
 
 const mockUsePodcast = usePodcast as jest.MockedFunction<typeof usePodcast>;
 const mockUseEpisodes = useEpisodes as jest.MockedFunction<typeof useEpisodes>;
-
-// Mock the auth provider
-jest.mock("@/components/auth/Provider", () => ({
-  useAuth: () => ({
-    user: { id: "user-123", email: "test@example.com" },
-  }),
-}));
 
 // Mock Supabase
 const mockUpdate = jest.fn();
@@ -173,6 +177,7 @@ describe("PodcastHeader", () => {
   const mockPodcast: Podcast = {
     id: "podcast-123",
     title: "Test Podcast",
+    podcast_name: "test-podcast",
     description: "This is a test podcast description that provides context.",
     author: "Test Author",
     email: "test@example.com",
@@ -196,7 +201,11 @@ describe("PodcastHeader", () => {
     
     // Reset mocks to default state
     mockUsePodcast.mockReturnValue({
-      podcast: null,
+      podcast: undefined,
+      episodes: undefined,
+      episodeCount: undefined,
+      totalDuration: undefined,
+      seasonCount: undefined,
       loading: false,
       error: null,
       refresh: mockRefresh,
@@ -457,6 +466,10 @@ describe("PodcastHeader", () => {
 
       mockUsePodcast.mockReturnValue({
         podcast: hookPodcast,
+        episodes: undefined,
+        episodeCount: undefined,
+        totalDuration: undefined,
+        seasonCount: undefined,
         loading: false,
         error: null,
         refresh: mockRefresh,
@@ -475,7 +488,11 @@ describe("PodcastHeader", () => {
 
     it("should fall back to initial data when hook returns null", () => {
       mockUsePodcast.mockReturnValue({
-        podcast: null,
+        podcast: undefined,
+        episodes: undefined,
+        episodeCount: undefined,
+        totalDuration: undefined,
+        seasonCount: undefined,
         loading: false,
         error: null,
         refresh: mockRefresh,
@@ -502,6 +519,10 @@ describe("PodcastHeader", () => {
 
       mockUsePodcast.mockReturnValue({
         podcast: podcastWithCategories,
+        episodes: undefined,
+        episodeCount: undefined,
+        totalDuration: undefined,
+        seasonCount: undefined,
         loading: false,
         error: null,
         refresh: mockRefresh,
@@ -522,6 +543,10 @@ describe("PodcastHeader", () => {
 
       mockUsePodcast.mockReturnValue({
         podcast: podcastWithoutCategories,
+        episodes: undefined,
+        episodeCount: undefined,
+        totalDuration: undefined,
+        seasonCount: undefined,
         loading: false,
         error: null,
         refresh: mockRefresh,
@@ -541,6 +566,10 @@ describe("PodcastHeader", () => {
 
       mockUsePodcast.mockReturnValue({
         podcast: hookPodcast,
+        episodes: undefined,
+        episodeCount: undefined,
+        totalDuration: undefined,
+        seasonCount: undefined,
         loading: false,
         error: null,
         refresh: mockRefresh,
@@ -598,6 +627,10 @@ describe("PodcastHeader", () => {
 
       mockUsePodcast.mockReturnValue({
         podcast: hookPodcast,
+        episodes: undefined,
+        episodeCount: undefined,
+        totalDuration: undefined,
+        seasonCount: undefined,
         loading: false,
         error: null,
         refresh: mockRefresh,
