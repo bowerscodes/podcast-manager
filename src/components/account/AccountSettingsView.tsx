@@ -55,7 +55,6 @@ export default function AccountSettingsView({ user, profile }: Props) {
               <p className="text-sm text-gray-600">
                 Update your public profile details
               </p>{" "}
-              {/* Description below */}
             </div>
           )}
         >
@@ -83,7 +82,6 @@ export default function AccountSettingsView({ user, profile }: Props) {
               <p className="text-sm text-gray-600">
                 Manage your email address
               </p>{" "}
-              {/* Description below */}
             </div>
           )}
         >
@@ -111,7 +109,6 @@ export default function AccountSettingsView({ user, profile }: Props) {
               <p className="text-sm text-gray-600">
                 Change your password
               </p>{" "}
-              {/* Description below */}
             </div>
           )}
         >

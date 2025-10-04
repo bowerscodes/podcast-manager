@@ -63,22 +63,43 @@ console.log("Attempting login with email:", email);
           </span>
         </div>
       </div>
-      <form onSubmit={handleEmailAuth} className="space-y-4">
+      <form onSubmit={handleEmailAuth} className="space-y-6">
+        <div className="flex flex-col gap-4">
         <Input
           type="email"
           label="Email"
+          labelPlacement="outside"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          variant="bordered"
+          classNames={{
+            base: "",
+            label: "!font-semibold !text-gray-600",
+            description: "!font-semibold",
+          }}
           required
         />
         <Input
           type="password"
           label="Password"
+          labelPlacement="outside"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          variant="bordered"
+          classNames={{
+            base: "",
+            label: "!font-semibold !text-gray-600",
+            description: "!font-semibold",
+          }}
           required
         />
-        <Button type="submit" className="w-full" isLoading={loading}>
+        </div>
+        <Button 
+          type="submit" 
+          className="w-full font-bold" 
+          color="primary"
+          isLoading={loading}
+        >
           {isSignUp ? "Sign up" : "Login"}
         </Button>
       </form>
