@@ -11,6 +11,7 @@ interface PasswordInputProps {
   autoComplete?: string;
   error?: string;
   color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
+  inputClassName?: string;
 }
 
 export default function PasswordInput({
@@ -20,7 +21,8 @@ export default function PasswordInput({
   onChange,
   autoComplete = "new-password",
   error,
-  color
+  color,
+  inputClassName = ""
 }: PasswordInputProps) {
   return (
     <Input
@@ -35,7 +37,7 @@ export default function PasswordInput({
       isInvalid={!!error}
       errorMessage={error}
       classNames={{
-        base: "max-w-xs",
+        base: inputClassName,
         label: "!font-semibold !text-gray-600",
       }}
       autoComplete={autoComplete}
