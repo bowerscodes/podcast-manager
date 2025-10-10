@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { AiOutlineEdit } from "react-icons/ai";
 import { IoCheckmark, IoClose } from "react-icons/io5";
 
-import ExpandableText from "./ExpandableText";
+import ExpandableText from "@/components/ui/ExpandableText";
 
 type Props = {
   value: string;

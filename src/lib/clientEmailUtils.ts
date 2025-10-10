@@ -7,7 +7,6 @@ export async function updateUserEmail(newEmail: string): Promise<{
   error: string | null;
 }> {
   try {
-    console.log("clientEmailUtils: Updating email to:", newEmail);
     
     const { error } = await supabase.auth.updateUser({
       email: newEmail
@@ -21,7 +20,6 @@ export async function updateUserEmail(newEmail: string): Promise<{
       };
     }
 
-    console.log("Email update successful");
     return {
       success: true,
       error: null

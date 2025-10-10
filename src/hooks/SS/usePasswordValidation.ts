@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { validatePasswordStrength } from '@/lib/passwordUtils';
+import { validatePasswordStrength } from '@/lib/SS/passwordUtils';
 
 export function usePasswordValidation(password: string) {
   const [passwordStrength, setPasswordStrength] = useState<{

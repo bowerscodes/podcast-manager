@@ -6,9 +6,9 @@ import { useForm, Controller } from "react-hook-form";
 import { Button } from "@heroui/button";
 import toast from "react-hot-toast";
 
-import { validatePassword, updateUserPassword, verifyCurrentPassword } from "@/lib/passwordUtils";
-import PasswordInput from "@/components/account/PasswordInput";
-import PasswordStrengthIndicator from "@/components/account/PasswordStrengthIndicator";
+import { validatePassword, updateUserPassword, verifyCurrentPassword } from "@/lib/SS/passwordUtils";
+import PasswordInput from "./PasswordInput";
+import PasswordStrengthIndicator from "./PasswordStrengthIndicator";
 
 interface FormValues {
   currentPassword: string;

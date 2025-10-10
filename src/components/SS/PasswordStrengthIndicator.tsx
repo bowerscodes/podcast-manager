@@ -1,6 +1,6 @@
 "use client";
 
-import { usePasswordStrength } from "@/hooks/usePasswordStrength";
+import { usePasswordStrength } from "@/hooks/SS/usePasswordStrength";
 
 interface Props {
   password: string;

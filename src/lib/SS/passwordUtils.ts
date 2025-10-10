@@ -1,6 +1,6 @@
 "use server";
 
-import { createServerClient } from "./createServiceClient";
+import { createServerClient } from "@/lib/createServiceClient";
 
 export async function validatePassword(password: string, confirmPassword?: string): Promise<{
   valid: boolean;

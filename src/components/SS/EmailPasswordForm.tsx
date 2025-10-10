@@ -20,9 +20,6 @@ export default function EmailPasswordForm({ isSignUp, onToggleMode, onSuccess }:
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-// Temporary debugging - add this to your login form to see what's happening
-console.log("Attempting login with email:", email);
     
     try {
       if (isSignUp) {

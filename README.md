@@ -7,7 +7,7 @@ A modern, full-stack podcast management platform built with Next.js 14, featurin
 - **🎙️ Podcast Creation & Management** - Complete CRUD operations with metadata and artwork URL management
 - **📱 Episode Management** - Episode creation with external audio URL linking and content organization  
 - **📡 RSS Feed Generation** - Standards-compliant RSS feeds with platform detection (Apple Podcasts, Spotify, etc.)
-- **🔐 Authentication** - Social login (Google, GitHub) and email/password authentication
+- **🔐 Authentication** - Secure email-based magic link authentication via Supabase
 - **📊 Analytics** - Real-time podcast and episode analytics with platform tracking
 - **🎨 Modern UI** - Clean interface with HeroUI components and Tailwind CSS
 
@@ -15,7 +15,7 @@ A modern, full-stack podcast management platform built with Next.js 14, featurin
 
 **Frontend:** Next.js 14, React, TypeScript, Tailwind CSS, HeroUI  
 **Backend:** Next.js API Routes, Supabase (PostgreSQL)  
-**Authentication:** Supabase Auth with OAuth providers  
+**Authentication:** Supabase Auth with email magic links (OTP)  
 **Testing:** Jest, React Testing Library  
 **External Assets:** URL-based linking for audio files and podcast artwork
 

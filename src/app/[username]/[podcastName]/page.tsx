@@ -60,7 +60,6 @@ export default async function PodcastPage(props: PageProps) {
     .single();
 
   if (!profile) {
-    console.log("User not found:", username);
     notFound();
   }
 

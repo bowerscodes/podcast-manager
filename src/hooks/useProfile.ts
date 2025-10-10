@@ -36,8 +36,6 @@ export function useProfile() {
         setError(new Error(error.message));
         return;
       }
-
-      console.log("Profile data:", data);
       
       if (data && data.username) {
         setProfile(data);

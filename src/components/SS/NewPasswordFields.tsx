@@ -1,9 +1,9 @@
 "use client";
 
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
-import PasswordInput from "@/components/account/PasswordInput";
-import PasswordStrengthIndicator from "@/components/account/PasswordStrengthIndicator";
-import { validatePassword } from "@/lib/passwordUtils";
+import PasswordInput from "./PasswordInput";
+import PasswordStrengthIndicator from "./PasswordStrengthIndicator";
+import { validatePassword } from "@/lib/SS/passwordUtils";
 
 interface Props<T extends FieldValues = FieldValues> {
   control: Control<T>;
