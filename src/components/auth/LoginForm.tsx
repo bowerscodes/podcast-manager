@@ -1,23 +1,20 @@
 'use client';
 
-import SocialLoginButtons from './SocialLoginButtons';
-import EmailPasswordForm from './EmailPasswordForm';
+import MagicLinkForm from './MagicLinkForm';
 
 type Props = {
-  isSignUp: boolean;
-  onToggleMode: () => void;
-  onSuccess: () => void;
+  onClose?: () => void;
 };
 
-export default function LoginForm ({ isSignUp, onToggleMode, onSuccess }: Props) {
+export default function LoginForm ({ onClose }: Props) {
+  const handleSuccess = () => {
+    if (onClose) {
+      setTimeout(onClose, 3000);
+    }
+  }
   return (
     <div className='space-y-4'>
-      <SocialLoginButtons />
-      <EmailPasswordForm 
-        isSignUp={isSignUp}
-        onToggleMode={onToggleMode}
-        onSuccess={onSuccess}
-      />
+      <MagicLinkForm onSuccess={handleSuccess} />
     </div>
   );
 };

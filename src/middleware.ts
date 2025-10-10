@@ -1,31 +1,44 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-  const supabase = createMiddlewareClient({ req, res });
+export async function middleware(request: NextRequest) {
+  const response = NextResponse.next({
+    request,
+  })
 
-  // skip middleware for auth callback routes
-  if (req.nextUrl.pathname.startsWith("/auth/callback")) {
-    return res;
-  }
-
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-  
-    // If logged in user tries to access home, redirect to podcasts
-    if (req.nextUrl.pathname === "/" && session) {
-      return NextResponse.redirect(new URL("/podcasts", req.url));
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+        },
+        remove(name: string, options: CookieOptions) {
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          })
+        },
+      },
     }
+  )
 
-    return res;
-  } catch (error) {
-    console.error("❌ Middleware error:", error);
-    return res;
-  }
+  await supabase.auth.getSession()
+
+  return response
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"]
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }

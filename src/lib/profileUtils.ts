@@ -2,6 +2,58 @@
 
 import { createServerClient } from "@/lib/createServiceClient";
 
+
+// This ensures a profile exists when called
+export async function ensureUserProfile(userId: string) {
+  if (!userId) return { success: false, error: "No user ID provided" };
+
+  // Use your service client pattern to access Supabase with admin privileges
+  const supabase = createServerClient();
+  
+  try {
+    // First check if profile exists
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, username')
+      .eq('id', userId)
+      .maybeSingle();
+    
+    // If profile exists, we're done
+    if (data) {
+      return { success: true, hasUsername: !!data.username };
+    }
+    
+    // Create the profile with a temporary username 
+    // (we'll update it later when the user sets their real username)
+    const tempUsername = `user_${Date.now().toString().slice(-6)}`;
+    
+    const { error: insertError } = await supabase
+      .from('profiles')
+      .insert({
+        id: userId,
+        // Add a temporary username to satisfy the not-null constraint
+        username: tempUsername,
+        display_name: "New User",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+    
+    if (insertError) {
+      console.error("Error creating profile:", insertError);
+      return { success: false, error: insertError.message };
+    }
+    
+    // Return success but indicate username needs to be set
+    return { success: true, hasUsername: false };
+  } catch (err) {
+    console.error("Exception in ensureUserProfile:", err);
+    return { 
+      success: false, 
+      error: err instanceof Error ? err.message : "Unknown error" 
+    };
+  }
+};
+
 export async function fetchUserProfile(userId: string) {
   const supabaseServer = createServerClient();
   

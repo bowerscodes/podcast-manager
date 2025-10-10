@@ -143,6 +143,22 @@ body::before {
 
 /* END SPACE BACKGROUND SECTION */
 
+.screen-reader-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.input {
+  border: 1px solid black;
+}
+
 /* Ensure light backgrounds for all cards and components against space background */
 .podcast-card,
 .stats-card,
@@ -262,6 +278,13 @@ h5 {
   box-shadow: var(--shadow-soft);
   transition: all 200ms;
   border: none;
+}
+
+.btn-primary[disabled]:disabled:hover, 
+button.btn-primary:disabled:hover {
+  box-shadow: var(--shadow-soft);
+  background: var(--gradient-primary); 
+  opacity: 0.5;
 }
 
 .btn-primary:hover {

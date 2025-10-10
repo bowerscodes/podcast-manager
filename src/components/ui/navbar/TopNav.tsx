@@ -1,62 +1,24 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Button } from "@heroui/button";
 import { useDisclosure } from "@heroui/modal";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
 
 import { useAuth } from "@/providers/Providers";
-import { fetchUserProfile } from "@/lib/profileUtils";
+import { useProfile } from "@/hooks/useProfile";
 import UserMenu from "./UserMenu";
 import LoginModal from "./LoginModal";
+import UsernameSetupModal from "@/components/auth/UsernameSetupModal";
 import { appTitle } from "@/lib/data";
-
-interface Profile {
-  display_name: string | undefined;
-}
+import { useState } from "react";
 
 export default function TopNav() {
   const { user } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { profile, loading, showUsernameSetup } = useProfile();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [forceHideModal, setForceHideModal] = useState(false);
+
   const router = useRouter();
-
-  // Use useCallback to memoize the function and prevent infinite re-renders
-  const loadProfile = useCallback(async () => {
-    if (!user) {
-      setProfile(null);
-      return;
-    }
-
-    try {
-      const { profile: profileData, error } = await fetchUserProfile(user.id);
-      
-      if (error) {
-        console.error("Error fetching profile:", error);
-        return;
-      }
-      
-      setProfile(profileData);
-    } catch (error) {
-      console.error("Unexpected error fetching profile:", error);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    // Initial fetch
-    loadProfile();
-
-    // Listen for profile update events
-    const handleProfileUpdate = () => {
-      loadProfile();
-    };
-
-    window.addEventListener("profileUpdated", handleProfileUpdate);
-
-    return () => {
-      window.removeEventListener("profileUpdated", handleProfileUpdate);
-    };
-  }, [loadProfile]); // Now we can safely include loadProfile
 
   const handleLogoClick = () => {
     router.push("/");
@@ -81,7 +43,11 @@ export default function TopNav() {
           </div>
           <div className="flex items-center space-x-4">
             {user ? (
-              <UserMenu user={user} profile={profile} />
+              <UserMenu 
+                user={user} 
+                profile={profile} 
+                isLoading={loading}
+              />
             ) : (
               <Button onPress={onOpen} className="btn-primary">
                 Login
@@ -90,7 +56,18 @@ export default function TopNav() {
           </div>
         </div>
       </nav>
+      
       <LoginModal isOpen={isOpen} onClose={onClose} />
+      
+      {showUsernameSetup && !forceHideModal && (
+        <UsernameSetupModal 
+          onComplete={() => {
+            setForceHideModal(true);
+
+            window.location.reload();
+          }} 
+        />
+      )}
     </>
   );
 }

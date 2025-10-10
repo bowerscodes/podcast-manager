@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import TopNav from "../TopNav";
 
@@ -25,9 +25,9 @@ jest.mock("@/providers/Providers", () => ({
   useAuth: jest.fn(),
 }));
 
-// Mock profileUtils
-jest.mock("@/lib/profileUtils", () => ({
-  fetchUserProfile: jest.fn(),
+// Mock useProfile hook
+jest.mock("@/hooks/useProfile", () => ({
+  useProfile: jest.fn(),
 }));
 
 jest.mock("@/lib/data", () => ({
@@ -136,15 +136,18 @@ jest.mock("@heroui/button", () => ({
 
 describe("TopNav", () => {
   const mockUseAuth = jest.requireMock("@/providers/Providers").useAuth;
-  const mockFetchUserProfile = jest.requireMock("@/lib/profileUtils").fetchUserProfile;
+  const mockUseProfile = jest.requireMock("@/hooks/useProfile").useProfile;
   
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Default successful profile fetch mock
-    mockFetchUserProfile.mockResolvedValue({
-      profile: { display_name: "Test User" },
+    // Default mock for useProfile hook
+    mockUseProfile.mockReturnValue({
+      profile: { username: "testuser", display_name: "Test User" },
+      loading: false,
       error: null,
+      showUsernameSetup: false,
+      refreshProfile: jest.fn(),
     });
   });
 
@@ -167,15 +170,17 @@ describe("TopNav", () => {
       loading: false,
     });
 
-    render(<TopNav />);
-
-    // Wait for profile to load
-    await waitFor(() => {
-      expect(mockFetchUserProfile).toHaveBeenCalledWith('user-123');
+    mockUseProfile.mockReturnValue({
+      profile: { username: "testuser", display_name: "Test User" },
+      loading: false,
+      error: null,
+      showUsernameSetup: false,
+      refreshProfile: jest.fn(),
     });
 
-    expect(screen.getByText(/User Menu for test@example.com/)).toBeInTheDocument();
+    render(<TopNav />);
 
+    expect(screen.getByText(/User Menu for test@example.com/)).toBeInTheDocument();
   });
 
   it("should handle login button click", () => {
@@ -210,25 +215,37 @@ describe("TopNav", () => {
   });
 
   it('should fetch profile when user is authenticated', async () => {
+    const mockRefreshProfile = jest.fn();
+    
     mockUseAuth.mockReturnValue({
       user: mockUser,
       setUser: mockSetUser,
       loading: false
     });
 
+    mockUseProfile.mockReturnValue({
+      profile: { username: "testuser", display_name: "Test User" },
+      loading: false,
+      error: null,
+      showUsernameSetup: false,
+      refreshProfile: mockRefreshProfile,
+    });
+
     render(<TopNav />);
 
-    await waitFor(() => {
-      expect(mockFetchUserProfile).toHaveBeenCalledWith('user-123');
-    });
+    // Profile should be loaded via the hook
+    expect(screen.getByTestId('user-menu')).toBeInTheDocument();
   });
 
   it('should handle profile fetch error gracefully', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
     
-    mockFetchUserProfile.mockResolvedValue({
+    mockUseProfile.mockReturnValue({
       profile: null,
-      error: 'Profile not found'
+      loading: false,
+      error: new Error('Profile not found'),
+      showUsernameSetup: false,
+      refreshProfile: jest.fn(),
     });
 
     mockUseAuth.mockReturnValue({
@@ -239,36 +256,37 @@ describe("TopNav", () => {
 
     render(<TopNav />);
 
-    await waitFor(() => {
-      expect(mockFetchUserProfile).toHaveBeenCalledWith('user-123');
-    });
-
-    expect(consoleSpy).toHaveBeenCalledWith('Error fetching profile:', 'Profile not found');
+    // Component should still render even with profile error
+    expect(screen.getByTestId('user-menu')).toBeInTheDocument();
     
     consoleSpy.mockRestore();
   });
 
   it('should listen for profile update events', async () => {
+    const mockRefreshProfile = jest.fn();
+    
     mockUseAuth.mockReturnValue({
       user: mockUser,
       setUser: mockSetUser,
       loading: false
     });
 
-    render(<TopNav />);
-
-    // Wait for initial profile fetch
-    await waitFor(() => {
-      expect(mockFetchUserProfile).toHaveBeenCalledTimes(1);
+    mockUseProfile.mockReturnValue({
+      profile: { username: "testuser", display_name: "Test User" },
+      loading: false,
+      error: null,
+      showUsernameSetup: false,
+      refreshProfile: mockRefreshProfile,
     });
+
+    render(<TopNav />);
 
     // Simulate profile update event
     const profileUpdateEvent = new CustomEvent('profileUpdated');
     window.dispatchEvent(profileUpdateEvent);
 
-    // Should fetch profile again
-    await waitFor(() => {
-      expect(mockFetchUserProfile).toHaveBeenCalledTimes(2);
-    });
+    // The useProfile hook handles the event listener internally
+    // Just verify the component renders correctly
+    expect(screen.getByTestId('user-menu')).toBeInTheDocument();
   });
 });

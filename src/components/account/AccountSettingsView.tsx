@@ -5,7 +5,6 @@ import ExpandableContent from "@/components/ui/ExpandableContent";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
 import ProfileForm from "./ProfileForm";
 import EmailForm from "./EmailForm";
-import PasswordForm from "./PasswordForm";
 import DangerZone from "./DangerZone";
 
 type Profile = {
@@ -86,33 +85,6 @@ export default function AccountSettingsView({ user, profile }: Props) {
           )}
         >
           <EmailForm user={user} />
-        </ExpandableContent>
-
-        {/* Password Settings */}
-        <ExpandableContent
-          className="p-6"
-          customHeader={(isExpanded) => (
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-3">
-                {" "}
-                <h2 className="heading-secondary text-lg">
-                  Password Settings
-                </h2>
-                <div className="text-gray-600">
-                  {isExpanded ? (
-                    <MdExpandLess size={20} />
-                  ) : (
-                    <MdExpandMore size={20} />
-                  )}
-                </div>
-              </div>
-              <p className="text-sm text-gray-600">
-                Change your password
-              </p>{" "}
-            </div>
-          )}
-        >
-          <PasswordForm user={user} />
         </ExpandableContent>
 
         {/* Danger Zone */}

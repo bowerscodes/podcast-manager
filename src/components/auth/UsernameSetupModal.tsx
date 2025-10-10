@@ -5,46 +5,54 @@ import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import toast from "react-hot-toast";
-import { supabase } from "@/lib/supabase";
 
+import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { checkUsernameAvailable, updateProfile, validateUsername } from "@/lib/profileUtils";
 
-export default function UsernameSetupModal() {
+type Props = {
+  onComplete?: () => void;
+};
+
+export default function UsernameSetupModal({ onComplete }: Props) {
   const { user } = useAuth();
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);
+  const [checking, setChecking] = useState(true);
 
-  // Check if the user needs to set up a username
+  // Fetch profile and determine if modal should be open
   useEffect(() => {
     if (!user) return;
 
-    const checkUsername = async () => {
-      setIsChecking(true);
-      const { data } = await supabase
+    const fetchProfile = async () => {
+      setChecking(true);
+      const { data, error } = await supabase
         .from("profiles")
         .select("username")
         .eq("id", user.id)
         .single();
 
-      // If no username exists, show the modal
-      if (!data?.username) {
-        const emailUsername = user.email?.split("@")[0] || "";
-        const suggestedUsername = emailUsername
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, "-");
-
-        setUsername(suggestedUsername);
-        setIsOpen(true);
+      if (error) {
+        setChecking(false);
+        return;
       }
-      setIsChecking(false);
+
+      if (!data?.username) {
+        // Prefill with email prefix
+        const emailUsername = user.email?.split("@")[0] || "";
+        setUsername(emailUsername);
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+      setChecking(false);
     };
 
-    checkUsername();
+    fetchProfile();
   }, [user]);
 
+  // After successful username set, re-fetch profile to close modal if needed
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -52,16 +60,14 @@ export default function UsernameSetupModal() {
     setLoading(true);
 
     try {
-      // Use shared validation function
       const { valid, error: validationError, cleanUsername } = await validateUsername(username);
-      
+
       if (!valid) {
         toast.error(validationError);
         setLoading(false);
         return;
       }
 
-      // Check if username is already taken
       const { available, error: checkError } = await checkUsernameAvailable(cleanUsername, user.id);
 
       if (checkError) {
@@ -76,7 +82,6 @@ export default function UsernameSetupModal() {
         return;
       }
 
-      // Use shared update function
       const { success, error } = await updateProfile(user.id, {
         username: cleanUsername,
       });
@@ -88,7 +93,23 @@ export default function UsernameSetupModal() {
       }
 
       toast.success("Username set successfully");
-      setIsOpen(false);
+
+      // Fire profileUpdated event for cross-component sync
+      window.dispatchEvent(
+        new CustomEvent("profileUpdated", { detail: { username: cleanUsername } })
+      );
+
+      // Re-fetch profile to check if username is now set, and close modal if so
+      const { data } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
+
+      if (data?.username) {
+        setIsOpen(false);
+        if (onComplete) onComplete();
+      }
     } catch (error) {
       console.error("Error setting username:", error);
       toast.error("Failed to set username");
@@ -97,29 +118,36 @@ export default function UsernameSetupModal() {
     }
   };
 
-  // Don't render anything if still checking, or if the modal shouldn't be shown
-  if (isChecking || !isOpen) return null;
+  // Listen for profileUpdated event (in case username is set elsewhere)
+  useEffect(() => {
+    const handler = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
+      if (data?.username) setIsOpen(false);
+    };
+    window.addEventListener("profileUpdated", handler);
+    return () => window.removeEventListener("profileUpdated", handler);
+  }, [user]);
+
+  if (checking || !isOpen) return null;
 
   return (
     <Modal
       isOpen={isOpen}
-      onOpenChange={(open) => {
-        // Only allow closing if a username is set!
-        if (!open && !username) {
-          toast.error("Please set a username to continue");
-          return;
-        }
-        setIsOpen(open);
-      }}
+      onOpenChange={() => {}}
       placement="center"
       isDismissable={false}
       hideCloseButton
     >
       <ModalContent>
         <ModalHeader>
-          <h2 className="text-xl font-bold">Set your Username</h2>
+          <h2 className="text-xl heading-secondary font-bold">Set your Username</h2>
         </ModalHeader>
-        <ModalBody className="p-6">
+        <ModalBody className="p-6 pt-0">
           <p className="mb-4">
             Please choose a username for your podcasting profile. This will
             appear in your podcast URL.
@@ -138,17 +166,18 @@ export default function UsernameSetupModal() {
               isRequired
               minLength={3}
               variant="bordered"
+              autoFocus
             />
             <div className="text-sm text-gray-400">
               <span className="font-medium w-full">
                 Your podcast URL will look like:
               </span>{" "}
-              {window.location.origin}/{username}/your-podcast
+              {window.location.origin}/<strong>{username}</strong>/your-podcast
             </div>
             <Button
               type="submit"
               color="primary"
-              className="w-full"
+              className="w-full py-2 px-2 shadow-md font-medium text-white btn-primary bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               isLoading={loading}
             >
               Continue

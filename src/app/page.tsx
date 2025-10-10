@@ -1,9 +1,27 @@
-import { Button } from "@heroui/button";
-import Link from "next/link";
-import { MdPodcasts, MdRssFeed, MdLink } from "react-icons/md";
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/providers/Providers';
+import { Button } from '@heroui/button';
+import Link from 'next/link';
+import { MdLink, MdPodcasts, MdRssFeed } from 'react-icons/md';
 
 export default function Home() {
-  return (
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect authenticated users to /podcasts
+    if (!loading && user) {
+      router.replace('/podcasts');
+    }
+  }, [user, loading, router]);
+
+  // Show nothing while checking auth or redirecting
+  if (loading || user) {
+    return null;
+  }  return (
     <div>
       <main className="page-container">
         {/* Hero Section */}

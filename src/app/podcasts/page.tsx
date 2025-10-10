@@ -4,7 +4,6 @@ import { Button } from "@heroui/button";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
-import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { Podcast } from "@/types/podcast";
 import toast from "react-hot-toast";
@@ -12,6 +11,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import PodcastCard from "../../components/podcasts/PodcastCard";
 import PlaceholderPodcastCard from "@/components/podcasts/PlaceholderPodcastCard";
 import PodcastModal from "@/components/modals/PodcastModal";
+import { PodcastQueries } from "@/lib/queries/podcast-queries";
 
 export default function PodcastsList() {
   const router = useRouter();
@@ -19,6 +19,7 @@ export default function PodcastsList() {
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [hasLoadedData, setHasLoadedData] = useState(false);
 
  // Auth protection useEffect
   useEffect(() => {
@@ -29,24 +30,22 @@ export default function PodcastsList() {
 
   const fetchPodcasts = useCallback(async () => {
     if (!user) return;
-    
-    setDataLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("podcasts")
-        .select("*")
-        .eq("user_id", user?.id)
-        .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      setPodcasts(data || []);
+    if (!hasLoadedData) {
+      setDataLoading(true);
+    }
+    
+    try {
+      const data = await PodcastQueries.getPodcastsByUser(user.id)
+      setPodcasts(data);
+      setHasLoadedData(true);
     } catch (error) {
       console.error("Error fetching podcasts: ", error);
       toast.error("Failed to load podcasts. Please refresh the page.")
     } finally {
       setDataLoading(false);
     }
-  }, [user]);
+  }, [user, hasLoadedData]);
 
   useEffect(() => {
     fetchPodcasts();
@@ -57,15 +56,18 @@ export default function PodcastsList() {
     setIsCreateModalOpen(false);
   }
 
-  if (authLoading) {
+  // Show loading only on initial auth check - not on tab switches
+  if (authLoading && !user) {
     return <LoadingSpinner message="Checking authentication..." />;
   }
 
+  // Don't render anything if redirecting
   if (!user) {
     return null;
   }
   
-  if (dataLoading) {
+  // Show loading only on first data fetch
+  if (dataLoading && !hasLoadedData) {
     return <LoadingSpinner message="Loading podcasts..." />;
   }
 

@@ -48,11 +48,16 @@ jest.mock('@/lib/supabase', () => ({
       eq: jest.fn().mockReturnThis(),
       order: jest.fn().mockReturnThis(),
       single: jest.fn(),
+      maybeSingle: jest.fn(),
       then: jest.fn(),
     })),
     auth: {
       getUser: jest.fn(),
       getSession: jest.fn(),
+      signInWithOtp: jest.fn(),
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } }
+      })),
     },
   },
   supabaseServiceRole: {
@@ -63,6 +68,32 @@ jest.mock('@/lib/supabase', () => ({
       single: jest.fn(),
     })),
   },
+}));
+
+// Mock server client
+jest.mock('@/lib/createServiceClient', () => ({
+  createServerClient: jest.fn(() => ({
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      single: jest.fn(),
+      maybeSingle: jest.fn(),
+    })),
+    auth: {
+      getUser: jest.fn(),
+      getSession: jest.fn(),
+    },
+  })),
+}));
+
+// Mock email utils (server actions)
+jest.mock('@/lib/emailUtils', () => ({
+  validateEmailDomain: jest.fn(),
+  checkEmailDeliverability: jest.fn(),
 }));
 
 // Mock HeroUI components

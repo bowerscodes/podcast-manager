@@ -16,10 +16,15 @@ type Props = {
   profile?:  {
     display_name?: string;
   } | null;
+  isLoading: boolean;
 };
 
-export default function UserMenu({ user, profile }: Props) {
+export default function UserMenu({ user, profile, isLoading }: Props) {
   const router = useRouter();
+  
+  if (isLoading) {
+    return <div className="text-white">Loading...</div>
+  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();

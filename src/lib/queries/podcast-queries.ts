@@ -3,10 +3,26 @@ import {
   Episode, 
   PodcastWithStats,
   PodcastWithEpisodes,
+  Podcast,
 } from "@/types/podcast";
 
 
 export class PodcastQueries {
+  static async getPodcastsByUser(userId: string): Promise<Podcast[]> {
+    const { data, error } = await supabase
+      .from("podcasts")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    
+    if (error) {
+      console.error("Error fetching podcasts: ", error);
+      throw error;
+    }
+
+    return data || [];
+  }
+
   // Get podcast with all related data in a single optimized query
   static async getPodcastWithStats(
     podcastId: string,

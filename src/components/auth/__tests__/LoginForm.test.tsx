@@ -1,88 +1,74 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import LoginForm from '../LoginForm';
 
-// Mock child components
-jest.mock('../SocialLoginButtons', () => {
-  return function MockSocialLoginButtons() {
-    return <div data-testid="social-login-buttons">Social Login Buttons</div>;
-  };
-});
-
-jest.mock('../EmailPasswordForm', () => {
-  return function MockEmailPasswordForm({ isSignUp, onToggleMode, onSuccess }: {
-    isSignUp: boolean;
-    onToggleMode: () => void;
-    onSuccess: () => void;
-  }) {
+// Mock MagicLinkForm component
+jest.mock('../MagicLinkForm', () => {
+  return function MockMagicLinkForm({ onSuccess }: { onSuccess: () => void }) {
     return (
-      <div data-testid="email-password-form">
-        <div>isSignUp: {isSignUp.toString()}</div>
-        <button onClick={onToggleMode}>Toggle Mode</button>
-        <button onClick={onSuccess}>Success</button>
+      <div data-testid="magic-link-form">
+        <button onClick={onSuccess}>Send Magic Link</button>
       </div>
     );
   };
 });
 
 describe('LoginForm', () => {
-  const mockOnToggleMode = jest.fn();
-  const mockOnSuccess = jest.fn();
-
-  const defaultProps = {
-    isSignUp: false,
-    onToggleMode: mockOnToggleMode,
-    onSuccess: mockOnSuccess,
-  };
+  const mockOnClose = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
   });
 
-  it('should render both social login buttons and email password form', () => {
-    render(<LoginForm {...defaultProps} />);
-
-    expect(screen.getByTestId('social-login-buttons')).toBeTruthy();
-    expect(screen.getByTestId('email-password-form')).toBeTruthy();
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
 
-  it('should pass isSignUp prop to EmailPasswordForm', () => {
-    render(<LoginForm {...defaultProps} isSignUp={true} />);
+  it('should render MagicLinkForm', () => {
+    render(<LoginForm />);
 
-    expect(screen.getByText('isSignUp: true')).toBeTruthy();
+    expect(screen.getByTestId('magic-link-form')).toBeInTheDocument();
   });
 
-  it('should pass isSignUp false to EmailPasswordForm', () => {
-    render(<LoginForm {...defaultProps} isSignUp={false} />);
+  it('should pass onSuccess callback to MagicLinkForm', () => {
+    render(<LoginForm onClose={mockOnClose} />);
 
-    expect(screen.getByText('isSignUp: false')).toBeTruthy();
+    const successButton = screen.getByText('Send Magic Link');
+    fireEvent.click(successButton);
+
+    // Should call onClose after 3 second timeout
+    expect(mockOnClose).not.toHaveBeenCalled();
+    
+    jest.advanceTimersByTime(3000);
+    
+    expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('should pass onToggleMode callback to EmailPasswordForm', () => {
-    render(<LoginForm {...defaultProps} />);
+  it('should not call onClose if not provided', () => {
+    render(<LoginForm />);
 
-    fireEvent.click(screen.getByText('Toggle Mode'));
-    expect(mockOnToggleMode).toHaveBeenCalled();
-  });
+    const successButton = screen.getByText('Send Magic Link');
+    fireEvent.click(successButton);
 
-  it('should pass onSuccess callback to EmailPasswordForm', () => {
-    render(<LoginForm {...defaultProps} />);
+    jest.advanceTimersByTime(3000);
 
-    fireEvent.click(screen.getByText('Success'));
-    expect(mockOnSuccess).toHaveBeenCalled();
+    // Should not throw error
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('should apply correct CSS structure', () => {
-    const { container } = render(<LoginForm {...defaultProps} />);
+    const { container } = render(<LoginForm />);
 
     const wrapper = container.firstChild as HTMLElement;
     expect(wrapper.className).toContain('space-y-4');
   });
 
-  it('should render components in correct order', () => {
-    const { container } = render(<LoginForm {...defaultProps} />);
+  it('should render MagicLinkForm as child', () => {
+    const { container } = render(<LoginForm />);
 
-    const children = Array.from(container.firstChild?.childNodes || []);
-    expect(children[0]).toHaveAttribute('data-testid', 'social-login-buttons');
-    expect(children[1]).toHaveAttribute('data-testid', 'email-password-form');
+    const wrapper = container.firstChild as HTMLElement;
+    const magicLinkForm = wrapper.querySelector('[data-testid="magic-link-form"]');
+    expect(magicLinkForm).toBeInTheDocument();
   });
 });
