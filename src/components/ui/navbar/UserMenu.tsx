@@ -58,7 +58,7 @@ export default function UserMenu({ user, profile, isLoading }: Props) {
       
       <DropdownMenu aria-label="User menu actions">
         {/* User Info Section */}
-        <DropdownSection title="Account" showDivider>
+        <DropdownSection title="Account Settings" showDivider>
           <DropdownItem 
             key="profile" 
             textValue="Profile"
