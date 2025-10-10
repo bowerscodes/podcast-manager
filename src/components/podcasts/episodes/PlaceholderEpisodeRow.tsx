@@ -17,7 +17,7 @@ export default function PlaceholderEpisodeRow({ podcastId, onEpisodeCreated, isF
   return (
     <>
       <Card
-        className="podcast-card group border-2 border-dashed w-[100%]"
+        className="podcast-card group border-2 border-dashed w-[100%] mt-1"
         style={{
           borderColor: 'rgba(139, 92, 246, 0.3)',
           background: 'rgba(139, 92, 246, 0.05)'
