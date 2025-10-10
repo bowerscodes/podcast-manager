@@ -249,7 +249,7 @@ describe("PodcastHeader", () => {
   it("should open edit modal when edit button is clicked", () => {
     render(<PodcastHeader {...defaultProps} />);
 
-    const editButton = screen.getByRole("button", { name: /edit/i });
+    const editButton = screen.getByTestId('edit-podcast-button');
     fireEvent.click(editButton);
 
     expect(screen.getByTestId("podcast-modal")).toBeInTheDocument();
@@ -260,7 +260,7 @@ describe("PodcastHeader", () => {
     render(<PodcastHeader {...defaultProps} />);
 
     // Open modal
-    const editButton = screen.getByRole("button", { name: /edit/i });
+    const editButton = screen.getByTestId('edit-podcast-button');
     fireEvent.click(editButton);
 
     expect(screen.getByTestId("podcast-modal")).toBeInTheDocument();
@@ -276,7 +276,7 @@ describe("PodcastHeader", () => {
     render(<PodcastHeader {...defaultProps} />);
 
     // Open modal
-    const editButton = screen.getByRole("button", { name: /edit/i });
+    const editButton = screen.getByTestId('edit-podcast-button');
     fireEvent.click(editButton);
 
     // Save changes - use more specific selector
@@ -330,10 +330,10 @@ describe("PodcastHeader", () => {
   it("should apply correct styling to edit button", () => {
     render(<PodcastHeader {...defaultProps} />);
 
-    const editButton = screen.getByRole("button", { name: /edit/i });
+    const editButton = screen.getByTestId('edit-podcast-button');
     expect(editButton).toHaveAttribute("data-variant", "light");
     expect(editButton).toHaveAttribute("data-color", "primary");
-    expect(editButton).toHaveClass("top-0", "right-0", "z-10");
+    expect(editButton).toHaveClass("text-blue-400");
   });
 
   describe("Episode information display", () => {

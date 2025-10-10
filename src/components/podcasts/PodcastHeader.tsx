@@ -75,12 +75,14 @@ export default function PodcastHeader({
               </div>
             </div>
             <Button
+              isIconOnly
               variant="light"
               color="primary"
-              className="top-0 right-0 z-10 text-blue-400"
+              className="text-blue-400"
               onPress={() => setIsEditModalOpen(true)}
+              data-testid="edit-podcast-button"
             >
-              Edit <AiOutlineEdit size={20} />
+              <AiOutlineEdit size={20} />
             </Button>
           </div>
 
