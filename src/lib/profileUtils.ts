@@ -124,3 +124,74 @@ export async function updateProfile(
 
   return { success: true, error: null };
 }
+
+export async function deleteUserAccount(userId: string) {
+  const supabase = createServerClient();
+  
+  try {
+    // First, delete all episodes for all podcasts owned by the user
+    // Get all podcast IDs for this user
+    const { data: podcasts, error: podcastsError } = await supabase
+      .from("podcasts")
+      .select("id")
+      .eq("user_id", userId);
+    
+    if (podcastsError) {
+      console.error("Error fetching user podcasts:", podcastsError);
+      return { success: false, error: "Failed to fetch user data" };
+    }
+
+    // If user has podcasts, delete all associated episodes
+    if (podcasts && podcasts.length > 0) {
+      const podcastIds = podcasts.map(p => p.id);
+      
+      const { error: episodesError } = await supabase
+        .from("episodes")
+        .delete()
+        .in("podcast_id", podcastIds);
+      
+      if (episodesError) {
+        console.error("Error deleting episodes:", episodesError);
+        return { success: false, error: "Failed to delete episodes" };
+      }
+    }
+
+    // Delete all podcasts owned by the user
+    const { error: deletePodcastsError } = await supabase
+      .from("podcasts")
+      .delete()
+      .eq("user_id", userId);
+    
+    if (deletePodcastsError) {
+      console.error("Error deleting podcasts:", deletePodcastsError);
+      return { success: false, error: "Failed to delete podcasts" };
+    }
+
+    // Delete the user's profile
+    const { error: deleteProfileError } = await supabase
+      .from("profiles")
+      .delete()
+      .eq("id", userId);
+    
+    if (deleteProfileError) {
+      console.error("Error deleting profile:", deleteProfileError);
+      return { success: false, error: "Failed to delete profile" };
+    }
+
+    // Finally, delete the user from auth.users using the service role client
+    const { error: deleteAuthError } = await supabase.auth.admin.deleteUser(userId);
+    
+    if (deleteAuthError) {
+      console.error("Error deleting auth user:", deleteAuthError);
+      return { success: false, error: "Failed to delete authentication data" };
+    }
+
+    return { success: true, error: null };
+  } catch (err) {
+    console.error("Exception in deleteUserAccount:", err);
+    return { 
+      success: false, 
+      error: err instanceof Error ? err.message : "Unknown error occurred" 
+    };
+  }
+}

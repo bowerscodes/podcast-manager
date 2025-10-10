@@ -5,6 +5,9 @@ import { Input } from "@heroui/input";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { deleteUserAccount } from "@/lib/profileUtils";
+import { supabase } from "@/lib/supabase";
 
 type Props = {
   user: User;
@@ -13,6 +16,7 @@ type Props = {
 export default function DangerZone({ user }: Props) {
   const [confirmEmail, setConfirmEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleDeleteAccount = async () => {
     if (confirmEmail !== user.email) {
@@ -22,12 +26,26 @@ export default function DangerZone({ user }: Props) {
 
     setIsLoading(true);
     try {
-      // TODO: Implement account deletion logic
-      toast.error("Account deletion not yet implemented");
+      // Delete the user account and all associated data
+      const result = await deleteUserAccount(user.id);
+      
+      if (!result.success) {
+        toast.error(result.error || "Failed to delete account");
+        setIsLoading(false);
+        return;
+      }
+
+      // Sign out the user
+      await supabase.auth.signOut();
+      
+      // Show success message
+      toast.success("Account deleted successfully");
+      
+      // Redirect to home page
+      router.push("/");
     } catch (error) {
       console.error("Error deleting account:", error);
       toast.error("Failed to delete account");
-    } finally {
       setIsLoading(false);
     }
   };
