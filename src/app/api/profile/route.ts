@@ -1,5 +1,3 @@
-// Create this new route for handling profile operations
-
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/createServiceClient';
 

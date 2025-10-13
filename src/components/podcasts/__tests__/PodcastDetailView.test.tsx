@@ -168,16 +168,14 @@ describe('PodcastDetailView', () => {
     expect(screen.getByTestId('podcast-actions')).toBeInTheDocument();
   });
 
-  it('should show not found message when podcast does not exist', async () => {
+  it('should redirect when podcast does not exist', async () => {
     (PodcastQueries.getUserPodcastWithStats as jest.Mock).mockResolvedValue(null);
 
     render(<PodcastDetailView podcastId="test-podcast-id" />);
     
     await waitFor(() => {
-      expect(screen.getByText('Podcast Not Found')).toBeInTheDocument();
+      expect(mockPush).toHaveBeenCalledWith('/');
     });
-    
-    expect(screen.getByText("This podcast doesn't exist or you don't have access to it.")).toBeInTheDocument();
   });
 
   it('should call PodcastQueries with correct parameters', async () => {
@@ -191,7 +189,7 @@ describe('PodcastDetailView', () => {
     });
   });
 
-  it('should handle fetch errors gracefully', async () => {
+  it('should redirect on fetch errors', async () => {
     const consoleError = jest.spyOn(console, 'error').mockImplementation();
     (PodcastQueries.getUserPodcastWithStats as jest.Mock).mockRejectedValue(
       new Error('Failed to fetch')
@@ -200,7 +198,7 @@ describe('PodcastDetailView', () => {
     render(<PodcastDetailView podcastId="test-podcast-id" />);
     
     await waitFor(() => {
-      expect(screen.getByText('Podcast Not Found')).toBeInTheDocument();
+      expect(mockPush).toHaveBeenCalledWith('/');
     });
 
     consoleError.mockRestore();

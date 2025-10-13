@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+
 import { useAuth } from "@/providers/Providers";
 import { PodcastQueries } from "@/lib/queries/podcast-queries";
 import { PodcastWithStats } from "@/types/podcast";
@@ -69,8 +70,15 @@ export default function PodcastDetailView({ podcastId }: { podcastId: string}) {
     };
 
     fetchData();
-  }, [user, authLoading, podcastId, podcastData]);
+  }, [user, authLoading, podcastId, podcastData, router]);
 
+  // Redirect if podcast not found (after loading completes)
+  useEffect(() => {
+    if (!loading && !authLoading && (notFound || !podcastData)) {
+      router.push("/");
+    }
+  }, [notFound, podcastData, loading, authLoading, router]);
+  
   // Show loading while checking auth
   if (authLoading) {
     return <LoadingSpinner message="Checking authentication..." />;
@@ -86,12 +94,7 @@ export default function PodcastDetailView({ podcastId }: { podcastId: string}) {
   }
 
   if (notFound || !podcastData) {
-    return (
-      <div className="p-8 text-center">
-        <h1>Podcast Not Found</h1>
-        <p>This podcast doesn&apos;t exist or you don&apos;t have access to it.</p>
-      </div>
-    );
+    return null;
   }
 
   const { podcast, episodeCount } = podcastData;

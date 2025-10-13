@@ -183,8 +183,9 @@ export default function ProfileForm({ user, profile }: Props) {
             label: "!font-semibold !text-gray-600",
             description: "!font-semibold",
           }}
+          placeholder="Enter your preferred display name"
           description="Your public display name (optional)"
-        />
+          />
         <Button
           color={isUsernameChanged ? "warning" : "primary"}
           onPress={handleSave}
