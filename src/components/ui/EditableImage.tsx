@@ -144,7 +144,7 @@ export default function EditableImage({
     <>
       {/* Main Image Display */}
       <div
-        className={`relative overflow-hidden w-48 h-48 ${circular ? 'rounded-full' : 'rounded-lg'} ${borderThickness === 'thick' ? 'border-gradient-thick' : 'border-gradient'}`}
+        className={`relative overflow-hidden w-48 h-48 ${circular ? 'rounded-full' : 'rounded-lg'} ${borderThickness === 'thick' ? 'border-gradient-thick' : 'border-gradient'} shadow-lg`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
