@@ -358,7 +358,7 @@ button.btn-primary:disabled:hover {
   border: 2px solid transparent;
   background-image: 
     var(--gradient-card),
-    linear-gradient(-45deg, rgba(139, 92, 246, 0.6) 0%, rgba(6, 182, 212, 0.6) 100%);
+    linear-gradient(-45deg, rgb(139, 92, 246) 0%, rgb(6, 182, 212) 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }
@@ -368,7 +368,7 @@ button.btn-primary:disabled:hover {
   border-radius: 0.6rem;
   background-image: 
     var(--gradient-card),
-    linear-gradient(-45deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.9) 100%);
+    linear-gradient(-45deg, rgb(139, 92, 246) 0%, rgb(6, 182, 212) 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }
@@ -378,7 +378,7 @@ button.btn-primary:disabled:hover {
   border-radius: 1rem;
   background-image: 
     var(--gradient-card),
-    linear-gradient(-45deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.9) 100%);
+    linear-gradient(-45deg, rgb(139, 92, 246) 0%, rgb(6, 182, 212) 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }
@@ -386,7 +386,16 @@ button.btn-primary:disabled:hover {
 .border-gradient:hover {
   background-image: 
     var(--gradient-card),
-    linear-gradient(-45deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 1) 100%);
+    linear-gradient(-45deg, rgb(139, 92, 246) 0%, rgb(6, 182, 212) 100%);
+}
+
+.border-gradient-thick {
+  border: 4px solid transparent;
+  background-image: 
+    var(--gradient-card),
+    linear-gradient(-45deg, rgb(139, 92, 246) 0%, rgb(6, 182, 212) 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
 }
 
 /* Card Components */

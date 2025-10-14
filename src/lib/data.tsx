@@ -1,4 +1,5 @@
 import { FaPodcast } from "react-icons/fa";
+import { MdAccountCircle } from "react-icons/md";
 
 export const applePodcastsSubmitLink = "https://podcastsconnect.apple.com/";
 export const spotifyPodcastsSubmitLink = "https://podcasters.spotify.com/";
@@ -43,6 +44,17 @@ export const defaultArtwork = () => {
   return (
     <div className="flex w-full h-full items-center justify-center bg-gray-100 text-gray-400 rounded-lg">
       <FaPodcast size={128} />
+    </div>
+  );
+};
+
+export const defaultAvatar = () => {
+  return (
+    <div className="flex items-center justify-center w-full h-full">
+      <MdAccountCircle 
+        color="gray" 
+        className="cursor-pointer w-full h-full"
+      />
     </div>
   );
 };

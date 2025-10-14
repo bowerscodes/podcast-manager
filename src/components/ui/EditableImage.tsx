@@ -8,7 +8,8 @@ type Props = {
   alt: string;
   onSave: (newImageUrl: string) => Promise<void>;
   fallback: React.ReactNode;
-  className: string;
+  circular?: boolean;
+  borderThickness?: 'normal' | 'thick';
 };
 
 export default function EditableImage({
@@ -16,7 +17,8 @@ export default function EditableImage({
   alt,
   onSave,
   fallback,
-  className = "",
+  circular = false,
+  borderThickness = 'normal',
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [imageUrl, setImageUrl] = useState(src || "");
@@ -79,7 +81,7 @@ export default function EditableImage({
     try {
       await onSave(imageUrl);
       setIsEditing(false);
-      toast.success("Image updated successfully");
+      // Success toast is handled by the parent component
     } catch (error) {
       console.error("Error saving image: ", error);
       toast.error("Failed to update image");
@@ -105,7 +107,7 @@ export default function EditableImage({
     if (!imageUrl) {
       return (
         <div className="w-full h-full flex items-center justify-center">
-          <div className="scale-50">{fallback}</div>
+          {fallback}
         </div>
       );
     }
@@ -126,7 +128,7 @@ export default function EditableImage({
           onLoad={() => setImageError(false)}
         />
         <div
-          className="w-full h-full rounded-lg"
+          className={`w-full h-full ${circular ? 'rounded-full' : 'rounded-lg'}`}
           style={{
             backgroundImage: `url(${imageUrl})`,
             backgroundSize: "cover",
@@ -142,38 +144,37 @@ export default function EditableImage({
     <>
       {/* Main Image Display */}
       <div
-        className="relative inline-block"
+        className={`relative overflow-hidden w-48 h-48 ${circular ? 'rounded-full' : 'rounded-lg'} ${borderThickness === 'thick' ? 'border-gradient-thick' : 'border-gradient'}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {src ? (
-          <div className={`relative rounded-lg ${className}`}>
-            <Image
-              src={src}
-              alt={alt}
-              className="w-48 h-48 border-gradient-md rounded-lg object-cover cursor-pointer"
-              onClick={() => setIsEditing(true)}
-            />
-          </div>
+          <Image
+            src={src}
+            alt={alt}
+            className={`w-full h-full object-cover cursor-pointer ${circular ? 'rounded-full' : 'rounded-lg'}`}
+            style={{ transform: 'scale(1.05)' }}
+            onClick={() => setIsEditing(true)}
+          />
         ) : (
-          <div className={`relative rounded-lg ${className}`}>
-            <div
-              className="w-48 h-48 border-gradient rounded-lg overflow-hidden cursor-pointer"
-              onClick={() => setIsEditing(true)}
-            >
-              {fallback}
-            </div>
+          <div
+            className={`w-full h-full overflow-hidden cursor-pointer ${circular ? 'rounded-full' : 'rounded-lg'}`}
+            style={{ transform: 'scale(1.05)' }}
+            onClick={() => setIsEditing(true)}
+          >
+            {fallback}
           </div>
         )}
 
         {/* Hover overlay with Edit icon */}
         {isHovered && (
           <div
-            className="absolute inset-0 bg-black rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 z-20"
+            className={`absolute inset-0 bg-black flex items-center justify-center cursor-pointer transition-all duration-200 z-20 ${circular ? 'rounded-full' : 'rounded-lg'}`}
             onClick={() => setIsEditing(true)}
             style={{
               pointerEvents: "auto",
               backgroundColor: "rgba(0, 0, 0, 0.6)",
+              transform: "scale(1.05)",
             }}
           >
             <div className="bg-gray-800 bg-opacity-90 rounded-full p-3 transform hover:scale-110 transition-transform">
@@ -200,7 +201,7 @@ export default function EditableImage({
 
             {/* Image Preview */}
             <div className="mb-4 flex justify-center">
-              <div className="w-32 h-32 rounded-lg border border-gray-300 overflow-hidden bg-gray-50 flex items-center justify-center">
+              <div className={`w-32 h-32 border border-gray-300 overflow-hidden bg-gray-50 flex items-center justify-center ${circular ? 'rounded-full' : 'rounded-lg'}`}>
                 {renderImagePreview()}
               </div>
             </div>

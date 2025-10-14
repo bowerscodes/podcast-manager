@@ -19,11 +19,14 @@ import {
   updateProfile,
   validateUsername,
 } from "@/lib/profileUtils";
+import EditableImage from "../ui/EditableImage";
+import { defaultAvatar } from "@/lib/data";
 
 type Profile = {
   id: string;
   username: string;
   display_name?: string;
+  avatar_url?: string;
   created_at: string;
   updated_at: string;
 };
@@ -36,6 +39,7 @@ type Props = {
 export default function ProfileForm({ user, profile }: Props) {
   const [username, setUsername] = useState(profile?.username || "");
   const [displayName, setDisplayName] = useState(profile?.display_name || "");
+  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "");
   const [isLoading, setIsLoading] = useState(false);
 
   // For the confirmation modal
@@ -49,6 +53,29 @@ export default function ProfileForm({ user, profile }: Props) {
   const originalUsername = profile?.username || "";
   const isUsernameChanged =
     username.toLowerCase().trim() !== originalUsername.toLowerCase();
+
+
+  const handleAvatarUpdate = async (newImageUrl: string) => {
+    setAvatarUrl(newImageUrl);
+    
+    // Immediately save the avatar to the database
+    try {
+      const { success, error } = await updateProfile(user.id, {
+        avatar_url: newImageUrl.trim() || null,
+      });
+
+      if (!success) {
+        toast.error(error || "Failed to update avatar");
+        return;
+      }
+
+      toast.success("Avatar updated successfully");
+      window.dispatchEvent(new CustomEvent("profileUpdated"));
+    } catch (error) {
+      console.error("Error updating avatar:", error);
+      toast.error("An unexpected error occurred");
+    }
+  };
 
   const handleSave = async () => {
     if (isUsernameChanged) {
@@ -101,6 +128,7 @@ export default function ProfileForm({ user, profile }: Props) {
       const { success, error } = await updateProfile(user.id, {
         username: cleanUsername,
         display_name: displayName.trim() || null,
+        avatar_url: avatarUrl.trim() || null,
       });
 
       if (!success) {
@@ -144,57 +172,72 @@ export default function ProfileForm({ user, profile }: Props) {
 
   return (
     <>
-      <div className="flex flex-col gap-4 pt-6">
-        <Input
-          label="Username"
-          labelPlacement="outside"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          variant="bordered"
-          classNames={{
-            base: "max-w-sm",
-            label: "!font-semibold !text-gray-600",
-            description: "!font-semibold",
-          }}
-          startContent={
-            <span className="text-gray-500">
-              {process.env.NEXT_PUBLIC_BASE_URL}/
-            </span>
-          }
-          description="This appears in your podcast URLs"
-          color={isUsernameChanged ? "warning" : undefined}
-        />
-
-        {isUsernameChanged && (
-          <div className="text-sm text-amber-500 font-medium -mt-2 max-w-sm">
-            ⚠️ Changing your username will break existing RSS feed links and
-            require resubmission to podcast platforms.
-          </div>
-        )}
-
-        <Input
-          label="Display Name"
-          labelPlacement="outside"
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
-          variant="bordered"
-          classNames={{
-            base: "max-w-2xs",
-            label: "!font-semibold !text-gray-600",
-            description: "!font-semibold",
-          }}
-          placeholder="Enter your preferred display name"
-          description="Your public display name (optional)"
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
+        {/* column 1 - avatar (appears first on mobile) */}
+        <div className="flex justify-center md:justify-center w-full md:order-2">
+          <EditableImage 
+            src={avatarUrl}
+            onSave={handleAvatarUpdate}
+            alt="Profile avatar"
+            fallback={defaultAvatar()}
+            circular
+            borderThickness="thick"
           />
-        <Button
-          color={isUsernameChanged ? "warning" : "primary"}
-          onPress={handleSave}
-          isLoading={isLoading}
-          className="self-start"
-          startContent={isUsernameChanged ? "🔒" : undefined}
-        >
-          {isUsernameChanged ? "Verify & Save Changes" : "Save Changes"}
-        </Button>
+        </div>
+
+        {/* column 2 - form fields (appears second on mobile) */}
+        <div className="flex flex-col gap-4 md:order-1">
+          <Input
+            label="Username"
+            labelPlacement="outside"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            variant="bordered"
+            classNames={{
+              base: "max-w-sm",
+              label: "!font-semibold !text-gray-600",
+              description: "!font-semibold",
+            }}
+            startContent={
+              <span className="text-gray-500">
+                {process.env.NEXT_PUBLIC_BASE_URL}/
+              </span>
+            }
+            description="This appears in your podcast URLs"
+            color={isUsernameChanged ? "warning" : undefined}
+          />
+  
+          {isUsernameChanged && (
+            <div className="text-sm text-amber-500 font-medium -mt-2 max-w-sm">
+              ⚠️ Changing your username will break existing RSS feed links and
+              require resubmission to podcast platforms.
+            </div>
+          )}
+  
+          <Input
+            label="Display Name"
+            labelPlacement="outside"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            variant="bordered"
+            classNames={{
+              base: "max-w-2xs",
+              label: "!font-semibold !text-gray-600",
+              description: "!font-semibold",
+            }}
+            placeholder="Enter your preferred display name"
+            description="Your public display name (optional)"
+            />
+          <Button
+            color={isUsernameChanged ? "warning" : "primary"}
+            onPress={handleSave}
+            isLoading={isLoading}
+            className="self-start"
+            startContent={isUsernameChanged ? "🔒" : undefined}
+          >
+            {isUsernameChanged ? "Verify & Save Changes" : "Save Changes"}
+          </Button>
+        </div>
       </div>
 
       {/* Confirmation Modal */}

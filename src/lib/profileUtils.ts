@@ -108,7 +108,7 @@ export async function validateUsername(username: string) {
 
 export async function updateProfile(
   userId: string, 
-  updates: { username?: string; display_name?: string | null }
+  updates: { username?: string; display_name?: string | null; avatar_url?: string | null }
 ) {
   const supabaseServer = createServerClient();
   

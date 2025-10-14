@@ -8,6 +8,7 @@ import {
 import { useRouter } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
 import { MdAccountCircle, MdPodcasts, MdSettings, MdHelp, MdLogout } from 'react-icons/md';
+import { Image } from '@heroui/image';
 
 import { supabase } from '@/lib/supabase';
 
@@ -15,6 +16,7 @@ type Props = {
   user: User;
   profile?:  {
     display_name?: string;
+    avatar_url?: string;
   } | null;
   isLoading: boolean;
 };
@@ -46,13 +48,24 @@ export default function UserMenu({ user, profile, isLoading }: Props) {
           className="flex items-center gap-2 p-1 rounded-lg hover:bg-white/10 transition-colors"
           name="User Menu"  
         >
-          <MdAccountCircle 
-            data-testid="account-circle-icon"
-            data-name={displayName}
-            color="white" 
-            size={36}
-            className="cursor-pointer"
-          />
+          {profile?.avatar_url ? (
+            <div className="w-9 h-9 rounded-full border-gradient overflow-hidden">
+              <Image
+                src={profile.avatar_url}
+                alt={displayName || 'User avatar'}
+                className="w-full h-full object-cover rounded-full cursor-pointer"
+                style={{ transform: 'scale(1.05)' }}
+              />
+            </div>
+          ) : (
+            <MdAccountCircle 
+              data-testid="account-circle-icon"
+              data-name={displayName}
+              color="white" 
+              size={36}
+              className="cursor-pointer"
+            />
+          )}
         </button>
       </DropdownTrigger>
       

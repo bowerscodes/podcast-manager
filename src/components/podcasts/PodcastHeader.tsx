@@ -60,7 +60,7 @@ export default function PodcastHeader({
               refresh();
             }}
             fallback={defaultArtwork()}
-            className="rounded-lg shadow-md"
+            borderThickness="thick"
           />
         </div>
 

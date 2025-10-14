@@ -62,6 +62,19 @@ export function useProfile() {
     loadProfile();
   }, [loadProfile]);
 
+  // Listen for profileUpdated events
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      loadProfile();
+    };
+
+    window.addEventListener("profileUpdated", handleProfileUpdate);
+    
+    return () => {
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
+    };
+  }, [loadProfile]);
+
   return {
     profile,
     loading,
