@@ -149,17 +149,20 @@ export default function EditableImage({
         onMouseLeave={() => setIsHovered(false)}
       >
         {src ? (
-          <Image
-            src={src}
-            alt={alt}
-            className={`w-full h-full object-cover cursor-pointer ${circular ? 'rounded-full' : 'rounded-lg'}`}
-            style={{ transform: 'scale(1.05)' }}
+          <div
+            className={`w-full h-full cursor-pointer ${circular ? 'rounded-full' : 'rounded-lg'}`}
             onClick={() => setIsEditing(true)}
+            style={{
+              backgroundImage: `url(${src})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              transform: "scale(1.02)",
+            }}
           />
         ) : (
           <div
             className={`w-full h-full overflow-hidden cursor-pointer ${circular ? 'rounded-full' : 'rounded-lg'}`}
-            style={{ transform: 'scale(1.05)' }}
             onClick={() => setIsEditing(true)}
           >
             {fallback}
@@ -174,7 +177,7 @@ export default function EditableImage({
             style={{
               pointerEvents: "auto",
               backgroundColor: "rgba(0, 0, 0, 0.6)",
-              transform: "scale(1.05)",
+              transform: "scale(1.02)",
             }}
           >
             <div className="bg-gray-800 bg-opacity-90 rounded-full p-3 transform hover:scale-110 transition-transform">
