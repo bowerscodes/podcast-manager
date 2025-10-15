@@ -47,7 +47,6 @@ export default function EmailForm({ user }: { user: User }) {
         return;
       }
 
-      toast.success("Confirmation email sent! Check your current email address to confirm the change.");
       setCurrentEmail("");
       setNewEmail("");
     } finally {

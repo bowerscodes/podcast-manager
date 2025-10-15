@@ -39,7 +39,6 @@ export default function EditableImage({
 
   // Reset state when src changes
   useEffect(() => {
-    console.log("EditableImage useEffect - src changed to:", src);
     // Only set imageUrl if it's an external URL, not a Supabase URL
     if (src && src.includes('.supabase.co/storage/')) {
       setImageUrl(""); // Clear the input for Supabase URLs
@@ -119,7 +118,7 @@ export default function EditableImage({
     try {
       await onSave(url);
       setIsEditing(false);
-      toast.success("Image uploaded successfully");
+      // Don't show toast here - let parent component handle success notification
     } catch (error) {
       console.error("Error saving uploaded image:", error);
       toast.error("Failed to save uploaded image");

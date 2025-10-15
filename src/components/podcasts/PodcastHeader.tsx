@@ -49,6 +49,8 @@ export default function PodcastHeader({
           <EditableImage
             src={displayPodcast.artwork}
             alt={`${displayPodcast.title} artwork`}
+            userId={displayPodcast.user_id}
+            imageType="artwork"
             onSave={async (newImageUrl: string) => {
               const { error } = await supabase
                 .from("podcasts")

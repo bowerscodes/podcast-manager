@@ -34,7 +34,6 @@ export default function DeleteModal(props: DeleteModalProps) {
 
       if (error) throw error;
 
-      toast.success(`${itemType} deleted successfully`);
       onSuccess();
       onClose();
     } catch (error) {

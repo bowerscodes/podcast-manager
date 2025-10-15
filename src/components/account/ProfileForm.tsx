@@ -82,7 +82,6 @@ export default function ProfileForm({ user, profile }: Props) {
         return;
       }
 
-      toast.success("Avatar updated successfully");
       window.dispatchEvent(new CustomEvent("profileUpdated"));
     } catch (error) {
       console.error("Error updating avatar:", error);
@@ -149,8 +148,6 @@ export default function ProfileForm({ user, profile }: Props) {
         setIsLoading(false);
         return;
       }
-
-      toast.success("Profile updated successfully");
 
       window.dispatchEvent(new CustomEvent("profileUpdated"));
     } catch (error) {

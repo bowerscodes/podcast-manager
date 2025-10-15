@@ -3,11 +3,11 @@ import { supabase } from '@/lib/supabase';
 
 /**
  * Custom hook to load images from Supabase Storage with authentication
- * Handles both private Supabase bucket URLs and external URLs
+ * Handles private buckets (avatars) with auth, public buckets (artwork), and external URLs
  * 
  * @param src - Image URL (Supabase Storage or external)
- * @param imageType - Type of image ('avatar' or 'artwork') to determine bucket
- * @returns Blob URL for authenticated Supabase images, or original URL for external images
+ * @param imageType - Type of image ('avatar' or 'artwork') to determine bucket and access method
+ * @returns Blob URL for private authenticated images, or direct URL for public/external images
  */
 export function useAuthenticatedImage(
   src: string | null | undefined,
@@ -21,19 +21,35 @@ export function useAuthenticatedImage(
       return;
     }
 
-    // If it's a Supabase Storage URL, download with auth
-    if (src.includes('.supabase.co/storage/')) {
+    // Check if it's a Supabase Storage URL
+    const isSupabaseUrl = src.includes('.supabase.co/storage/');
+    
+    if (!isSupabaseUrl) {
+      // External URL, use directly
+      setBlobUrl(src);
+      return;
+    }
+
+    // It's a Supabase URL - handle based on bucket type
+    if (imageType === 'artwork') {
+      // Artwork bucket is public - use URL directly for better performance
+      setBlobUrl(src);
+      return;
+    }
+
+    // Avatars bucket is private - download with authentication
+    if (imageType === 'avatar') {
       let mounted = true;
       let currentBlobUrl: string | null = null;
 
       async function loadAuthenticatedImage() {
         try {
-          const bucket = imageType === 'avatar' ? 'avatars' : 'artwork';
+          const bucket = 'avatars';
           
           // Extract the file path from the URL
           const urlParts = src!.split(`${bucket}/`);
           if (urlParts.length < 2) {
-            console.error('Invalid Supabase URL format');
+            console.error('Invalid Supabase avatar URL format:', src);
             if (mounted) setBlobUrl(src ?? null); // Fallback
             return;
           }
@@ -45,7 +61,7 @@ export function useAuthenticatedImage(
             .download(filePath);
 
           if (error) {
-            console.error('Error downloading image:', error);
+            console.error('Error downloading avatar:', error);
             if (mounted) setBlobUrl(src ?? null); // Fallback
             return;
           }
@@ -55,7 +71,7 @@ export function useAuthenticatedImage(
           currentBlobUrl = blob;
           if (mounted) setBlobUrl(blob);
         } catch (error) {
-          console.error('Error loading authenticated image:', error);
+          console.error('Error loading authenticated avatar:', error);
           if (mounted) setBlobUrl(src ?? null); // Fallback
         }
       }
@@ -69,9 +85,6 @@ export function useAuthenticatedImage(
           URL.revokeObjectURL(currentBlobUrl);
         }
       };
-    } else {
-      // External URL, use directly
-      setBlobUrl(src);
     }
   }, [src, imageType]);
 

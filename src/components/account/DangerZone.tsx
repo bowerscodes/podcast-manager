@@ -38,9 +38,6 @@ export default function DangerZone({ user }: Props) {
       // Sign out the user
       await supabase.auth.signOut();
       
-      // Show success message
-      toast.success("Account deleted successfully");
-      
       // Redirect to home page
       router.push("/");
     } catch (error) {

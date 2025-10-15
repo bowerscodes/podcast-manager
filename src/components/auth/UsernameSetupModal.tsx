@@ -92,8 +92,6 @@ export default function UsernameSetupModal({ onComplete }: Props) {
         return;
       }
 
-      toast.success("Username set successfully");
-
       // Fire profileUpdated event for cross-component sync
       window.dispatchEvent(
         new CustomEvent("profileUpdated", { detail: { username: cleanUsername } })

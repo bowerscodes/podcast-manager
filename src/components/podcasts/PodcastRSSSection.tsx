@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 
 import { Podcast } from "@/types/podcast";
 import { CardBody } from "@heroui/card";
@@ -34,7 +33,6 @@ export default function PodcastRSSSection({ podcast }: Props) {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success("RSS URL copied to clipboard");
   };
 
   const rssUrl = profile?.username 

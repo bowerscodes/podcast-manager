@@ -120,7 +120,6 @@ export default function PodcastFormClient({
           throw error;
         }
 
-        toast.success("Podcast updated successfully!");
         clearPersistedData();
         onSuccess();
       } else {
@@ -157,7 +156,6 @@ export default function PodcastFormClient({
         }
 
         clearPersistedData();
-        toast.success("Podcast created successfully!");
         router.push(`/${username}/${data.podcast_name}`);
       }
     } catch (error) {

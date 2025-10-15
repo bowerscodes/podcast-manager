@@ -47,7 +47,7 @@ export default function ImageUpload({
       }
 
       onImageSelected(url);
-      toast.success("Image uploaded successfully!");
+      // Don't show toast here - let parent component handle success notification
     } catch (error) {
       console.error("Error uploading image:", error);
       toast.error("Error uploading image. Please try again.");

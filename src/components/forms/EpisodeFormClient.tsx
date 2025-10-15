@@ -314,11 +314,6 @@ export default function EpisodeFormClient({
         }
       }
 
-      toast.success(
-        isEditMode
-          ? `Episode ${isDraft ? "saved as draft" : "updated"} successfully!`
-          : `Episode ${isDraft ? "saved as draft" : "published"} successfully!`
-      );
       clearPersistedData();
       onSuccess();
     } catch (error) {
