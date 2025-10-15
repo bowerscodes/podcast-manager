@@ -70,11 +70,12 @@ export default function ImageUpload({
       />
       
       <Button
-        size="sm"
+        size="md"
         color="primary"
         onPress={() => imageInputRef.current?.click()}
         isLoading={isUploading}
         fullWidth
+        style={{ background: "var(--gradient-primary)" }}
       >
         {isUploading 
           ? "Uploading..." 

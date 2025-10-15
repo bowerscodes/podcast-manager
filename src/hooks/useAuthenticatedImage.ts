@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, isStorageProviderUrl } from '@/lib/supabase';
 
 /**
  * Custom hook to load images from Supabase Storage with authentication
@@ -21,10 +21,10 @@ export function useAuthenticatedImage(
       return;
     }
 
-    // Check if it's a Supabase Storage URL
-    const isSupabaseUrl = src.includes('.supabase.co/storage/');
+    // Check if it's from our storage provider
+    const isProviderUrl = isStorageProviderUrl(src);
     
-    if (!isSupabaseUrl) {
+    if (!isProviderUrl) {
       // External URL, use directly
       setBlobUrl(src);
       return;

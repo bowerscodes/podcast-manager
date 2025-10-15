@@ -115,11 +115,11 @@ export default function ExpandableContent({
         </div>
 
         <div
-          className={`overflow-hidden transition-all duration-400 ease-in-out
+          className={`overflow-hidden transition-all duration-200 ease-in-out
             ${isExpanded ? "max-h-[100%] opacity-100" : "max-h-0 opacity-0"}  
           `}
         >
-          <div className={`px-3 pb-3 transition-all duration-400 ease-in-out ${contentClassName}`}>
+          <div className={`px-3 pb-3 transition-all duration-200 ease-in-out ${contentClassName}`}>
             {children}
           </div>
         </div>

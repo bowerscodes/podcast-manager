@@ -4,6 +4,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 import ImageUpload from "./ImageUpload";
 import { ImageType } from "@/lib/imageUploadUtils";
 import { useAuthenticatedImage } from "@/hooks/useAuthenticatedImage";
+import { isStorageProviderUrl } from "@/lib/supabase";
 
 type Props = {
   src: string | null;
@@ -39,11 +40,12 @@ export default function EditableImage({
 
   // Reset state when src changes
   useEffect(() => {
-    // Only set imageUrl if it's an external URL, not a Supabase URL
-    if (src && src.includes('.supabase.co/storage/')) {
-      setImageUrl(""); // Clear the input for Supabase URLs
+    // Only show URL in input field if it's an external URL
+    // Hide storage provider URLs (Supabase, etc.) to keep internal paths private
+    if (src && !isStorageProviderUrl(src)) {
+      setImageUrl(src);
     } else {
-      setImageUrl(src || "");
+      setImageUrl(""); // Clear for storage provider URLs
     }
   }, [src]);
 
@@ -55,7 +57,13 @@ export default function EditableImage({
   }, [isEditing]);
 
   const handleCancel = useCallback(() => {
-    setImageUrl(src || "");
+    // Reset to src only if it's an external URL
+    // Don't expose storage provider URLs
+    if (src && !isStorageProviderUrl(src)) {
+      setImageUrl(src);
+    } else {
+      setImageUrl("");
+    }
     setIsEditing(false);
   }, [src]);
 
@@ -95,7 +103,12 @@ export default function EditableImage({
     } catch (error) {
       console.error("Error saving image: ", error);
       toast.error("Failed to update image");
-      setImageUrl(src || "");
+      // Reset to src only if it's an external URL
+      if (src && !isStorageProviderUrl(src)) {
+        setImageUrl(src);
+      } else {
+        setImageUrl("");
+      }
     } finally {
       setSaving(false);
     }
@@ -219,9 +232,9 @@ export default function EditableImage({
             className="rounded-lg p-6 max-w-md w-full mx-4"
             style={{ background: "var(--gradient-card-subtle)" }}
           >
-            <h3 className="text-lg text-gradient font-semibold mb-4">
+            <h2 className="text-lg text-gradient font-semibold mb-4">
               Update Image
-            </h3>
+            </h2>
 
             {/* Image Preview */}
             <div className="mb-4 flex justify-center">
