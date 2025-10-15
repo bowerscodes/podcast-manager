@@ -2,7 +2,7 @@
 
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
 import {
@@ -39,8 +39,15 @@ type Props = {
 export default function ProfileForm({ user, profile }: Props) {
   const [username, setUsername] = useState(profile?.username || "");
   const [displayName, setDisplayName] = useState(profile?.display_name || "");
-  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Sync local state when profile prop changes
+  useEffect(() => {
+    if (profile) {
+      setUsername(profile.username || "");
+      setDisplayName(profile.display_name || "");
+    }
+  }, [profile]);
 
   // For the confirmation modal
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -54,10 +61,16 @@ export default function ProfileForm({ user, profile }: Props) {
   const isUsernameChanged =
     username.toLowerCase().trim() !== originalUsername.toLowerCase();
 
+  // Early return if no profile
+  if (!profile) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <p className="text-gray-500">Loading profile...</p>
+      </div>
+    );
+  }
 
   const handleAvatarUpdate = async (newImageUrl: string) => {
-    setAvatarUrl(newImageUrl);
-    
     // Immediately save the avatar to the database
     try {
       const { success, error } = await updateProfile(user.id, {
@@ -128,7 +141,7 @@ export default function ProfileForm({ user, profile }: Props) {
       const { success, error } = await updateProfile(user.id, {
         username: cleanUsername,
         display_name: displayName.trim() || null,
-        avatar_url: avatarUrl.trim() || null,
+        avatar_url: profile.avatar_url || null,
       });
 
       if (!success) {
@@ -176,9 +189,11 @@ export default function ProfileForm({ user, profile }: Props) {
         {/* column 1 - avatar (appears first on mobile) */}
         <div className="flex justify-center md:justify-center w-full md:order-2">
           <EditableImage 
-            src={avatarUrl}
-            onSave={handleAvatarUpdate}
+            src={profile?.avatar_url || null}
             alt="Profile avatar"
+            userId={profile.id}
+            imageType="avatar"     
+            onSave={handleAvatarUpdate}
             fallback={defaultAvatar()}
             circular
             borderThickness="thick"
@@ -227,7 +242,7 @@ export default function ProfileForm({ user, profile }: Props) {
             }}
             placeholder="Enter your preferred display name"
             description="Your public display name (optional)"
-            />
+          />
           <Button
             color={isUsernameChanged ? "warning" : "primary"}
             onPress={handleSave}
@@ -310,12 +325,12 @@ export default function ProfileForm({ user, profile }: Props) {
                   value={confirmEmail}
                   onChange={(e) => setConfirmEmail(e.target.value)}
                   className="mt-2"
-                  autoComplete="new-password" // This tricks browsers better than "off"
+                  autoComplete="new-password"
                   autoCorrect="off"
                   autoCapitalize="off"
                   name={`confirm-email-${Math.random()
                     .toString(36)
-                    .substring(2, 8)}`} // Random name prevents matching
+                    .substring(2, 8)}`}
                   spellCheck="false"
                 />
               </div>

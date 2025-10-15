@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Image } from "@heroui/image";
 import toast from "react-hot-toast";
 import { AiOutlineEdit } from "react-icons/ai";
+import ImageUpload from "./ImageUpload";
+import { ImageType } from "@/lib/imageUploadUtils";
+import { useAuthenticatedImage } from "@/hooks/useAuthenticatedImage";
 
 type Props = {
   src: string | null;
@@ -9,30 +11,41 @@ type Props = {
   onSave: (newImageUrl: string) => Promise<void>;
   fallback: React.ReactNode;
   circular?: boolean;
-  borderThickness?: 'normal' | 'thick';
+  borderThickness?: "normal" | "thick";
+  userId: string;
+  imageType: ImageType;
 };
 
 export default function EditableImage({
   src,
-  alt,
   onSave,
   fallback,
   circular = false,
-  borderThickness = 'normal',
+  borderThickness = "normal",
+  userId,
+  imageType,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [imageUrl, setImageUrl] = useState(src || "");
   const [saving, setSaving] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [imageError, setImageError] = useState(false);
+  
+  // Use custom hook to handle authenticated image loading
+  const displayUrl = useAuthenticatedImage(src, imageType);
+  const previewUrl = useAuthenticatedImage(src, imageType);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Reset state when src changes
   useEffect(() => {
-    setImageUrl(src || "");
-    setImageError(false);
+    console.log("EditableImage useEffect - src changed to:", src);
+    // Only set imageUrl if it's an external URL, not a Supabase URL
+    if (src && src.includes('.supabase.co/storage/')) {
+      setImageUrl(""); // Clear the input for Supabase URLs
+    } else {
+      setImageUrl(src || "");
+    }
   }, [src]);
 
   // Focus input when modal opens
@@ -44,7 +57,6 @@ export default function EditableImage({
 
   const handleCancel = useCallback(() => {
     setImageUrl(src || "");
-    setImageError(false);
     setIsEditing(false);
   }, [src]);
 
@@ -81,7 +93,6 @@ export default function EditableImage({
     try {
       await onSave(imageUrl);
       setIsEditing(false);
-      // Success toast is handled by the parent component
     } catch (error) {
       console.error("Error saving image: ", error);
       toast.error("Failed to update image");
@@ -100,43 +111,46 @@ export default function EditableImage({
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setImageUrl(event.target.value);
-    setImageError(false);
+  };
+
+  const handleImageUploaded = async (url: string) => {
+    // Auto-save uploaded images immediately
+    setSaving(true);
+    try {
+      await onSave(url);
+      setIsEditing(false);
+      toast.success("Image uploaded successfully");
+    } catch (error) {
+      console.error("Error saving uploaded image:", error);
+      toast.error("Failed to save uploaded image");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const renderImagePreview = () => {
-    if (!imageUrl) {
+    // Show preview from previewUrl (authenticated blob) or imageUrl (manual URL input)
+    const urlToShow = previewUrl || imageUrl;
+    
+    if (!urlToShow) {
       return (
         <div className="w-full h-full flex items-center justify-center">
           {fallback}
         </div>
       );
     }
-    if (imageError) {
-      return (
-        <div className="w-full h-full flex items-center justify-center text-red-400">
-          <div className="text-sm">Invalid URL</div>
-        </div>
-      );
-    }
     return (
-      <>
-        <Image
-          src={imageUrl}
-          alt={alt}
-          className="hidden"
-          onError={() => setImageError(true)}
-          onLoad={() => setImageError(false)}
-        />
-        <div
-          className={`w-full h-full ${circular ? 'rounded-full' : 'rounded-lg'}`}
-          style={{
-            backgroundImage: `url(${imageUrl})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
-        />
-      </>
+      <div
+        className={`w-full h-full ${
+          circular ? "rounded-full" : "rounded-lg"
+        }`}
+        style={{
+          backgroundImage: `url("${urlToShow}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
     );
   };
 
@@ -144,35 +158,43 @@ export default function EditableImage({
     <>
       {/* Main Image Display */}
       <div
-        className={`relative overflow-hidden w-48 h-48 ${circular ? 'rounded-full' : 'rounded-lg'} ${borderThickness === 'thick' ? 'border-gradient-thick' : 'border-gradient'} shadow-lg`}
+        className={`relative overflow-hidden w-48 h-48 ${
+          circular ? "rounded-full" : "rounded-lg"
+        } ${
+          borderThickness === "thick"
+            ? "border-gradient-thick"
+            : "border-gradient"
+        } shadow-lg`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {src ? (
-          <div
-            className={`w-full h-full cursor-pointer ${circular ? 'rounded-full' : 'rounded-lg'}`}
-            onClick={() => setIsEditing(true)}
-            style={{
-              backgroundImage: `url(${src})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              transform: "scale(1.02)",
-            }}
-          />
-        ) : (
-          <div
-            className={`w-full h-full overflow-hidden cursor-pointer ${circular ? 'rounded-full' : 'rounded-lg'}`}
-            onClick={() => setIsEditing(true)}
-          >
-            {fallback}
-          </div>
-        )}
+        <div
+          className={`w-full h-full cursor-pointer ${
+            circular ? "rounded-full" : "rounded-lg"
+          }`}
+          onClick={() => setIsEditing(true)}
+          style={{
+            backgroundImage: displayUrl ? `url("${displayUrl}")` : 'none',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            transform: "scale(1.02)",
+          }}
+        >
+          {/* Show fallback if no src */}
+          {!displayUrl && (
+            <div className="w-full h-full flex items-center justify-center">
+              {fallback}
+            </div>
+          )}
+        </div>
 
         {/* Hover overlay with Edit icon */}
         {isHovered && (
           <div
-            className={`absolute inset-0 bg-black flex items-center justify-center cursor-pointer transition-all duration-200 z-20 ${circular ? 'rounded-full' : 'rounded-lg'}`}
+            className={`absolute inset-0 bg-black flex items-center justify-center cursor-pointer transition-all duration-200 z-20 ${
+              circular ? "rounded-full" : "rounded-lg"
+            }`}
             onClick={() => setIsEditing(true)}
             style={{
               pointerEvents: "auto",
@@ -204,15 +226,39 @@ export default function EditableImage({
 
             {/* Image Preview */}
             <div className="mb-4 flex justify-center">
-              <div className={`w-32 h-32 border border-gray-300 overflow-hidden bg-gray-50 flex items-center justify-center ${circular ? 'rounded-full' : 'rounded-lg'}`}>
+              <div
+                className={`w-32 h-32 border border-gray-300 overflow-hidden bg-gray-50 flex items-center justify-center ${
+                  circular ? "rounded-full" : "rounded-lg"
+                }`}
+              >
                 {renderImagePreview()}
+              </div>
+            </div>
+
+            {/* Image Upload */}
+            <div className="mb-4">
+              <ImageUpload
+                userId={userId}
+                imageType={imageType}
+                onImageSelected={handleImageUploaded}
+              />
+            </div>
+
+            {/* Divider */}
+            <div className="relative my-4 mb-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-gradient text-gray-500">or</span>
+                </div>
+                <div className="w-full border-t border-gray-300"></div>
               </div>
             </div>
 
             {/* URL Input */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image URL
+                Or paste an external image URL:
               </label>
               <input
                 ref={inputRef}
@@ -220,10 +266,13 @@ export default function EditableImage({
                 value={imageUrl}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
-                placeholder="Enter image URL..."
+                placeholder="https://example.com/image.jpg"
                 className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={saving}
               />
+              <p className="text-xs text-gray-500 mt-1">
+                For external images only. Uploaded images are managed automatically.
+              </p>
             </div>
 
             {/* Clear option */}

@@ -4,13 +4,18 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 
+type Profile = {
+  id: string;
+  username: string;
+  display_name?: string;
+  avatar_url?: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export function useProfile() {
   const { user } = useAuth();
-  const [profile, setProfile] = useState<{ 
-    username?: string; 
-    display_name?: string;
-    avatar_url?: string;
-  } | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [showUsernameSetup, setShowUsernameSetup] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -27,7 +32,7 @@ export function useProfile() {
       
       const { data, error } = await supabase
         .from("profiles")
-        .select("username, display_name, avatar_url")
+        .select("*")
         .eq("id", user.id)
         .maybeSingle();
 
