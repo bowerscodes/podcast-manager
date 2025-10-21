@@ -1,8 +1,9 @@
 'use client';
 
-import { Card, CardHeader, CardBody, CardFooter } from '@heroui/card';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
+
+import { Card, CardHeader, CardBody, CardFooter } from '@/components/ui/Card';
 
 type Props = {
   header?: ReactNode
@@ -29,7 +30,6 @@ export default function ActionCard({
     <Card 
       className="action-card group"
       isPressable
-      disableRipple
       onPress={handlePress}
     >
       <CardHeader className='p-6 flex-col items-start'>

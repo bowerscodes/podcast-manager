@@ -1,4 +1,4 @@
-import { Card, CardBody } from "@heroui/card";
+import { Card, CardBody } from "@/components/ui/Card";
 
 type Props = {
   episodeCount: number;

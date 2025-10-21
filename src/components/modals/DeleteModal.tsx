@@ -1,10 +1,10 @@
-import { Modal, ModalContent } from "@heroui/modal";
-import { Card, CardBody, CardHeader } from "@heroui/card";
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { Modal, ModalContent } from "@heroui/modal";
 import toast from "react-hot-toast";
 import { Button } from "@heroui/button";
 
+import { supabase } from "@/lib/supabase";
+import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 
 type DeleteModalProps = {
   isOpen: boolean;

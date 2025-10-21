@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Button } from "@heroui/button";
 
 import { Podcast } from "@/types/podcast";
-import { CardBody } from "@heroui/card";
-import { Button } from "@heroui/button";
+import { CardBody } from "@/components/ui/Card";
 import { applePodcastsSubmitLink, spotifyPodcastsSubmitLink } from "@/lib/data";
 import { supabase } from "@/lib/supabase";
 

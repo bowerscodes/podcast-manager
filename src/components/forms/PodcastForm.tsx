@@ -1,6 +1,6 @@
-import { Card, CardHeader, CardBody } from "@heroui/card";
 
 import { Podcast } from "@/types/podcast";
+import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import PodcastFormClient from "./PodcastFormClient";
 
 type Props = {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Card, CardBody } from '@heroui/card';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
+
+import { Card, CardBody } from '@/components/ui/Card';
 import EpisodeModal from '@/components/modals/EpisodeModal';
 
 

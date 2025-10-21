@@ -1,8 +1,9 @@
 "use client";
 
-import { Card } from "@heroui/card";
 import { useState } from "react";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
+
+import { Card } from "@/components/ui/Card";
 
 type ExpandableContentProps = {
   title?: string;

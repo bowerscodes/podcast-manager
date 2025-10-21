@@ -1,9 +1,9 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Card } from "@heroui/card";
 import { Image } from "@heroui/image";
 
 import { Podcast } from "@/types/podcast";
+import { Card } from "@/components/ui/Card";
 import { defaultArtwork } from "@/lib/data";
 import { supabase } from "@/lib/supabase";
 

@@ -1,8 +1,9 @@
+import { MdExpandLess, MdExpandMore } from "react-icons/md";
+
 import { Episode } from "@/types/podcast";
 import EpisodeRow from "./EpisodeRow";
 import Tag from "@/components/ui/Tag";
 import ExpandableContent from "@/components/ui/ExpandableContent";
-import { MdExpandLess, MdExpandMore } from "react-icons/md";
 
 type SeasonAccordionProps = {
   seasonNumber: string;

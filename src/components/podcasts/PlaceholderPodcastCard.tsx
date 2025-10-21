@@ -1,5 +1,6 @@
-import { Card, CardBody } from "@heroui/card";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+
+import { Card, CardBody } from "@/components/ui/Card"
 
 type Props = {
   isFirstInList?: boolean;

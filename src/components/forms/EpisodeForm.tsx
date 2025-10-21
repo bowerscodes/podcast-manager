@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody } from '@heroui/card';
+import { Card, CardHeader, CardBody } from '@/components/ui/Card';
 
 import { Episode } from '@/types/podcast';
 import EpisodeFormClient from './EpisodeFormClient';
