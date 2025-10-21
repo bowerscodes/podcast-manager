@@ -53,18 +53,22 @@ export default function EpisodeRow({
               )}
               <div className="flex items-center flex-row gap-1 flex-shrink-0 ">
                 <Button
-                  className="flex items-center justify-center px-1 aspect-square w-6 h-6 min-w-0"
+                  isIconOnly
                   size="sm"
                   color="primary"
+                  variant="solid"
                   onPress={() => setIsEditModalOpen(true)}
+                  aria-label="Edit episode"
                 >
                   <AiOutlineEdit size={18} />
                 </Button>
                 <Button
-                  className="flex items-center justify-center px-1 aspect-square w-6 h-6 min-w-0"
+                  isIconOnly
                   size="sm"
                   color="danger"
+                  variant="solid"
                   onPress={() => setIsDeleteModalOpen(true)}
+                  aria-label="Delete episode"
                 >
                   <MdDeleteForever size={18} />
                 </Button>
