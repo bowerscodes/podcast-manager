@@ -17,20 +17,6 @@ jest.mock('react-icons/md', () => ({
   ),
 }));
 
-// Mock HeroUI Button
-jest.mock('@heroui/button', () => ({
-  Button: ({ children, onPress, className, ...props }: { 
-    children: React.ReactNode; 
-    onPress?: () => void; 
-    className?: string;
-    [key: string]: unknown;
-  }) => (
-    <button onClick={onPress} className={className} {...props}>
-      {children}
-    </button>
-  ),
-}));
-
 describe('EpisodeDescription', () => {
   // Mock DOM element properties at a global level
   let originalScrollHeight: PropertyDescriptor | undefined;

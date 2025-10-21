@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { Spinner } from "@heroui/spinner";
 import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
 
 import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/Button";
 import { BiSolidLock } from "react-icons/bi";
 import { validateEmail } from "@/lib/emailUtils";
 

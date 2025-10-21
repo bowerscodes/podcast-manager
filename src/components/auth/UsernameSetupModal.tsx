@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
-import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { checkUsernameAvailable, updateProfile, validateUsername } from "@/lib/profileUtils";
+import { Button } from "@/components/ui/Button";
 
 type Props = {
   onComplete?: () => void;

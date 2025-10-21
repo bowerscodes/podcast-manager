@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { useForm, Controller } from "react-hook-form";
-import { Button } from "@heroui/button";
+import { Button } from "@/components/ui/Button";
 import toast from "react-hot-toast";
 
 import { validatePassword, updateUserPassword, verifyCurrentPassword } from "@/lib/SS/passwordUtils";

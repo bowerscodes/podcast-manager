@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
@@ -8,6 +7,9 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { deleteUserAccount } from "@/lib/profileUtils";
 import { supabase } from "@/lib/supabase";
+
+import { Button } from "@/components/ui/Button";
+
 
 type Props = {
   user: User;

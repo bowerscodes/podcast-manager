@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Button } from "@heroui/button";
 import { MdDeleteForever } from "react-icons/md";
 import { AiOutlineEdit } from "react-icons/ai";
 
 import { Episode } from "@/types/podcast";
 import { Card, CardHeader, CardBody } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import EpisodeModal from "@/components/modals/EpisodeModal";
 import DeleteModal from "@/components/modals/DeleteModal";
 import ExpandableText from "@/components/ui/ExpandableText";

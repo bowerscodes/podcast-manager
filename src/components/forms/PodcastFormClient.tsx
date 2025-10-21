@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/button";
 import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Checkbox } from "@heroui/checkbox";
@@ -13,6 +12,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { PodcastFormData } from "@/types/podcast";
 import { podcastCategories } from "@/lib/data";
+import { Button } from "@/components/ui/Button";
 
 type Props = {
   initialData: Partial<PodcastFormData>;

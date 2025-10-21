@@ -1,4 +1,4 @@
-import { Button } from "@heroui/button";
+import { Button } from "@/components/ui/Button";
 import { useEffect, useRef, useState } from "react";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
 

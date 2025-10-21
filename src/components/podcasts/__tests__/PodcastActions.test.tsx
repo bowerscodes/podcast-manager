@@ -72,21 +72,6 @@ jest.mock('../../modals/DeleteModal', () => {
   };
 });
 
-// Mock HeroUI Button
-jest.mock('@heroui/button', () => ({
-  Button: ({ children, onPress, variant, color, ...props }: { 
-    children: React.ReactNode; 
-    onPress?: () => void; 
-    variant?: string; 
-    color?: string; 
-    [key: string]: unknown;
-  }) => (
-    <button onClick={onPress} data-variant={variant} data-color={color} {...props}>
-      {children}
-    </button>
-  ),
-}));
-
 describe('PodcastActions', () => {
   const mockPodcast = {
     id: 'podcast-123',

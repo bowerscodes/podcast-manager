@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
@@ -19,8 +18,10 @@ import {
   updateProfile,
   validateUsername,
 } from "@/lib/profileUtils";
+import { Button } from "@/components/ui/Button";
 import EditableImage from "../ui/EditableImage";
 import { defaultAvatar } from "@/lib/data";
+import { RiLockPasswordFill } from "react-icons/ri";
 
 type Profile = {
   id: string;
@@ -198,7 +199,7 @@ export default function ProfileForm({ user, profile }: Props) {
         </div>
 
         {/* column 2 - form fields (appears second on mobile) */}
-        <div className="flex flex-col gap-4 md:order-1">
+        <div className="flex flex-col gap-4 md:order-1 p-1">
           <Input
             label="Username"
             labelPlacement="outside"
@@ -245,7 +246,7 @@ export default function ProfileForm({ user, profile }: Props) {
             onPress={handleSave}
             isLoading={isLoading}
             className="self-start"
-            startContent={isUsernameChanged ? "🔒" : undefined}
+            startContent={isUsernameChanged ? <RiLockPasswordFill /> : undefined}
           >
             {isUsernameChanged ? "Verify & Save Changes" : "Save Changes"}
           </Button>

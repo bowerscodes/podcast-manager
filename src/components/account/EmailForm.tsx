@@ -1,12 +1,14 @@
 "use client";
 
-import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
 import { validateEmail, checkEmailAvailable, verifyCurrentEmail } from "@/lib/emailUtils";
 import { updateUserEmail } from "@/lib/clientEmailUtils";
+
+import { Button } from "@/components/ui/Button";
+
 
 export default function EmailForm({ user }: { user: User }) {
   const [currentEmail, setCurrentEmail] = useState("");

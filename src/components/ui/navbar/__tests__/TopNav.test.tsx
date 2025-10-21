@@ -116,7 +116,7 @@ jest.mock("@heroui/link", () => ({
   ),
 }));
 
-jest.mock("@heroui/button", () => ({
+jest.mock("@/components/ui/Button", () => ({
   Button: ({
     children,
     onPress,

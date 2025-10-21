@@ -15,36 +15,6 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// Mock HeroUI components
-jest.mock('@heroui/card', () => ({
-  Card: ({ children, className, isPressable, onPress, ...props }: { 
-    children: React.ReactNode; 
-    className?: string; 
-    isPressable?: boolean; 
-    onPress?: () => void; 
-    disableRipple?: boolean;
-    [key: string]: unknown 
-  }) => {
-    // Filter out HeroUI-specific props
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { disableRipple, ...domProps } = props;
-    return (
-      <div 
-        className={className} 
-        onClick={isPressable ? onPress : undefined}
-        role={isPressable ? "button" : undefined}
-        tabIndex={isPressable ? 0 : undefined}
-        {...domProps}
-      >
-        {children}
-      </div>
-    );
-  },
-  CardHeader: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
-  CardBody: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
-  CardFooter: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
-}));
-
 describe('ActionCard', () => {
   const defaultProps = {
     header: <h3>Test Header</h3>,

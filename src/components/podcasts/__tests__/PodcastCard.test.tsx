@@ -18,30 +18,6 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// Mock HeroUI components
-jest.mock('@heroui/card', () => ({
-  Card: ({ children, className, isPressable, onPress, ...props }: { children: React.ReactNode; className?: string; isPressable?: boolean; onPress?: () => void; [key: string]: unknown }) => (
-    <div 
-      className={className} 
-      onClick={isPressable ? onPress : undefined}
-      role={isPressable ? "button" : undefined}
-      tabIndex={isPressable ? 0 : undefined}
-      {...props}
-    >
-      {children}
-    </div>
-  ),
-  CardHeader: ({ children, className, ...props }: { children: React.ReactNode; className?: string; [key: string]: unknown }) => (
-    <div className={className} {...props}>{children}</div>
-  ),
-  CardBody: ({ children, className, ...props }: { children: React.ReactNode; className?: string; [key: string]: unknown }) => (
-    <div className={className} {...props}>{children}</div>
-  ),
-  CardFooter: ({ children, className, ...props }: { children: React.ReactNode; className?: string; [key: string]: unknown }) => (
-    <div className={className} {...props}>{children}</div>
-  ),
-}));
-
 jest.mock('@heroui/image', () => ({
   Image: ({ alt, src, className }: { alt: string; src: string; className?: string }) => (
     // eslint-disable-next-line @next/next/no-img-element

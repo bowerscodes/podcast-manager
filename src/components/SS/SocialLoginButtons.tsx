@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@heroui/button';
+import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
 

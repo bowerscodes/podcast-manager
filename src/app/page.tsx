@@ -2,10 +2,12 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/providers/Providers';
-import { Button } from '@heroui/button';
 import Link from 'next/link';
 import { MdLink, MdPodcasts, MdRssFeed } from 'react-icons/md';
+
+import { useAuth } from '@/providers/Providers';
+import { Button } from '@/components/ui/Button';
+
 
 export default function Home() {
   const { user, loading } = useAuth();

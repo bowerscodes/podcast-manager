@@ -144,35 +144,6 @@ jest.mock("@/components/ui/ExpandableText", () => {
   };
 });
 
-// Mock HeroUI Button
-jest.mock("@heroui/button", () => ({
-  Button: ({
-    children,
-    onPress,
-    variant,
-    color,
-    className,
-    ...props
-  }: {
-    children: React.ReactNode;
-    onPress?: () => void;
-    variant?: string;
-    color?: string;
-    className?: string;
-    [key: string]: unknown;
-  }) => (
-    <button
-      onClick={onPress}
-      className={className}
-      data-variant={variant}
-      data-color={color}
-      {...props}
-    >
-      {children}
-    </button>
-  ),
-}));
-
 describe("PodcastHeader", () => {
   const mockPodcast: Podcast = {
     id: "podcast-123",

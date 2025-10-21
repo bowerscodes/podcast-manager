@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { Button } from '@heroui/button';
 
+import { Button } from '@/components/ui/Button';
 
 export default function AuthError() {
   return (

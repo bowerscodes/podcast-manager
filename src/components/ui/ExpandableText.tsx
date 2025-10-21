@@ -1,6 +1,8 @@
-import { Button } from "@heroui/button";
 import { useEffect, useRef, useState } from "react";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
+
+import { Button } from "@/components/ui/Button";
+
 
 type ExpandableTextProps = {
   text: string;

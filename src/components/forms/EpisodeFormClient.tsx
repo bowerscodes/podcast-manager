@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
+import { Input, Textarea } from "@heroui/input";
+import { Checkbox } from "@heroui/checkbox";
+import toast from "react-hot-toast";
+
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { EpisodeFormData } from "@/types/podcast";
 import { useFormPersistence } from "@/hooks/useFormPersistence";
-import { Button } from "@heroui/button";
-import { Input, Textarea } from "@heroui/input";
-import { Checkbox } from "@heroui/checkbox";
-import toast from "react-hot-toast";
+import { Button } from "@/components/ui/Button";
+
 
 type Props = {
   podcastId: string;
@@ -412,7 +414,6 @@ export default function EpisodeFormClient({
 
       <div className="flex gap-4 mt-6">
         <Button
-          type="button"
           color="primary"
           isLoading={isLoading}
           onPress={handlePublish}
@@ -420,7 +421,6 @@ export default function EpisodeFormClient({
           Publish Episode
         </Button>
         <Button
-          type="button"
           variant="bordered"
           color="primary"
           isLoading={isLoading}
@@ -428,7 +428,7 @@ export default function EpisodeFormClient({
         >
           Save Draft
         </Button>
-        <Button type="button" variant="light" onPress={() => handleCancel()}>
+        <Button variant="light" onPress={() => handleCancel()}>
           Cancel
         </Button>
       </div>

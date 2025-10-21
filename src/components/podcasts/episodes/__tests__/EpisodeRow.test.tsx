@@ -25,32 +25,6 @@ jest.mock('@/components/modals/DeleteModal', () => {
   };
 });
 
-// Mock HeroUI components
-jest.mock('@heroui/card', () => ({
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => <div className={className}>{children}</div>,
-  CardHeader: ({ children, className }: { children: React.ReactNode; className?: string }) => <div className={className}>{children}</div>,
-  CardBody: ({ children, className }: { children: React.ReactNode; className?: string }) => <div className={className}>{children}</div>,
-}));
-
-jest.mock('@heroui/button', () => ({
-  Button: ({ children, onPress, className, color, size }: { 
-    children: React.ReactNode; 
-    onPress?: () => void; 
-    className?: string; 
-    color?: string; 
-    size?: string;
-  }) => (
-    <button 
-      onClick={onPress} 
-      className={`${className} ${color} ${size}`}
-      data-color={color}
-      data-size={size}
-    >
-      {children}
-    </button>
-  ),
-}));
-
 // Mock react-icons
 jest.mock('react-icons/ai', () => ({
   AiOutlineEdit: () => <span data-testid="edit-icon">✏️</span>,

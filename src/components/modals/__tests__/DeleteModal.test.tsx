@@ -26,10 +26,10 @@ jest.mock('@/lib/supabase', () => ({
 
 // Mock HeroUI components
 jest.mock('@heroui/modal', () => ({
-  Modal: ({ isOpen, onOpenChange, children }: { 
+  Modal: ({ children, isOpen, onOpenChange }: { 
+    children: React.ReactNode; 
     isOpen: boolean; 
     onOpenChange: (open: boolean) => void; 
-    children: React.ReactNode; 
   }) => 
     isOpen ? (
       <div data-testid="modal" onClick={() => onOpenChange(false)}>
@@ -38,31 +38,6 @@ jest.mock('@heroui/modal', () => ({
     ) : null,
   ModalContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div className={className}>{children}</div>
-  ),
-}));
-
-jest.mock('@heroui/card', () => ({
-  Card: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  CardHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  CardBody: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
-
-jest.mock('@heroui/button', () => ({
-  Button: ({ children, onPress, color, isLoading, disabled }: { 
-    children: React.ReactNode; 
-    onPress?: () => void; 
-    color?: string; 
-    isLoading?: boolean;
-    disabled?: boolean;
-  }) => (
-    <button 
-      onClick={onPress} 
-      data-color={color}
-      disabled={disabled || isLoading}
-      data-loading={isLoading}
-    >
-      {children}
-    </button>
   ),
 }));
 

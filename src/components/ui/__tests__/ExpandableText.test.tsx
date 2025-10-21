@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import ExpandableText from '../ExpandableText';
 
 // Mock HeroUI Button
-jest.mock('@heroui/button', () => ({
+jest.mock('@/components/ui/Button', () => ({
   Button: ({ children, onPress, className, ...props }: { 
     children: React.ReactNode; 
     onPress?: () => void; 

@@ -74,56 +74,6 @@ jest.mock('@/lib/supabase', () => ({
   }
 }));
 
-// Mock HeroUI components
-jest.mock('@heroui/button', () => ({
-  Button: ({ children, onPress, type, isLoading, ...props }: { children: React.ReactNode; onPress?: () => void; type?: 'button' | 'submit' | 'reset'; isLoading?: boolean; [key: string]: unknown }) => (
-    <button onClick={onPress} type={type} disabled={isLoading} {...props}>
-      {children}
-    </button>
-  ),
-}));
-
-jest.mock('@heroui/input', () => ({
-  Input: ({ label, value, onChange, type, ...props }: { label?: string; value?: string; onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; type?: string; [key: string]: unknown }) => (
-    <div>
-      <label>{label}</label>
-      <input 
-        aria-label={label}
-        value={value} 
-        onChange={onChange} 
-        type={type}
-        {...props} 
-      />
-    </div>
-  ),
-  Textarea: ({ label, value, onChange, rows, ...props }: { label?: string; value?: string; onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void; rows?: number; [key: string]: unknown }) => (
-    <div>
-      <label>{label}</label>
-      <textarea 
-        aria-label={label}
-        value={value}
-        onChange={onChange}
-        rows={rows}
-        {...props}
-      />
-    </div>
-  )
-}));
-
-jest.mock('@heroui/checkbox', () => ({
-  Checkbox: ({ children, isSelected, onValueChange, ...props }: { children: React.ReactNode; isSelected?: boolean; onValueChange?: (value: boolean) => void; [key: string]: unknown }) => (
-    <label>
-      <input 
-        type="checkbox"
-        checked={isSelected}
-        onChange={(e) => onValueChange?.(e.target.checked)}
-        {...props}
-      />
-      {children}
-    </label>
-  ),
-}));
-
 describe('EpisodeFormClient', () => {
   const defaultProps = {
     podcastId: 'podcast-123',

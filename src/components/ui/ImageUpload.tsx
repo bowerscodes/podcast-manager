@@ -1,10 +1,11 @@
 "use client";
 
 import { ImageType, uploadImage } from "@/lib/imageUploadUtils";
-import { Button } from "@heroui/button";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaCamera } from "react-icons/fa";
+
+import { Button } from "@/components/ui/Button";
 
 
 type ImageUploadProps = {

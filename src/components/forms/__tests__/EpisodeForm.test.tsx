@@ -26,13 +26,6 @@ jest.mock('../EpisodeFormClient', () => {
   };
 });
 
-// Mock HeroUI components
-jest.mock('@heroui/card', () => ({
-  Card: ({ children }: { children: React.ReactNode }) => <div data-testid="card">{children}</div>,
-  CardHeader: ({ children }: { children: React.ReactNode }) => <div data-testid="card-header">{children}</div>,
-  CardBody: ({ children }: { children: React.ReactNode }) => <div data-testid="card-body">{children}</div>,
-}));
-
 describe('EpisodeForm', () => {
   const mockOnSuccess = jest.fn();
   const mockOnCancel = jest.fn();

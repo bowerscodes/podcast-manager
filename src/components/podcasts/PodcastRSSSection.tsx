@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@heroui/button";
 
 import { Podcast } from "@/types/podcast";
-import { CardBody } from "@/components/ui/Card";
-import { applePodcastsSubmitLink, spotifyPodcastsSubmitLink } from "@/lib/data";
 import { supabase } from "@/lib/supabase";
+import { CardBody } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { applePodcastsSubmitLink, spotifyPodcastsSubmitLink } from "@/lib/data";
 
 type Props = {
   podcast: Podcast;

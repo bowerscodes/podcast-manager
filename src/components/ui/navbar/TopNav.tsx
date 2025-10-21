@@ -1,16 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@heroui/button";
-import { useDisclosure } from "@heroui/modal";
 
 import { useAuth } from "@/providers/Providers";
 import { useProfile } from "@/hooks/useProfile";
+import { useDisclosure } from "@/hooks/useDisclosure";
 import UserMenu from "./UserMenu";
+import { Button } from "@/components/ui/Button";
 import LoginModal from "./LoginModal";
 import UsernameSetupModal from "@/components/auth/UsernameSetupModal";
 import { appTitle } from "@/lib/data";
-import { useState } from "react";
 
 export default function TopNav() {
   const { user } = useAuth();

@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@heroui/button";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 import { useAuth } from "@/providers/Providers";
 import { Podcast } from "@/types/podcast";
-import toast from "react-hot-toast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { Button } from "@/components/ui/Button";
 import PodcastCard from "../../components/podcasts/PodcastCard";
 import PlaceholderPodcastCard from "@/components/podcasts/PlaceholderPodcastCard";
 import PodcastModal from "@/components/modals/PodcastModal";

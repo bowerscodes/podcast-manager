@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@heroui/button";
+import { Button } from "@/components/ui/Button";
 import { Input } from "@heroui/input";
 import toast from "react-hot-toast";
 import { supabase } from "@/lib/supabase";

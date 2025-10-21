@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@heroui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Podcast } from "@/types/podcast";
 import DeleteModal from "../modals/DeleteModal";
 import BackButton from "../ui/BackButton";
+import { Button } from "@/components/ui/Button";
 
 type Props = {
   podcast: Podcast;

@@ -39,6 +39,7 @@ export function Card({
       onKeyDown={handleKeyDown}
       role={isPressable ? "button" : undefined}
       tabIndex={isPressable ? 0 : undefined}
+      data-pressable={isPressable}
       {...props}
     >
       {children}

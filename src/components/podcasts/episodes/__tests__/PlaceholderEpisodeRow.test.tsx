@@ -19,29 +19,7 @@ jest.mock('@/components/modals/EpisodeModal', () => {
   };
 });
 
-// Mock HeroUI components
-jest.mock('@heroui/card', () => ({
-  Card: ({ children, className, isPressable, onPress }: { 
-    children: React.ReactNode; 
-    className?: string; 
-    isPressable?: boolean;
-    onPress?: () => void;
-  }) => {
-    return (
-      <div 
-        className={className} 
-        onClick={isPressable ? onPress : undefined}
-        role={isPressable ? "button" : undefined}
-        tabIndex={isPressable ? 0 : undefined}
-      >
-        {children}
-      </div>
-    );
-  },
-  CardBody: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => 
-    <div {...props}>{children}</div>,
-}));
-
+// Mock HeroUI modal components
 jest.mock('@heroui/modal', () => ({
   Modal: ({ children, isOpen, ...props }: { 
     children: React.ReactNode; 

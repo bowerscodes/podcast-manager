@@ -22,41 +22,6 @@ jest.mock('react-hot-toast', () => ({
   }
 }));
 
-// Mock HeroUI components
-jest.mock('@heroui/button', () => ({
-  Button: ({ children, onPress, isLoading, ...props }: { 
-    children: React.ReactNode; 
-    onPress?: () => void; 
-    isLoading?: boolean; 
-    [key: string]: unknown 
-  }) => (
-    <button onClick={onPress} disabled={isLoading} {...props}>
-      {children}
-    </button>
-  ),
-}));
-
-jest.mock('@heroui/input', () => ({
-  Input: ({ label, value, onChange, type, ...props }: { 
-    label?: string; 
-    value?: string; 
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; 
-    type?: string; 
-    [key: string]: unknown 
-  }) => (
-    <div>
-      <label>{label}</label>
-      <input 
-        aria-label={label}
-        value={value} 
-        onChange={onChange} 
-        type={type}
-        {...props} 
-      />
-    </div>
-  ),
-}));
-
 describe('EmailPasswordForm', () => {
   const mockOnToggleMode = jest.fn();
   const mockOnSuccess = jest.fn();

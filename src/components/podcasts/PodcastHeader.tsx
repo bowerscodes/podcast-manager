@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { AiOutlineEdit } from "react-icons/ai";
-import { Button } from "@heroui/button";
 
 import { Podcast } from "@/types/podcast";
 import { formatDate } from "@/lib/date-utils";
 import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/Button";
 import EditableImage from "../ui/EditableImage";
 import Tag from "../ui/Tag";
 import ExpandableText from "../ui/ExpandableText";

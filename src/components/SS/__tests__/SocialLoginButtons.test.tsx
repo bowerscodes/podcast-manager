@@ -20,19 +20,6 @@ jest.mock('react-hot-toast', () => ({
   }
 }));
 
-// Mock HeroUI components
-jest.mock('@heroui/button', () => ({
-  Button: ({ children, onPress, ...props }: { 
-    children: React.ReactNode; 
-    onPress?: () => void; 
-    [key: string]: unknown 
-  }) => (
-    <button onClick={onPress} {...props}>
-      {children}
-    </button>
-  ),
-}));
-
 describe('SocialLoginButtons', () => {
   beforeEach(() => {
     jest.clearAllMocks();
