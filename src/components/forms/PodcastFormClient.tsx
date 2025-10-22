@@ -254,7 +254,7 @@ export default function PodcastFormClient({
 
       <Textarea
         label="Description"
-        rows={4}
+        rows={3}
         value={formData.description}
         onChange={(e) => {
           setFormData({ ...formData, description: e.target.value });

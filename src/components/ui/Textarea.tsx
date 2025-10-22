@@ -40,7 +40,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     !!helperText
   );
 
-  const inputClasses = buildInputClasses(variant, hasError, `resize-none ${className}`);
+  const inputClasses = buildInputClasses(variant, hasError, `resize-none py-2 ${className}`);
 
   return (
     <div className={`flex flex-col gap-1 ${inputWidthStyles[width]}`}>
