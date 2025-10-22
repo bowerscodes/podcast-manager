@@ -28,7 +28,7 @@ export default function EpisodeRow({
   return (
     <>
       <div className={className}>
-        <Card className="flex flex-col mb-3 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <Card className="flex flex-col p-3 mb-3 bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
           <CardHeader className="flex justify-between items-center pb-0 gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <h3 className="break-words truncate flex-shrink">

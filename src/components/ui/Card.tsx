@@ -53,7 +53,7 @@ export function CardHeader({
   ...props
 }: { children: ReactNode; className?: string } & HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={`p-4 ${className}`} {...props}>
+    <div className={`${className}`} {...props}>
       {children}
     </div>
   );
@@ -65,7 +65,7 @@ export function CardBody({
   ...props
 }: { children: ReactNode; className?: string } & HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={`p-4 ${className}`} {...props}>
+    <div className={`${className}`} {...props}>
       {children}
     </div>
   );
