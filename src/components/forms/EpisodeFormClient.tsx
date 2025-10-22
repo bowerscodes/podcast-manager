@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from "react";
-import { Input, Textarea } from "@heroui/input";
 import { Checkbox } from "@heroui/checkbox";
 import toast from "react-hot-toast";
 
@@ -7,6 +6,8 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
 import { EpisodeFormData } from "@/types/podcast";
 import { useFormPersistence } from "@/hooks/useFormPersistence";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 
 

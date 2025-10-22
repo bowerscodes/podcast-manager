@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
-import { Input } from "@heroui/input";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
+import { Input } from "@/components/ui/Input";
 import { checkUsernameAvailable, updateProfile, validateUsername } from "@/lib/profileUtils";
 import { Button } from "@/components/ui/Button";
 
@@ -155,7 +155,6 @@ export default function UsernameSetupModal({ onComplete }: Props) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               label="Username"
-              labelPlacement="outside-top"
               startContent={
                 <span className="text-gray-500 font-normal">
                   {process.env.NEXT_PUBLIC_BASE_URL}/
