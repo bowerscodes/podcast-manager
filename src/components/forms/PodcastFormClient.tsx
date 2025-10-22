@@ -1,11 +1,11 @@
 "use client";
 
-import { Input, Textarea } from "@heroui/input";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { Select, SelectItem } from "@heroui/select";
 import { Checkbox } from "@heroui/checkbox";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
-import toast from "react-hot-toast";
 
 import { useFormPersistence } from "@/hooks/useFormPersistence";
 import { supabase } from "@/lib/supabase";
@@ -13,6 +13,31 @@ import { useAuth } from "@/providers/Providers";
 import { PodcastFormData } from "@/types/podcast";
 import { podcastCategories } from "@/lib/data";
 import { Button } from "@/components/ui/Button";
+import { validateForm, clearFieldError, type FormConfig } from "@/lib/formValidation";
+
+// Define validation rules for the podcast form
+const podcastFormConfig: FormConfig = {
+  title: {
+    label: "Podcast Title",
+    rules: { required: true },
+  },
+  podcast_name: {
+    label: "Podcast URL",
+    rules: { required: true, minLength: 3 },
+  },
+  description: {
+    label: "Description",
+    rules: { required: true },
+  },
+  author: {
+    label: "Author name",
+    rules: { required: true },
+  },
+  email: {
+    label: "Contact email",
+    rules: { required: true, type: "email" },
+  },
+};
 
 type Props = {
   initialData: Partial<PodcastFormData>;
@@ -31,6 +56,7 @@ export default function PodcastFormClient({
   const [isEditMode, setIsEditMode] = useState(false);
   const [profileUsername, setProfileUsername] = useState<string>("");
   const [hasEditedPodcastName, setHasEditedPodcastName] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { formData, setFormData, clearPersistedData } = useFormPersistence(
     `podcast-form-${initialData.id || "new"}`,
@@ -95,6 +121,14 @@ export default function PodcastFormClient({
 
     if (!user) return;
 
+    // Validate form using the validation utility
+    const validation = validateForm(formData, podcastFormConfig);
+    
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      return;
+    }
+
     setLoading(true);
     try {
       if (isEditMode) {
@@ -137,7 +171,7 @@ export default function PodcastFormClient({
           .single();
 
         if (error) {
-          toast.error("Failed to create podcast");
+          console.error("Failed to create podcast:", error);
           setLoading(false);
           return;
         }
@@ -150,7 +184,7 @@ export default function PodcastFormClient({
 
         const username = profile?.username;
         if (!username) {
-          toast.error("Please set your username first");
+          console.error("Username not found");
           setLoading(false);
           return;
         }
@@ -163,7 +197,7 @@ export default function PodcastFormClient({
         `Error ${isEditMode ? "updating" : "creating"} podcast: `,
         error
       );
-      toast.error(`Failed to ${isEditMode ? "update" : "create"} podcast`);
+      // Could set a form-level error here instead of toast
     } finally {
       setLoading(false);
     }
@@ -186,22 +220,27 @@ export default function PodcastFormClient({
   }, [handleCancel]);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} noValidate className="space-y-6">
       <Input
         label="Podcast Title"
-        labelPlacement="outside-top"
         value={formData.title}
-        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+        onChange={(e) => {
+          setFormData({ ...formData, title: e.target.value });
+          setErrors((prev) => clearFieldError(prev, "title"));
+        }}
         isRequired
         variant="bordered"
         autoFocus
+        error={errors.title}
       />
 
       <Input
         value={formData.podcast_name}
-        onChange={handlePodcastNameChange}
+        onChange={(e) => {
+          handlePodcastNameChange(e);
+          setErrors((prev) => clearFieldError(prev, "podcast_name"));
+        }}
         label="Podcast URL"
-        labelPlacement="outside-top"
         startContent={
           <span className="text-gray-500 font-normal">
             {process.env.NEXT_PUBLIC_BASE_URL}/{profileUsername}/
@@ -210,18 +249,20 @@ export default function PodcastFormClient({
         isRequired
         minLength={3}
         variant="bordered"
+        error={errors.podcast_name}
       />
 
       <Textarea
         label="Description"
-        labelPlacement="outside-top"
         rows={4}
         value={formData.description}
         onChange={(e) => {
           setFormData({ ...formData, description: e.target.value });
+          setErrors((prev) => clearFieldError(prev, "description"));
         }}
         isRequired
         variant="bordered"
+        error={errors.description}
       />
 
       <Select
@@ -242,26 +283,31 @@ export default function PodcastFormClient({
 
       <Input
         label="Author name"
-        labelPlacement="outside-top"
         value={formData.author}
-        onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+        onChange={(e) => {
+          setFormData({ ...formData, author: e.target.value });
+          setErrors((prev) => clearFieldError(prev, "author"));
+        }}
         variant="bordered"
         isRequired
+        error={errors.author}
       />
 
       <Input
         label="Contact email"
-        labelPlacement="outside-top"
         type="email"
         value={formData.email}
-        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        onChange={(e) => {
+          setFormData({ ...formData, email: e.target.value });
+          setErrors((prev) => clearFieldError(prev, "email"));
+        }}
         variant="bordered"
         isRequired
+        error={errors.email}
       />
 
       <Input
         label="Website (optional)"
-        labelPlacement="outside-top"
         type="url"
         value={formData.website}
         onChange={(e) => setFormData({ ...formData, website: e.target.value })}
@@ -270,7 +316,6 @@ export default function PodcastFormClient({
 
       <Input
         label="Artwork URL (optional)"
-        labelPlacement="outside-top"
         type="url"
         value={formData.artwork}
         onChange={(e) => setFormData({ ...formData, artwork: e.target.value })}

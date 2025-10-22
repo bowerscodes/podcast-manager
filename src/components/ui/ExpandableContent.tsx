@@ -74,7 +74,7 @@ export default function ExpandableContent({
 
         <div
           className={`
-            transition-all duration-300 ease-in-out overflow-hidden
+            transition-all duration-300 ease-in-out overflow-hidden px-1
             ${isExpanded ? 'max-h-[100%] opacity-100' : 'max-h-0 opacity-0'}
           `}
           style={contentStyle}
@@ -116,7 +116,7 @@ export default function ExpandableContent({
         </div>
 
         <div
-          className={`overflow-hidden transition-all duration-200 ease-in-out
+          className={`overflow-hidden transition-all duration-200 ease-in-out px-1
             ${isExpanded ? "max-h-[100%] opacity-100" : "max-h-0 opacity-0"}  
           `}
         >

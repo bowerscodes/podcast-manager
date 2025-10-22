@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@heroui/input";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
@@ -8,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { deleteUserAccount } from "@/lib/profileUtils";
 import { supabase } from "@/lib/supabase";
 
+import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
 
@@ -63,25 +63,20 @@ export default function DangerZone({ user }: Props) {
           <Input
             name={`confirm-deletion-${user}`}
             label={`Type "${user.email}" to confirm`}
-            labelPlacement="outside"
             placeholder={`${user.email}`}
             value={confirmEmail}
+            width="md"
             onChange={(e) => setConfirmEmail(e.target.value)}
             variant="bordered"
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
-            spellCheck="false"
+            spellCheck={false}
             data-1p-ignore
             data-lpignore
             data-form-type="other"
             role="textbox"
             aria-label="Email confirmation for account deletion"
-            classNames={{
-              base: "max-w-xs",
-              label: "!font-semibold !text-gray-600",
-              description: "!font-semibold",
-            }}
           />
           <Button
             color="danger"

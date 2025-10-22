@@ -1,12 +1,12 @@
 "use client";
 
-import { Input } from "@heroui/input";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
+
 import { validateEmail, checkEmailAvailable, verifyCurrentEmail } from "@/lib/emailUtils";
 import { updateUserEmail } from "@/lib/clientEmailUtils";
-
+import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
 
@@ -64,38 +64,34 @@ export default function EmailForm({ user }: { user: User }) {
 
       <Input
         label="Current Email Address"
-        labelPlacement="outside"
         type="email"
         value={currentEmail}
         variant="bordered"
-        onChange={(e) => setCurrentEmail(e.target.value)}
-        isInvalid={!!errors.current}
-        errorMessage={errors.current}
-        classNames={{
-          base: "max-w-xs",
-          label: "!font-semibold !text-gray-600",
-          description: "!font-semibold",
+        width="md"
+        onChange={(e) => {
+          setCurrentEmail(e.target.value);
+          if (errors.current) setErrors(prev => ({ ...prev, current: undefined }));
         }}
-        required
+        isInvalid={!!errors.current}
+        error={errors.current}
+        isRequired
         description="Enter your current email address to verify"
-        placeholder="Enter your new current address"
+        placeholder="Enter your current email address"
       />
 
       <Input
         label="New Email Address"
-        labelPlacement="outside"
         type="email"
         value={newEmail}
         variant="bordered"
-        onChange={(e) => setNewEmail(e.target.value)}
-        isInvalid={!!errors.new}
-        errorMessage={errors.new}
-        classNames={{
-          base: "max-w-xs",
-          label: "!font-semibold !text-gray-600",
-          description: "!font-semibold",
+        width="md"
+        onChange={(e) => {
+          setNewEmail(e.target.value);
+          if (errors.new) setErrors(prev => ({ ...prev, new: undefined }));
         }}
-        required
+        isInvalid={!!errors.new}
+        error={errors.new}
+        isRequired
         description="You'll need to confirm the new email address"
         placeholder="Enter your new email address"
       />

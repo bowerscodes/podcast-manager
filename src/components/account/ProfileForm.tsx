@@ -1,6 +1,6 @@
 "use client";
 
-import { Input } from "@heroui/input";
+import { Input } from "@/components/ui/Input";
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
@@ -199,18 +199,14 @@ export default function ProfileForm({ user, profile }: Props) {
         </div>
 
         {/* column 2 - form fields (appears second on mobile) */}
-        <div className="flex flex-col gap-4 md:order-1 p-1">
+        <div className="flex flex-col gap-4 md:order-1">
           <Input
+            id="username"
             label="Username"
-            labelPlacement="outside"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             variant="bordered"
-            classNames={{
-              base: "max-w-sm",
-              label: "!font-semibold !text-gray-600",
-              description: "!font-semibold",
-            }}
+            spellCheck={false}
             startContent={
               <span className="text-gray-500">
                 {process.env.NEXT_PUBLIC_BASE_URL}/
@@ -228,16 +224,11 @@ export default function ProfileForm({ user, profile }: Props) {
           )}
   
           <Input
+            id="display-name"
             label="Display Name"
-            labelPlacement="outside"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             variant="bordered"
-            classNames={{
-              base: "max-w-2xs",
-              label: "!font-semibold !text-gray-600",
-              description: "!font-semibold",
-            }}
             placeholder="Enter your preferred display name"
             description="Your public display name (optional)"
           />
@@ -319,6 +310,7 @@ export default function ProfileForm({ user, profile }: Props) {
                   associated with this account:
                 </p>
                 <Input
+                  id="confirm-email"
                   placeholder="Type your email address to confirm"
                   value={confirmEmail}
                   onChange={(e) => setConfirmEmail(e.target.value)}
@@ -329,7 +321,7 @@ export default function ProfileForm({ user, profile }: Props) {
                   name={`confirm-email-${Math.random()
                     .toString(36)
                     .substring(2, 8)}`}
-                  spellCheck="false"
+                  spellCheck={false}
                 />
               </div>
             </div>
