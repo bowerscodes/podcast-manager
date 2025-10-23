@@ -1,13 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/Providers";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+} from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
-import { checkUsernameAvailable, updateProfile, validateUsername } from "@/lib/profileUtils";
+import {
+  checkUsernameAvailable,
+  updateProfile,
+  validateUsername,
+} from "@/lib/profileUtils";
 import { Button } from "@/components/ui/Button";
 
 type Props = {
@@ -60,7 +69,11 @@ export default function UsernameSetupModal({ onComplete }: Props) {
     setLoading(true);
 
     try {
-      const { valid, error: validationError, cleanUsername } = await validateUsername(username);
+      const {
+        valid,
+        error: validationError,
+        cleanUsername,
+      } = await validateUsername(username);
 
       if (!valid) {
         toast.error(validationError);
@@ -68,7 +81,10 @@ export default function UsernameSetupModal({ onComplete }: Props) {
         return;
       }
 
-      const { available, error: checkError } = await checkUsernameAvailable(cleanUsername, user.id);
+      const { available, error: checkError } = await checkUsernameAvailable(
+        cleanUsername,
+        user.id
+      );
 
       if (checkError) {
         toast.error(checkError);
@@ -94,7 +110,9 @@ export default function UsernameSetupModal({ onComplete }: Props) {
 
       // Fire profileUpdated event for cross-component sync
       window.dispatchEvent(
-        new CustomEvent("profileUpdated", { detail: { username: cleanUsername } })
+        new CustomEvent("profileUpdated", {
+          detail: { username: cleanUsername },
+        })
       );
 
       // Re-fetch profile to check if username is now set, and close modal if so
@@ -136,14 +154,15 @@ export default function UsernameSetupModal({ onComplete }: Props) {
   return (
     <Modal
       isOpen={isOpen}
-      onOpenChange={() => {}}
       placement="center"
-      isDismissable={false}
-      hideCloseButton
+      closeOnOverlayClick={false}
+      closeOnEsc={false}
     >
       <ModalContent>
         <ModalHeader>
-          <h2 className="text-xl heading-secondary font-bold">Set your Username</h2>
+          <h2 className="text-xl heading-secondary font-bold">
+            Set your Username
+          </h2>
         </ModalHeader>
         <ModalBody className="p-6 pt-0">
           <p className="mb-4">

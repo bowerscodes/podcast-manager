@@ -1,6 +1,5 @@
 
 import { Podcast } from "@/types/podcast";
-import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import PodcastFormClient from "./PodcastFormClient";
 
 type Props = {
@@ -14,27 +13,11 @@ export default function PodcastForm({
   onSuccess,
   onCancel
 }: Props) {
-  const isEditing = Object.keys(initialData).length > 0;
-
   return (
-    <Card 
-      className="border border-gray-200 shadow-sm"
-      style={{
-        background: "var(--gradient-card-subtle)"
-      }}
-      >
-      <CardHeader>
-        <h2 className="heading-secondary">
-          {isEditing ? "Edit Podcast" : "Create Podcast"}
-        </h2>
-      </CardHeader>
-      <CardBody>
-        <PodcastFormClient 
-          initialData={initialData} 
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-        />
-      </CardBody>
-    </Card>
+    <PodcastFormClient 
+      initialData={initialData} 
+      onSuccess={onSuccess}
+      onCancel={onCancel}
+    />
   );
 };

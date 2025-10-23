@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Modal, ModalContent } from "@heroui/modal";
-
+import { Modal, ModalContent, ModalHeader, ModalBody } from "@/components/ui/Modal";
 import PodcastForm from "../forms/PodcastForm";
 import { Podcast } from "@/types/podcast";
 
@@ -29,17 +28,22 @@ export default function PodcastModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={handleOpenChange} placement="center" size="2xl">
+    <Modal isOpen={isOpen} onOpenChange={handleOpenChange} placement="center" size="xl">
       <ModalContent className="max-h-[90vh] overflow-y-auto">
-        <PodcastForm 
-          key={formKey}
-          initialData={initialData}
-          onSuccess={()=> {
-            onClose(); 
-            onSuccess();
-          }}
-          onCancel={onClose}
-        />
+        <ModalHeader>
+          {initialData && Object.keys(initialData).length > 0 ? "Edit Podcast" : "Create Podcast"}
+        </ModalHeader>
+        <ModalBody>
+          <PodcastForm 
+            key={formKey}
+            initialData={initialData}
+            onSuccess={()=> {
+              onClose(); 
+              onSuccess();
+            }}
+            onCancel={onClose}
+          />
+        </ModalBody>
       </ModalContent>
     </Modal>
   )

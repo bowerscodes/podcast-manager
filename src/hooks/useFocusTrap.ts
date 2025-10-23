@@ -10,7 +10,7 @@ const FOCUSABLE_ELEMENTS = [
 ];
 
 export function useFocusTrap<T extends HTMLElement = HTMLElement>(
-  ref: RefObject<T>,
+  ref: RefObject<T | null>,
   isActive = true
 ) {
   useEffect(() => {

@@ -1,5 +1,3 @@
-import { Card, CardHeader, CardBody } from '@/components/ui/Card';
-
 import { Episode } from '@/types/podcast';
 import EpisodeFormClient from './EpisodeFormClient';
 
@@ -11,28 +9,12 @@ type Props = {
 }
 
 export default function EpisodeForm({ podcastId, initialData = {}, onSuccess, onCancel }: Props) {
-  const isEditing = Object.keys(initialData).length > 0;
-
   return (
-    <Card 
-      className="border border-gray-200 shadow-sm"
-      style={{
-        background: "var(--gradient-card-subtle)"
-      }}
-    >
-      <CardHeader>
-        <h2 className="heading-secondary">
-          {isEditing ? "Edit Episode" : "Add Episode"}
-        </h2>
-      </CardHeader>
-      <CardBody>
-        <EpisodeFormClient 
-          podcastId={podcastId} 
-          initialData={initialData} 
-          onSuccess={onSuccess} 
-          onCancel={onCancel} 
-        />
-      </CardBody>
-    </Card>
+    <EpisodeFormClient 
+      podcastId={podcastId} 
+      initialData={initialData} 
+      onSuccess={onSuccess} 
+      onCancel={onCancel} 
+    />
   );
 };

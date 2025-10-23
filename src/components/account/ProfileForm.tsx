@@ -4,13 +4,6 @@ import { Input } from "@/components/ui/Input";
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
 import { Checkbox } from "@heroui/checkbox";
 
 import {
@@ -18,6 +11,13 @@ import {
   updateProfile,
   validateUsername,
 } from "@/lib/profileUtils";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import EditableImage from "../ui/EditableImage";
 import { defaultAvatar } from "@/lib/data";
@@ -238,6 +238,7 @@ export default function ProfileForm({ user, profile }: Props) {
             isLoading={isLoading}
             className="self-start"
             startContent={isUsernameChanged ? <RiLockPasswordFill /> : undefined}
+            disabled={isLoading || (!isUsernameChanged && displayName === profile.display_name)}
           >
             {isUsernameChanged ? "Verify & Save Changes" : "Save Changes"}
           </Button>

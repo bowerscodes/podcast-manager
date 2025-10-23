@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Modal, ModalContent } from "@heroui/modal";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/lib/supabase";
-import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@/components/ui/Modal";
 
 type DeleteModalProps = {
   isOpen: boolean;
@@ -21,7 +20,7 @@ export default function DeleteModal(props: DeleteModalProps) {
 
   const isDeletePodcast = "podcastId" in props;
   const itemType = isDeletePodcast ? "Podcast" : "Episode";
-  const itemId = isDeletePodcast ? props.podcastId : props.episodeId
+  const itemId = isDeletePodcast ? props.podcastId : props.episodeId;
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -45,34 +44,30 @@ export default function DeleteModal(props: DeleteModalProps) {
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onClose} placement="center">
-      <ModalContent className="max-h-[90vh] overflow-y-auto bg-white">
-        <Card className="bg-white border-0 shadow-none">
-          <CardHeader>
-            <h3 className="heading-secondary">Delete {itemType}</h3>
-          </CardHeader>
-          <CardBody>
-            <p className="font-normal">
-              Are you sure you want to delete this {itemType.toLowerCase()}? This action cannot be undone.
-            </p>
-            <div className="flex gap-2 justify-end">
-              <Button
-                variant="bordered"
-                onPress={onClose}
-                disabled= {isDeleting}
-              >
-                Cancel
-              </Button>
-              <Button
-                color="danger"
-                onPress={handleDelete}
-                isLoading={isDeleting}
-              >
-                {isDeleting ? "Deleting..." : "Delete"}
-              </Button>
-            </div>
-          </CardBody>
-        </Card>
+    <Modal isOpen={isOpen} onClose={onClose} placement="center">
+      <ModalContent className="max-h-[90vh] overflow-y-auto">
+        <ModalHeader className="heading-secondary">Delete {itemType}</ModalHeader>
+        <ModalBody>
+          <p className="font-normal">
+            Are you sure you want to delete this {itemType.toLowerCase()}? This action cannot be undone.
+          </p>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            variant="bordered"
+            onPress={onClose}
+            disabled={isDeleting}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="danger"
+            onPress={handleDelete}
+            isLoading={isDeleting}
+          >
+            {isDeleting ? "Deleting..." : "Delete"}
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );
