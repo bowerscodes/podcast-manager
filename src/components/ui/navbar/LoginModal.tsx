@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
 
 import { useAuth } from "@/providers/Providers";
 import LoginForm from "@/components/auth/LoginForm";
+import { Modal, ModalContent, ModalHeader, ModalBody } from "@/components/ui/Modal";
 
 type Props = {
   isOpen: boolean;
@@ -23,7 +23,6 @@ export default function LoginModal({ isOpen, onClose }: Props) {
       isOpen={isOpen}
       onOpenChange={onClose}
       placement="center"
-      backdrop="blur"
       size="md"
     >
       <ModalContent>
